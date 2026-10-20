@@ -42,11 +42,12 @@ docs/
 
 ## GitHub Pages で公開する手順
 
-1. このブランチの内容を `main` にマージする
-2. GitHub のリポジトリ画面で **Settings → Pages** を開く
-3. **Build and deployment** の Source を「**Deploy from a branch**」にする
-4. Branch を **`main`**、フォルダを **`/docs`** にして **Save**
-5. 1〜2分待つと `https://ht-0328.github.io/aws-get-certified/` で見られるようになります
+`.github/workflows/pages.yml` のワークフローで自動デプロイします。
+
+1. **最初の1回だけ**：GitHub のリポジトリ画面で **Settings → Pages** を開き、**Build and deployment** の Source を「**GitHub Actions**」にする
+2. このブランチを `main` にマージする
+3. あとは `main` の `docs/` が変わるたびに自動で公開されます（**Actions** タブの「Deploy to GitHub Pages」から手動実行も可能）
+4. 公開先：`https://ht-0328.github.io/aws-get-certified/`
 
 ローカルで見るときは `docs/index.html` をブラウザで開くだけで OK です。
 
