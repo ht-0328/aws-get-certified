@@ -13,306 +13,295 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第5章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第5章 データベース</h1>
-<p class="lead">お客さんの名前、注文の記録、商品の在庫……。アプリの大事な情報は<b>データベース</b>に入っています。AWS にはデータベースが十数種類ありますが、<b>「表で管理するか、しないか」</b>で大きく2つに分けると、ぐっと覚えやすくなります。</p>
+<p class="lead">顧客情報、注文履歴、在庫数など、アプリケーションの中核となるデータはデータベースに保存されます。AWS には十数種類のデータベースサービスがありますが、まず<b>「リレーショナルか、NoSQL か」</b>で大きく二分すると、全体を整理しやすくなります。</p>
 
 <div class="box map">
-  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>
   <ol style="margin:0">
-    <li>データベースの2大グループ（リレーショナルと NoSQL）</li>
-    <li>「マネージド」ってなに？ —— AWS と自分の役割分担</li>
-    <li>RDS と Aurora —— 表で管理するデータベース（マルチAZ・リードレプリカ）</li>
-    <li>DynamoDB —— 速くて止まらない NoSQL</li>
-    <li>ElastiCache と MemoryDB —— メモリで超高速</li>
-    <li>Redshift —— 分析用の巨大な倉庫</li>
-    <li>目的別データベースのいろいろ</li>
-    <li>引っ越し（DMS・SCT）</li>
+    <li>データベースの2分類（リレーショナルと NoSQL）</li>
+    <li>マネージドサービスとは —— AWS と利用者の役割分担</li>
+    <li>RDS と Aurora —— リレーショナルデータベース（マルチ AZ・リードレプリカ）</li>
+    <li>DynamoDB —— 高速・高可用な NoSQL</li>
+    <li>ElastiCache と MemoryDB —— インメモリデータベース</li>
+    <li>Redshift —— 分析用のデータウェアハウス</li>
+    <li>目的別データベース</li>
+    <li>データベースの移行（DMS・SCT）</li>
   </ol>
 </div>
 
-<h2>1. データベースの2大グループ</h2>
-<p><span class="term" data-tip="データベース（DB）：たくさんのデータを、あとで探しやすく・書きかえやすいように整理してためておくしくみ。">データベース</span>は、データのしまい方で大きく2つに分かれます。</p>
+<h2>1. データベースの2分類</h2>
+<p><span class="term" data-tip="データベース（DB）：大量のデータを、検索・更新しやすいように整理して蓄積する仕組み。">データベース</span>は、データの構造と扱い方によって大きく2つに分類されます。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">📒</span>たとえ話：エクセルの表 と 付せんの束</div>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
   <ul style="margin:0">
-    <li><b>リレーショナル（RDB）</b>＝ <b>きっちりした Excel の表</b>。列（名前・住所・電話…）が決まっていて、表と表を「顧客番号」などで<b>つなげて（リレーション）</b>使う。<b>SQL</b> という言葉で検索する。ルールがきびしいぶん、お金の計算などにまちがいが起きにくい。</li>
-    <li><b>NoSQL</b>＝ <b>番号つきの付せんの束</b>。「番号（キー）を言えば、その付せんがすぐ出てくる」。付せんごとに書く内容がちがってもOK。決まりがゆるいぶん、<b>ものすごく大量・高速</b>にさばける。</li>
+    <li><b>リレーショナル（RDB）</b>：列の定義が厳密に決まった表（テーブル）にデータを格納し、「顧客 ID」などの共通項目で表どうしを<b>関連付けて（リレーション）</b>扱う。問い合わせには <b>SQL</b> を使う。整合性の制約が厳しい分、金銭計算などでデータの矛盾が起きにくい。</li>
+    <li><b>NoSQL</b>：キーを指定すると対応する値を直接取り出せる形式など、表に限らない構造でデータを扱う。項目ごとに属性が異なっていてもよく、制約が緩い分、<b>大量のデータを高速に</b>処理できる。</li>
   </ul>
 </div>
 
 <div class="diagram">
-  <div class="dtitle">リレーショナル と NoSQL</div>
+  <div class="dtitle">リレーショナルと NoSQL</div>
   <div class="grp-row">
-    <div class="grp plain"><div class="glabel">リレーショナル（表＋つながり）</div>
+    <div class="grp plain"><div class="glabel">リレーショナル（表＋関連付け）</div>
       <div class="flow">
-        <div class="node"><img src="../assets/aws-icons/resource/DataTable.svg" alt="">顧客テーブル<small>番号・名前・住所</small></div>
-        <div class="arr">⇄<small>顧客番号で<br>つなぐ</small></div>
-        <div class="node"><img src="../assets/aws-icons/resource/DataTable.svg" alt="">注文テーブル<small>注文番号・顧客番号<br>・商品</small></div>
+        <div class="node"><img src="../assets/aws-icons/resource/DataTable.svg" alt="">顧客テーブル<small>ID・氏名・住所</small></div>
+        <div class="arr">⇄<small>顧客 ID で<br>関連付け</small></div>
+        <div class="node"><img src="../assets/aws-icons/resource/DataTable.svg" alt="">注文テーブル<small>注文 ID・顧客 ID<br>・商品</small></div>
       </div>
       <div class="flow"><div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS</div><div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonAurora.svg" alt="">Aurora</div></div>
     </div>
-    <div class="grp plain"><div class="glabel">NoSQL（キーで一発）</div>
+    <div class="grp plain"><div class="glabel">NoSQL（キーで直接取得）</div>
       <div class="flow">
-        <div class="node"><img src="../assets/aws-icons/resource/AmazonDynamoDBTable.svg" alt="">キー「user#123」<small>→ {名前, 好きな色,<br>最後のログイン…}</small></div>
+        <div class="node"><img src="../assets/aws-icons/resource/AmazonDynamoDBTable.svg" alt="">キー「user#123」<small>→ {氏名, 設定,<br>最終ログイン…}</small></div>
       </div>
       <div class="flow"><div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonDynamoDB.svg" alt="">DynamoDB</div><div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonElastiCache.svg" alt="">ElastiCache</div></div>
     </div>
   </div>
-  <div class="cap">左：形がきっちり決まった表をつなげる。右：キーを言えば中身が一発で返ってくる。</div>
+  <div class="cap">左：構造が厳密に定義された表を関連付けて扱う。右：キーを指定すると値が直接返る。</div>
 </div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>リレーショナルデータベース</dt><dd>RDB。データを「表（テーブル）」で管理し、表どうしを関係（リレーション）でつなぐデータベース。</dd>
-    <dt>SQL</dt><dd>エスキューエル。リレーショナルデータベースに「この条件のデータを出して」とお願いするための言葉。</dd>
-    <dt>NoSQL</dt><dd>ノーエスキューエル。「SQL（表）だけじゃない」データベースのこと。キーと値（バリュー）などで管理する。</dd>
-    <dt>スキーマ</dt><dd>表の「設計図」。どんな列があって、それぞれ何が入るかの決まり。</dd>
-    <dt>トランザクション</dt><dd>「お金を引く」と「お金を足す」のように、<b>全部成功するか、全部取り消すか</b>のどちらかにしたい一連の処理。</dd>
+    <dt>リレーショナルデータベース</dt><dd>RDB。データを表（テーブル）で管理し、表どうしを関連（リレーション）で結び付けるデータベース。</dd>
+    <dt>SQL</dt><dd>エスキューエル。リレーショナルデータベースに対してデータの検索・追加・更新・削除を指示するための言語。</dd>
+    <dt>NoSQL</dt><dd>ノーエスキューエル。「Not only SQL」の意。キーバリュー型やドキュメント型など、表形式以外のデータモデルを採用するデータベースの総称。</dd>
+    <dt>スキーマ</dt><dd>テーブルの構造定義。どの列があり、それぞれにどの型のデータが入るかを定めたもの。</dd>
+    <dt>トランザクション</dt><dd>「口座 A から引き落とす」「口座 B に入金する」のように、<b>すべて成功するか、すべて取り消すか</b>のどちらかでなければならない一連の処理。</dd>
   </dl>
 </div>
 
-<h2>2. 「マネージド」ってなに？</h2>
-<p>EC2 に自分でデータベースのソフトを入れて使うこともできますが、AWS には<b>面倒なお世話を AWS がやってくれる</b>データベースがあります。これを<span class="term" data-tip="マネージド（managed）：「管理された」という意味。サーバーの管理やお世話を AWS がやってくれる、ということ。">マネージド</span>サービスといいます。</p>
-
-<div class="box story">
-  <div class="box-title"><span class="em">🐶</span>たとえ話：ペットホテル</div>
-  <p>EC2 に自分で入れる＝<b>自宅で犬を飼う</b>（ごはん・散歩・病院、全部自分）。RDS などのマネージド＝<b>ペットホテルにお世話をまかせる</b>。自分は「どんな芸を教えるか（データの中身・使い方）」に集中できる。</p>
-</div>
+<h2>2. マネージドサービスとは</h2>
+<p>EC2 上にデータベースソフトウェアを自分でインストールして運用することもできますが、AWS には<b>運用管理の大部分を AWS が担う</b>データベースサービスがあります。これを<span class="term" data-tip="マネージド（managed）サービス：サーバーの構築・パッチ適用・バックアップなどの運用管理を AWS が代行するサービス形態。">マネージド</span>サービスと呼びます。利用者は、データの設計やアプリケーション側の利用方法に集中できます。</p>
 
 <div class="table-wrap"><table>
-  <tr><th>やること</th><th>EC2 に自分で入れる</th><th>RDS（マネージド）</th></tr>
+  <tr><th>作業</th><th>EC2 に自分で構築</th><th>RDS（マネージド）</th></tr>
   <tr><td>サーバー・ハードウェアの用意</td><td>AWS</td><td>AWS</td></tr>
-  <tr><td>OS のインストール・<span class="term" data-tip="パッチ：ソフトの不具合や弱点を直すための修正プログラム。パッチを当てる＝修正を入れること。">パッチ</span>当て</td><td><b>自分</b></td><td>AWS</td></tr>
-  <tr><td>データベースソフトの導入・更新</td><td><b>自分</b></td><td>AWS</td></tr>
-  <tr><td>バックアップ・障害時の切りかえ</td><td><b>自分</b></td><td>AWS（設定するだけ）</td></tr>
-  <tr><td>表の設計・データ・使い方・アクセス権</td><td><b>自分</b></td><td><b>自分</b></td></tr>
+  <tr><td>OS のインストール・<span class="term" data-tip="パッチ：ソフトウェアの不具合や脆弱性を修正するための更新プログラム。">パッチ</span>適用</td><td><b>利用者</b></td><td>AWS</td></tr>
+  <tr><td>データベースソフトウェアの導入・更新</td><td><b>利用者</b></td><td>AWS</td></tr>
+  <tr><td>バックアップ・障害時の切り替え</td><td><b>利用者</b></td><td>AWS（利用者は設定のみ）</td></tr>
+  <tr><td>テーブル設計・データ・利用方法・アクセス権</td><td><b>利用者</b></td><td><b>利用者</b></td></tr>
 </table></div>
-<p class="muted">※ RDS では、ふつうは中の OS に直接ログインできません（それが必要なら EC2 に自分で入れるか、RDS Custom という特別な形を使います）。</p>
+<p class="muted">※ 通常の RDS では、基盤となる OS に直接ログインすることはできません。OS レベルの操作が必要な場合は、EC2 上に自分で構築するか、RDS Custom を利用します。</p>
 
-<h2>3. RDS と Aurora —— 表で管理するデータベース</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt=""><div><div class="name">Amazon RDS<span class="yomi">アールディーエス / Relational Database Service</span></div><div class="one">リレーショナルデータベースを<b>マネージド</b>で使えるサービス。中身のソフト（<span class="term" data-tip="エンジン：データベースのソフトの種類のこと。車のエンジンのように、データベースを動かす本体。">エンジン</span>）は <b>MySQL・PostgreSQL・MariaDB・Oracle・SQL Server・Db2</b>、そして Aurora から選べる。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonAurora.svg" alt=""><div><div class="name">Amazon Aurora<span class="yomi">オーロラ</span></div><div class="one">AWS がクラウド向けに作り直した<b>高性能なリレーショナル DB</b>。<b>MySQL・PostgreSQL と互換</b>（同じように使える）。データを<b>3つの AZ に6個コピー</b>して守る。使う量に合わせて自動で伸び縮みする <b>Aurora Serverless</b> もある。</div></div></div>
+<h2>3. RDS と Aurora —— リレーショナルデータベース</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt=""><div><div class="name">Amazon RDS<span class="yomi">アールディーエス / Relational Database Service</span></div><div class="one">リレーショナルデータベースを<b>マネージド</b>で提供するサービス。データベース<span class="term" data-tip="エンジン：データベースを動かすソフトウェア製品の種類。MySQL や Oracle など。">エンジン</span>は <b>MySQL・PostgreSQL・MariaDB・Oracle・SQL Server・Db2</b>、および Aurora から選択する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonAurora.svg" alt=""><div><div class="name">Amazon Aurora<span class="yomi">オーロラ</span></div><div class="one">AWS がクラウド向けに設計した<b>高性能なリレーショナルデータベース</b>。<b>MySQL・PostgreSQL と互換性</b>がある。データを<b>3つの AZ に計6つ複製</b>して保護する。負荷に応じて容量が自動で伸縮する <b>Aurora Serverless</b> もある。</div></div></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：RDS のエンジン「<b>マイ・ポス・マリア・オラ・エス・ディー・オーロラ</b>」</div>
-  <p>「<b>マイ</b>ポストの<b>マリア</b>が、<b>オラ</b>（スペイン語で こんにちは）と<b>エス</b>ディー（SD）カードを<b>オーロラ</b>の下で渡す」—— MySQL / PostgreSQL / MariaDB / Oracle / SQL Server / Db2 / Aurora。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：RDS のエンジンは「OSS 3つ＋商用 3つ＋Aurora」</div>
+  <p><b>オープンソース系</b>：MySQL・PostgreSQL・MariaDB ／ <b>商用系</b>：Oracle・SQL Server・Db2 ／ <b>AWS 独自</b>：Aurora。3＋3＋1 のグループに分けて覚えると漏れが出にくくなります。</p>
 </div>
 
-<h3>マルチAZ と リードレプリカ —— 似ているけど目的がちがう</h3>
-<p>RDS の試験問題で<b>いちばん出る</b>のがここです。どちらも「コピーを作る」のですが、<b>何のために作るか</b>がちがいます。</p>
+<h3>マルチ AZ とリードレプリカ —— 似ているが目的が異なる</h3>
+<p>RDS の出題で<b>最も頻出</b>なのがこの区別です。どちらもデータベースの複製を作る機能ですが、<b>目的</b>が異なります。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🏪</span>たとえ話：お店の「控えの店長」と「案内係」</div>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
   <ul style="margin:0">
-    <li><b>マルチAZ</b>＝ <b>控えの店長（スタンバイ）</b>。いつも店長と同じことをメモしていて、店長がたおれたら<b>すぐ代わりに店長になる</b>。ふだんはお客さんの相手はしない。→ 目的は<b>止まらないこと（高可用性）</b>。</li>
-    <li><b>リードレプリカ</b>＝ <b>質問にだけ答える案内係</b>。商品の場所を聞かれたら答える（<b>読み取り</b>）けど、商品の注文（<b>書き込み</b>）は店長だけ。案内係を増やすと店長がラクになる。→ 目的は<b>速さ（読み取りの負荷分散）</b>。</li>
+    <li><b>マルチ AZ</b>：常に同じ内容を保持している<b>待機系（スタンバイ）</b>を別の AZ に置く。本番系に障害が起きると<b>自動で待機系に切り替わる</b>。待機系は通常時には処理を受け付けない。→ 目的は<b>可用性の向上</b>。</li>
+    <li><b>リードレプリカ</b>：<b>読み取り専用</b>の複製。参照系の問い合わせを複製側に振り分けることで、本番系の負荷を下げる。書き込みは本番系のみが受け付ける。→ 目的は<b>読み取り性能の向上（負荷分散）</b>。</li>
   </ul>
 </div>
 
 <div class="diagram">
-  <div class="dtitle">マルチAZ（止まらないため）</div>
+  <div class="dtitle">マルチ AZ（可用性のため）</div>
   <div class="grp region">
     <div class="glabel"><img src="../assets/aws-icons/architecture-group/Region.svg" alt=""><span class="gtxt">リージョン</span></div>
-    <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/GenericApplication.svg" alt="">アプリ<small>読み書きは<br>プライマリーへ</small></div></div>
+    <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/GenericApplication.svg" alt="">アプリケーション<small>読み書きは<br>プライマリーへ</small></div></div>
     <div class="grp-row">
-      <div class="grp az"><div class="glabel">AZ-a</div><div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonAuroraAmazonRDSInstance.svg" alt="">プライマリー<small>（店長）</small></div></div></div>
-      <div class="flow col"><div class="arr ok">⇒<small>同期コピー</small></div><div class="arr">⇐<small>故障したら<br>自動で交代</small></div></div>
-      <div class="grp az"><div class="glabel">AZ-c</div><div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonAuroraAmazonRDSInstance.svg" alt="">スタンバイ<small>（控えの店長）<br>ふだんは使えない</small></div></div></div>
+      <div class="grp az"><div class="glabel">AZ-a</div><div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonAuroraAmazonRDSInstance.svg" alt="">プライマリー<small>（本番系）</small></div></div></div>
+      <div class="flow col"><div class="arr ok">⇒<small>同期レプリケーション</small></div><div class="arr">⇐<small>障害時に<br>自動切り替え</small></div></div>
+      <div class="grp az"><div class="glabel">AZ-c</div><div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonAuroraAmazonRDSInstance.svg" alt="">スタンバイ<small>（待機系）<br>通常時は利用不可</small></div></div></div>
     </div>
   </div>
-  <div class="cap">データは<b>同時に（同期で）</b>コピー。プライマリーの AZ に障害が起きると、<b>自動で</b>スタンバイに切りかわる（フェイルオーバー）。</div>
+  <div class="cap">データは<b>同期的に</b>複製されます。プライマリーの AZ で障害が起きると、<b>自動的に</b>スタンバイへ切り替わります（フェイルオーバー）。</div>
 </div>
 
 <div class="diagram">
-  <div class="dtitle">リードレプリカ（速くするため）</div>
-  <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/GenericApplication.svg" alt="">アプリ</div></div>
+  <div class="dtitle">リードレプリカ（読み取り性能のため）</div>
+  <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/GenericApplication.svg" alt="">アプリケーション</div></div>
   <div class="flow spread" style="max-width:420px;margin:0 auto">
     <div class="arr">↓<small>書き込み・読み取り</small></div>
-    <div class="arr">↓<small>読み取りだけ</small></div>
+    <div class="arr">↓<small>読み取りのみ</small></div>
   </div>
   <div class="grp plain" style="max-width:460px;margin:6px auto"><div class="glabel">RDS</div>
     <div class="flow">
       <div class="node"><img src="../assets/aws-icons/resource/AmazonAuroraAmazonRDSInstance.svg" alt="">プライマリー</div>
-      <div class="arr">⇒<small>非同期コピー</small></div>
-      <div class="node"><img src="../assets/aws-icons/resource/AmazonAuroraAmazonRDSInstance.svg" alt="">リードレプリカ<small>読み取り専用<br>（別リージョンにも可）</small></div>
+      <div class="arr">⇒<small>非同期レプリケーション</small></div>
+      <div class="node"><img src="../assets/aws-icons/resource/AmazonAuroraAmazonRDSInstance.svg" alt="">リードレプリカ<small>読み取り専用<br>（別リージョンも可）</small></div>
     </div>
   </div>
-  <div class="cap">コピーは<b>少し遅れて（非同期で）</b>届く。読み取りが多いアプリ（ニュースサイトなど）で、プライマリーの負担を減らす。</div>
+  <div class="cap">複製は<b>非同期</b>で行われるため、わずかな遅延があります。参照の多いアプリケーション（ニュースサイトなど）で、プライマリーの負荷を軽減します。</div>
 </div>
 
 <div class="table-wrap"><table>
-  <tr><th></th><th>マルチAZ</th><th>リードレプリカ</th></tr>
-  <tr><td>目的</td><td><b>高可用性</b>（止まらない）</td><td><b>読み取り性能</b>アップ</td></tr>
-  <tr><td>コピーのしかた</td><td><span class="term" data-tip="同期（どうき）：コピー先にも書けたことを確認してから「完了」とするやり方。データのズレがない。">同期</span></td><td><span class="term" data-tip="非同期（ひどうき）：コピー先に書けたかを待たずに「完了」とするやり方。速いが、少し遅れてコピーされる。">非同期</span></td></tr>
-  <tr><td>コピーを読める？</td><td>読めない（待機しているだけ）<small class="muted">※標準のマルチAZ配置の場合</small></td><td><b>読める</b></td></tr>
-  <tr><td>故障したとき</td><td><b>自動で</b>切りかわる</td><td>手動でプライマリーに<b>昇格</b>させることはできる</td></tr>
-  <tr><td>置き場所</td><td>同じリージョンの別の AZ</td><td>同じ AZ／別 AZ／<b>別リージョン</b>も可</td></tr>
+  <tr><th></th><th>マルチ AZ</th><th>リードレプリカ</th></tr>
+  <tr><td>目的</td><td><b>高可用性</b></td><td><b>読み取り性能</b>の向上</td></tr>
+  <tr><td>複製方式</td><td><span class="term" data-tip="同期レプリケーション：複製先への書き込み完了を確認してから処理を完了とする方式。データのずれが生じない。">同期</span></td><td><span class="term" data-tip="非同期レプリケーション：複製先への書き込み完了を待たずに処理を完了とする方式。高速だが、複製にわずかな遅れが生じる。">非同期</span></td></tr>
+  <tr><td>複製への読み取り</td><td>不可（待機のみ）<small class="muted">※標準のマルチ AZ 配置の場合</small></td><td><b>可能</b></td></tr>
+  <tr><td>障害時</td><td><b>自動で</b>フェイルオーバー</td><td>手動でプライマリーに<b>昇格</b>させることは可能</td></tr>
+  <tr><td>配置場所</td><td>同一リージョン内の別 AZ</td><td>同一 AZ／別 AZ／<b>別リージョン</b>も可</td></tr>
 </table></div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>プライマリー</dt><dd>Primary。メインで動いているデータベース。書き込みはここだけ。</dd>
-    <dt>スタンバイ</dt><dd>Standby。いざというときのために待機しているコピー。</dd>
-    <dt>フェイルオーバー</dt><dd>Failover。メインが故障したとき、控えに自動で切りかえること。</dd>
-    <dt>レプリカ</dt><dd>Replica ＝ 複製・コピー。リード（Read）レプリカ＝読み取り用のコピー。</dd>
-    <dt>負荷分散</dt><dd>仕事を何台かで分けあって、1台あたりの負担を減らすこと。</dd>
+    <dt>プライマリー</dt><dd>Primary。本番として稼働しているデータベース。書き込みを受け付けるのはこのインスタンスのみ。</dd>
+    <dt>スタンバイ</dt><dd>Standby。障害に備えて待機している複製。</dd>
+    <dt>フェイルオーバー</dt><dd>Failover。本番系の障害時に、待機系へ自動で切り替えること。</dd>
+    <dt>レプリカ</dt><dd>Replica。複製。リードレプリカ＝読み取り用の複製。</dd>
+    <dt>負荷分散</dt><dd>処理を複数のサーバーに分散させ、1台あたりの負荷を下げること。</dd>
   </dl>
 </div>
 
-<h2>4. DynamoDB —— 速くて止まらない NoSQL</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonDynamoDB.svg" alt=""><div><div class="name">Amazon DynamoDB<span class="yomi">ダイナモディービー</span></div><div class="one"><b>キーと値（キーバリュー）</b>で管理する NoSQL データベース。<b>サーバーレス</b>（サーバーの台数を考えなくていい）で、どれだけデータが増えても<b>1桁ミリ秒</b>の速さで返す。</div></div></div>
+<h2>4. DynamoDB —— 高速・高可用な NoSQL</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonDynamoDB.svg" alt=""><div><div class="name">Amazon DynamoDB<span class="yomi">ダイナモディービー</span></div><div class="one"><b>キーバリュー型</b>（およびドキュメント型）の NoSQL データベース。<b>サーバーレス</b>でサーバー台数を意識する必要がなく、データ量が増えても<b>1桁ミリ秒</b>の応答性能を維持する。</div></div></div>
 
-<div class="box story">
-  <div class="box-title"><span class="em">🎫</span>たとえ話：巨大なコインロッカー</div>
-  <p>DynamoDB は、<b>番号（キー）を言えば一瞬で扉が開く</b>巨大コインロッカー。ロッカーが足りなくなったら AWS が勝手に増やしてくれる。ただし「赤い荷物が入っているロッカーを全部探して」のような<b>複雑な探し方は苦手</b>。</p>
-</div>
+<p>キーを指定した読み書きは極めて高速で、容量やスループットも AWS 側で自動的に拡張されます。一方で、複数のテーブルを結合（JOIN）するような<b>複雑な検索には向いていません</b>。</p>
 
 <div class="table-wrap"><table>
-  <tr><th>おさえるポイント</th><th>中身</th></tr>
-  <tr><td>向いている用途</td><td>ゲームのスコア、ショッピングカート、<span class="term" data-tip="セッション：ログインしてからログアウトするまでの、1人のユーザーの利用状態の情報。">セッション</span>情報、IoT のデータなど<b>大量・高速</b>なもの</td></tr>
-  <tr><td>DAX</td><td>DynamoDB 専用の<b>キャッシュ</b>。ミリ秒→<b>マイクロ秒</b>（1000倍速い単位）に。</td></tr>
-  <tr><td>グローバルテーブル</td><td>複数のリージョンに<b>自動でコピー</b>して、世界中どこからでも速く読み書き。</td></tr>
-  <tr><td>料金の形</td><td>オンデマンド（使った分だけ）／プロビジョンド（性能を前もって決める）</td></tr>
+  <tr><th>押さえるべき点</th><th>内容</th></tr>
+  <tr><td>適した用途</td><td>ゲームのスコア、ショッピングカート、<span class="term" data-tip="セッション：ログインからログアウトまでの間、利用者ごとに保持される状態情報。">セッション</span>情報、IoT データなど<b>大量・高速</b>な読み書き</td></tr>
+  <tr><td>DAX</td><td>DynamoDB 専用の<b>インメモリキャッシュ</b>。読み取りの応答をミリ秒から<b>マイクロ秒</b>単位に短縮する。</td></tr>
+  <tr><td>グローバルテーブル</td><td>複数リージョンに<b>自動で複製</b>し、各リージョンから低遅延で読み書きできるようにする。</td></tr>
+  <tr><td>キャパシティモード</td><td>オンデマンド（リクエスト量に応じた課金）／プロビジョンド（読み書き性能を事前に指定）</td></tr>
 </table></div>
 
-<h2>5. ElastiCache と MemoryDB —— メモリで超高速</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonElastiCache.svg" alt=""><div><div class="name">Amazon ElastiCache<span class="yomi">エラスティキャッシュ</span></div><div class="one"><b>メモリ</b>の上にデータを置く、超高速の<b>キャッシュ</b>サービス。Valkey・Redis OSS・Memcached が使える。よく読まれるデータを置いて、後ろのデータベースの負担を減らす。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonMemoryDB.svg" alt=""><div><div class="name">Amazon MemoryDB<span class="yomi">メモリーディービー</span></div><div class="one">メモリで速いのに、データを<b>複数 AZ にきちんと保存</b>するので、キャッシュではなく<b>メインのデータベース</b>として使える（Valkey / Redis OSS 互換）。</div></div></div>
+<h2>5. ElastiCache と MemoryDB —— インメモリデータベース</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonElastiCache.svg" alt=""><div><div class="name">Amazon ElastiCache<span class="yomi">エラスティキャッシュ</span></div><div class="one">データを<b>メモリ</b>上に保持する高速な<b>キャッシュ</b>サービス。Valkey・Redis OSS・Memcached に対応。頻繁に参照されるデータを保持し、背後のデータベースの負荷を軽減する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonMemoryDB.svg" alt=""><div><div class="name">Amazon MemoryDB<span class="yomi">メモリーディービー</span></div><div class="one">インメモリの高速性を持ちながら、データを<b>複数の AZ に永続化</b>するため、キャッシュではなく<b>プライマリーデータベース</b>として利用できる（Valkey / Redis OSS 互換）。</div></div></div>
 
-<div class="box story">
-  <div class="box-title"><span class="em">🗒️</span>たとえ話：机の上のメモ</div>
-  <p>データベース（RDS）は<b>書庫</b>。毎回書庫まで取りに行くのは時間がかかるので、よく見る情報は<b>机の上にメモ（キャッシュ）</b>しておく。それが ElastiCache。メモなので消えても書庫から取り直せばいい。MemoryDB は「<b>消えないメモ帳</b>」。</p>
-</div>
+<p>ElastiCache はあくまで<b>キャッシュ</b>であり、データが失われても元のデータベースから再取得できることが前提です。MemoryDB は耐久性を備えているため、それ自体を<b>主たるデータ保存先</b>にできます。</p>
 
 <div class="diagram">
-  <div class="dtitle">ElastiCache でデータベースの前に「メモ」を置く</div>
+  <div class="dtitle">ElastiCache をデータベースの前段に置く</div>
   <div class="flow wrap-ok">
-    <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">アプリ（EC2）</div>
-    <div class="arr ok">→<small>① まずメモを見る</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElastiCache.svg" alt="">ElastiCache<small>メモリ・超高速</small></div>
-    <div class="arr">→<small>② なければ書庫へ</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS<small>書庫</small></div>
+    <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">アプリケーション（EC2）</div>
+    <div class="arr ok">→<small>① まずキャッシュを参照</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElastiCache.svg" alt="">ElastiCache<small>インメモリ</small></div>
+    <div class="arr">→<small>② なければ DB へ</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS<small>元データ</small></div>
   </div>
-  <div class="cap">よく読まれるデータほど、RDS まで行かずに返せる → 速い＆RDS がラク。</div>
+  <div class="cap">頻繁に読まれるデータほど RDS まで問い合わせずに返せるため、応答が速くなり RDS の負荷も下がります。</div>
 </div>
 
-<h2>6. Redshift —— 分析用の巨大な倉庫</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonRedshift.svg" alt=""><div><div class="name">Amazon Redshift<span class="yomi">レッドシフト</span></div><div class="one"><b>データウェアハウス</b>（分析専用の巨大なデータベース）。何年分もの売上データを集めて「地域別・月別の売上は？」のような<b>集計・分析</b>を速くこなす。サーバーレス版もある。</div></div></div>
+<h2>6. Redshift —— 分析用のデータウェアハウス</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonRedshift.svg" alt=""><div><div class="name">Amazon Redshift<span class="yomi">レッドシフト</span></div><div class="one"><b>データウェアハウス</b>（分析専用の大規模データベース）。数年分の売上データなどを集約し、「地域別・月別の売上」のような<b>集計・分析</b>を高速に実行する。サーバーレス版もある。</div></div></div>
 
 <div class="table-wrap"><table>
-  <tr><th></th><th>OLTP（ふだんの仕事用）</th><th>OLAP（分析用）</th></tr>
-  <tr><td>例</td><td>「注文を1件登録する」</td><td>「去年の売上を地域別に集計する」</td></tr>
-  <tr><td>特徴</td><td>小さい処理を大量に・すばやく</td><td>大量のデータをまとめて計算</td></tr>
+  <tr><th></th><th>OLTP（業務処理）</th><th>OLAP（分析処理）</th></tr>
+  <tr><td>例</td><td>「注文を1件登録する」</td><td>「昨年の売上を地域別に集計する」</td></tr>
+  <tr><td>特徴</td><td>小さな処理を大量・高速にこなす</td><td>大量のデータをまとめて計算する</td></tr>
   <tr><td>AWS</td><td>RDS・Aurora・DynamoDB</td><td><b>Redshift</b></td></tr>
 </table></div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>データウェアハウス</dt><dd>Data Warehouse ＝ データの倉庫。分析するためにいろいろなデータを集めた場所。DWH と略す。</dd>
-    <dt>OLTP</dt><dd>オンライン・トランザクション処理。注文・支払いなど、ふだんの1件1件の処理。</dd>
-    <dt>OLAP</dt><dd>オンライン分析処理。たくさんのデータを集計・分析する処理。</dd>
-    <dt>列指向</dt><dd>データを「列」ごとにまとめて保存するやり方。「売上の列だけ全部足す」のような集計がとても速い。Redshift はこの方式。</dd>
+    <dt>データウェアハウス</dt><dd>Data Warehouse。分析を目的として、複数のシステムからデータを集約・蓄積したデータベース。DWH と略す。</dd>
+    <dt>OLTP</dt><dd>Online Transaction Processing。注文・決済など、日常業務の個々の処理。</dd>
+    <dt>OLAP</dt><dd>Online Analytical Processing。大量のデータを集計・分析する処理。</dd>
+    <dt>列指向</dt><dd>データを列単位でまとめて保存する方式。特定の列だけを集計する処理が非常に速い。Redshift が採用している。</dd>
   </dl>
 </div>
 
-<h2>7. 目的別データベースのいろいろ</h2>
-<p>AWS は「1つのデータベースで全部やる」のではなく、<b>目的ごとに専用のデータベースを使い分ける</b>考え方（<span class="term" data-tip="目的別データベース（Purpose-built database）：用途に合わせて作られた専用のデータベース。AWS が強くすすめている考え方。">目的別データベース</span>）をすすめています。名前と「何用か」を1対1で覚えましょう。</p>
+<h2>7. 目的別データベース</h2>
+<p>AWS は、1つのデータベースですべてを賄うのではなく、<b>用途ごとに最適なデータベースを使い分ける</b>考え方（<span class="term" data-tip="目的別データベース（Purpose-built database）：特定の用途やデータモデルに最適化されたデータベース。AWS が推奨する設計方針。">目的別データベース</span>）を推奨しています。サービス名と用途を1対1で対応づけて覚えます。</p>
 
 <div class="table-wrap"><table>
-  <tr><th>サービス</th><th>種類</th><th>何用？（キーワード）</th></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS / <img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonAurora.svg" alt="">Aurora</td><td>リレーショナル</td><td>ふつうの業務システム・EC サイトの注文</td></tr>
+  <tr><th>サービス</th><th>種類</th><th>用途（キーワード）</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS / <img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonAurora.svg" alt="">Aurora</td><td>リレーショナル</td><td>一般的な業務システム、EC サイトの受注管理</td></tr>
   <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonDynamoDB.svg" alt="">DynamoDB</td><td>キーバリュー</td><td>大量・高速・サーバーレス</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonElastiCache.svg" alt="">ElastiCache</td><td>インメモリ</td><td>キャッシュ・セッション管理</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonElastiCache.svg" alt="">ElastiCache</td><td>インメモリ</td><td>キャッシュ、セッション管理</td></tr>
   <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonRedshift.svg" alt="">Redshift</td><td>データウェアハウス</td><td>大量データの分析（OLAP）</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonDocumentDB.svg" alt="">DocumentDB</td><td>ドキュメント</td><td><b>MongoDB 互換</b>。JSON の形のデータ</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonNeptune.svg" alt="">Neptune</td><td>グラフ</td><td><b>つながり</b>の分析：SNS の友達関係、おすすめ、不正検知</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonDocumentDB.svg" alt="">DocumentDB</td><td>ドキュメント</td><td><b>MongoDB 互換</b>。JSON 形式のデータ</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonNeptune.svg" alt="">Neptune</td><td>グラフ</td><td><b>関係性</b>の分析：SNS の交友関係、レコメンド、不正検知</td></tr>
   <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonKeyspaces.svg" alt="">Keyspaces</td><td>ワイドカラム</td><td><b>Apache Cassandra 互換</b></td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonTimestream.svg" alt="">Timestream</td><td>時系列</td><td><b>時間ごとの記録</b>：センサーの温度、サーバーの状態</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonTimestream.svg" alt="">Timestream</td><td>時系列</td><td><b>時刻付きの計測データ</b>：センサー値、サーバーのメトリクス</td></tr>
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：名前からイメージする（イメージ連結）</div>
+  <div class="box-title"><span class="em">🔑</span>覚え方：サービス名の意味から用途を連想する</div>
   <ul style="margin:0">
-    <li><b>Neptune</b>（海王星）→ 星と星を線でつなぐ<b>星座</b> → <b>つながり＝グラフ</b></li>
-    <li><b>DocumentDB</b> → Document（書類）→ 書類フォルダを<b>モンゴ（Mongo）</b>ルの草原で読む → <b>MongoDB 互換</b></li>
-    <li><b>Keyspaces</b> → 鍵（Key）をかけた<b>カサンドラ</b>さんの部屋 → <b>Cassandra 互換</b></li>
+    <li><b>Neptune</b>（海王星）→ 天体を線で結ぶ星図 → <b>関係性＝グラフ</b></li>
+    <li><b>DocumentDB</b> → Document（文書）→ JSON 文書を扱う <b>MongoDB 互換</b></li>
+    <li><b>Keyspaces</b> → キー空間（Cassandra の用語「keyspace」）→ <b>Cassandra 互換</b></li>
     <li><b>Timestream</b> → Time（時間）の Stream（流れ）→ <b>時系列</b></li>
-    <li><b>Redshift</b> → 赤い（Red）グラフを並べた<b>分析会議</b> → <b>データウェアハウス</b></li>
+    <li><b>Redshift</b> → 大量データを扱う<b>データウェアハウス</b>（分析用）</li>
   </ul>
 </div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>互換（ごかん）</dt><dd>「同じように使える」こと。MongoDB 互換＝MongoDB 用に作ったアプリが、ほぼそのまま動く。</dd>
-    <dt>グラフ（DB の）</dt><dd>折れ線グラフではなく、<b>点（人やモノ）と線（関係）</b>のつながりのこと。</dd>
-    <dt>時系列データ</dt><dd>時刻といっしょに記録されていくデータ。「10:00 に 25℃、10:01 に 26℃…」。</dd>
-    <dt>インメモリ</dt><dd>データを、ディスクよりずっと速い「メモリ」の上に置くこと。</dd>
+    <dt>互換</dt><dd>同じインターフェースで利用できること。MongoDB 互換＝MongoDB 向けに作られたアプリケーションがほぼそのまま動作する。</dd>
+    <dt>グラフ（データベースの）</dt><dd>折れ線グラフではなく、<b>ノード（人や物）とエッジ（関係）</b>から成るデータ構造。</dd>
+    <dt>時系列データ</dt><dd>時刻とともに記録されていくデータ。例：「10:00 に 25℃、10:01 に 26℃」。</dd>
+    <dt>インメモリ</dt><dd>データをディスクより格段に高速なメモリ上に保持すること。</dd>
   </dl>
 </div>
 
-<h2>8. 引っ越し —— DMS と SCT</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSDatabaseMigrationService.svg" alt=""><div><div class="name">AWS DMS<span class="yomi">ディーエムエス / Database Migration Service</span></div><div class="one">データベースを AWS へ<b>引っ越す（移行する）</b>サービス。<b>元のデータベースを動かしたまま</b>、データをコピーし続けられるので、止める時間を短くできる。</div></div></div>
-<p>引っ越し元と先が<b>ちがう種類</b>（例：Oracle → Aurora PostgreSQL）のときは、表の設計図（スキーマ）を変換する必要があります。それをするのが <b>SCT（Schema Conversion Tool）</b>、または DMS の中の <b>DMS Schema Conversion</b> です。</p>
+<h2>8. データベースの移行 —— DMS と SCT</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSDatabaseMigrationService.svg" alt=""><div><div class="name">AWS DMS<span class="yomi">ディーエムエス / Database Migration Service</span></div><div class="one">データベースを AWS へ<b>移行する</b>サービス。<b>移行元を稼働させたまま</b>変更分を継続的に複製できるため、停止時間を最小限に抑えられる。</div></div></div>
+<p>移行元と移行先で<b>エンジンが異なる場合</b>（例：Oracle → Aurora PostgreSQL）は、スキーマの変換が必要です。これを行うのが <b>SCT（Schema Conversion Tool）</b>、または DMS に統合された <b>DMS Schema Conversion</b> です。</p>
 
 <div class="diagram">
-  <div class="dtitle">ちがう種類のデータベースへの引っ越し</div>
+  <div class="dtitle">異なるエンジン間の移行（異種移行）</div>
   <div class="flow wrap-ok">
     <div class="grp onprem">
-      <div class="glabel"><img src="../assets/aws-icons/architecture-group/Corporatedatacenter.svg" alt=""><span class="gtxt">社内</span></div>
-      <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonEC2DBInstance.svg" alt="">Oracle DB<small>動かしたまま</small></div></div>
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/Corporatedatacenter.svg" alt=""><span class="gtxt">オンプレミス</span></div>
+      <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonEC2DBInstance.svg" alt="">Oracle DB<small>稼働したまま</small></div></div>
     </div>
     <div class="flow col">
-      <div class="arr">→<small>① SCT で設計図を変換</small></div>
+      <div class="arr">→<small>① SCT でスキーマ変換</small></div>
       <div class="node sm"><img src="../assets/aws-icons/architecture-service/AWSDatabaseMigrationService.svg" alt="">DMS</div>
-      <div class="arr">→<small>② DMS でデータを移す</small></div>
+      <div class="arr">→<small>② DMS でデータ移行</small></div>
     </div>
     <div class="grp cloud">
       <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">AWS</span></div>
       <div class="flow"><div class="node"><img src="../assets/aws-icons/architecture-service/AmazonAurora.svg" alt="">Aurora<small>PostgreSQL 互換</small></div></div>
     </div>
   </div>
-  <div class="cap">同じ種類どうし（MySQL → RDS for MySQL）なら、SCT はいらず DMS だけでOK。</div>
+  <div class="cap">同じエンジンどうし（MySQL → RDS for MySQL）の同種移行であれば、SCT は不要で DMS のみで移行できます。</div>
 </div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
   <ul style="margin:0">
-    <li>「データベースを<b>止まりにくく</b>」「AZ 障害に<b>自動で</b>対応」→ <b>RDS マルチAZ</b></li>
-    <li>「<b>読み取り</b>が多くて遅い」→ <b>リードレプリカ</b> か <b>ElastiCache</b></li>
-    <li>「サーバー管理なしで、<b>ミリ秒</b>で大量アクセス」→ <b>DynamoDB</b>（さらに速く＝<b>DAX</b>）</li>
-    <li>「MySQL 互換で、もっと高性能・高可用」→ <b>Aurora</b></li>
-    <li>「大量データを<b>分析</b>・集計（BI）」→ <b>Redshift</b></li>
-    <li>「つながりの分析（SNS・おすすめ・不正検知）」→ <b>Neptune</b>／「MongoDB を移したい」→ <b>DocumentDB</b></li>
-    <li>「データベースを止めずに AWS へ移行」→ <b>DMS</b>（種類がちがえば＋<b>SCT</b>）</li>
+    <li>「データベースの<b>可用性を高めたい</b>」「AZ 障害に<b>自動で</b>対処したい」→ <b>RDS マルチ AZ</b></li>
+    <li>「<b>読み取り</b>が多く性能が不足している」→ <b>リードレプリカ</b> または <b>ElastiCache</b></li>
+    <li>「サーバー管理不要で、<b>ミリ秒</b>単位の応答を大規模に」→ <b>DynamoDB</b>（さらに高速化するなら <b>DAX</b>）</li>
+    <li>「MySQL 互換で、より高性能・高可用性」→ <b>Aurora</b></li>
+    <li>「大量データの<b>分析</b>・集計（BI）」→ <b>Redshift</b></li>
+    <li>「関係性の分析（SNS・レコメンド・不正検知）」→ <b>Neptune</b>／「MongoDB を移行したい」→ <b>DocumentDB</b></li>
+    <li>「データベースを停止せずに AWS へ移行」→ <b>DMS</b>（エンジンが異なる場合は <b>SCT</b> を併用）</li>
   </ul>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
   <ul style="margin:0">
-    <li><b>マルチAZ は「速くする」ためではない</b>。標準のマルチAZではスタンバイは読み取りに使えない。速さ（読み取り）ならリードレプリカ。</li>
-    <li>RDS は<b>マネージド</b>だが、OS にログインして好きにさわることは<b>できない</b>（ふつうの RDS の場合）。「OS を細かく設定したい」なら EC2 に自分で入れる。</li>
-    <li>DynamoDB は <b>NoSQL</b>。「表どうしを複雑につないで（JOIN して）検索したい」には向かない。</li>
+    <li><b>マルチ AZ は性能向上のための機能ではありません</b>。標準のマルチ AZ 配置ではスタンバイを読み取りに使えません。読み取り性能の向上にはリードレプリカを使います。</li>
+    <li>RDS は<b>マネージド</b>サービスのため、通常は OS にログインして自由に操作することは<b>できません</b>。OS レベルの細かな設定が必要なら EC2 上に構築します。</li>
+    <li>DynamoDB は <b>NoSQL</b> です。複数テーブルを結合（JOIN）する複雑な検索が必要な要件には適しません。</li>
   </ul>
 </div>
 
 <div class="recall">
-  <h2>🙌 手ぶら復習</h2>
-  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。思い出すのに苦労するほど、記憶は強くなります。</p>
-  <details class="q"><summary>リレーショナルと NoSQL のちがいを、たとえ話で説明すると？</summary><div class="a">リレーショナル＝きっちりした Excel の表を番号でつなげて SQL で探す。NoSQL＝番号つき付せんの束（キーを言えば一発で出る。形は自由で大量・高速）。</div></details>
-  <details class="q"><summary>RDS（マネージド）で AWS がやってくれることは？ 自分がやることは？</summary><div class="a">AWS：ハードウェア、OS・DB ソフトのパッチ、バックアップ、フェイルオーバー。自分：表の設計、データ、使い方、アクセス権。</div></details>
-  <details class="q"><summary>RDS で選べるエンジンを言えますか？</summary><div class="a">MySQL・PostgreSQL・MariaDB・Oracle・SQL Server・Db2・Aurora。</div></details>
-  <details class="q"><summary>マルチAZ とリードレプリカ、それぞれの目的とコピーのしかたは？</summary><div class="a">マルチAZ＝高可用性（同期コピー、障害時に自動フェイルオーバー）。リードレプリカ＝読み取り性能アップ（非同期コピー、別リージョンも可）。</div></details>
-  <details class="q"><summary>Aurora の特徴を3つ</summary><div class="a">MySQL / PostgreSQL 互換、高性能、3つの AZ に6個のコピー（Aurora Serverless もある）。</div></details>
-  <details class="q"><summary>DynamoDB をさらに速く（マイクロ秒）にする機能は？ 複数リージョンにコピーする機能は？</summary><div class="a">DAX（DynamoDB Accelerator）。グローバルテーブル。</div></details>
-  <details class="q"><summary>ElastiCache と MemoryDB のちがいは？</summary><div class="a">ElastiCache＝消えてもいい「メモ」としてのキャッシュ。MemoryDB＝メモリで速いのに複数 AZ に保存するので、メインのデータベースとして使える。</div></details>
-  <details class="q"><summary>OLAP（分析）用のデータウェアハウスは？</summary><div class="a">Amazon Redshift。</div></details>
-  <details class="q"><summary>Neptune・DocumentDB・Keyspaces・Timestream はそれぞれ何用？</summary><div class="a">Neptune＝グラフ（つながり）、DocumentDB＝MongoDB 互換のドキュメント、Keyspaces＝Cassandra 互換、Timestream＝時系列。</div></details>
-  <details class="q"><summary>Oracle から Aurora PostgreSQL へ引っ越すときに使うものは？</summary><div class="a">SCT（または DMS Schema Conversion）でスキーマを変換し、DMS でデータを移す。</div></details>
+  <h2>🧠 想起練習</h2>
+  <p class="muted">本文を見ずに答えを思い出してから、各項目を開いて確認してください。</p>
+  <details class="q"><summary>リレーショナルデータベースと NoSQL の違いは？</summary><div class="a">リレーショナル＝厳密に定義された表を関連付けて SQL で問い合わせる。整合性に強い。NoSQL＝キーバリュー型など表に限らない構造で、スキーマが柔軟で大量・高速な処理に強い。</div></details>
+  <details class="q"><summary>RDS（マネージド）で AWS が担う作業と、利用者が担う作業は？</summary><div class="a">AWS：ハードウェア、OS・DB ソフトウェアのパッチ適用、バックアップ、フェイルオーバー。利用者：テーブル設計、データ、利用方法、アクセス権。</div></details>
+  <details class="q"><summary>RDS で選択できるデータベースエンジンは？</summary><div class="a">MySQL・PostgreSQL・MariaDB・Oracle・SQL Server・Db2・Aurora。</div></details>
+  <details class="q"><summary>マルチ AZ とリードレプリカ、それぞれの目的と複製方式は？</summary><div class="a">マルチ AZ＝高可用性（同期レプリケーション、障害時に自動フェイルオーバー）。リードレプリカ＝読み取り性能の向上（非同期レプリケーション、別リージョンにも配置可）。</div></details>
+  <details class="q"><summary>Aurora の特徴を3つ挙げると？</summary><div class="a">MySQL / PostgreSQL 互換、高性能、3つの AZ に計6つのデータ複製（Aurora Serverless もある）。</div></details>
+  <details class="q"><summary>DynamoDB の読み取りをマイクロ秒単位に高速化する機能は？ 複数リージョンに複製する機能は？</summary><div class="a">DAX（DynamoDB Accelerator）。グローバルテーブル。</div></details>
+  <details class="q"><summary>ElastiCache と MemoryDB の違いは？</summary><div class="a">ElastiCache＝データ消失を前提とするキャッシュ。MemoryDB＝インメモリで高速かつ複数 AZ に永続化するため、プライマリーデータベースとして使える。</div></details>
+  <details class="q"><summary>OLAP（分析処理）向けのデータウェアハウスサービスは？</summary><div class="a">Amazon Redshift。</div></details>
+  <details class="q"><summary>Neptune・DocumentDB・Keyspaces・Timestream の用途はそれぞれ何か。</summary><div class="a">Neptune＝グラフ（関係性）、DocumentDB＝MongoDB 互換のドキュメント、Keyspaces＝Cassandra 互換、Timestream＝時系列。</div></details>
+  <details class="q"><summary>Oracle から Aurora PostgreSQL へ移行する際に使うサービスは？</summary><div class="a">SCT（または DMS Schema Conversion）でスキーマを変換し、DMS でデータを移行する。</div></details>
 </div>
 
 <div id="study-log"></div>
