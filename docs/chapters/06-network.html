@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ネットワーク | AWS 合格ノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-root="../" data-page="ch06">
+<main class="wrap">
+<div class="breadcrumb"><a href="../index.html">ホーム</a> › 第6章</div>
+<p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
+<h1>第6章 ネットワーク</h1>
+<p class="lead">サーバーやデータベースを「どこに置いて」「だれが通れるようにするか」を決めるのがネットワークです。SAA では最重要分野、CLF でも VPC とセキュリティグループは必ず出ます。</p>
+
+<div class="box map">
+  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <ol style="margin:0">
+    <li>まずは住所の話（IP アドレスと CIDR）</li>
+    <li>VPC ＝ 自分専用のネットワーク（サブネット・ゲートウェイ・ルートテーブル）</li>
+    <li>2つの門番：セキュリティグループと ネットワーク ACL</li>
+    <li>VPC どうし・VPC と AWS サービスをつなぐ（ピアリング／Transit Gateway／エンドポイント）</li>
+    <li>会社（オンプレミス）とつなぐ（Site-to-Site VPN／Direct Connect）</li>
+    <li>お客さんを速く・正しく案内する（Route 53／CloudFront／Global Accelerator）</li>
+  </ol>
+</div>
+
+<h2>1. まずは住所の話（IP アドレスと CIDR）</h2>
+<p>ネットワークの世界では、コンピューター1台1台に<b>住所</b>がついています。これを <span class="term" data-tip="IP アドレス：ネットワーク上のコンピューターの住所。例：10.0.1.25。数字4つを点で区切る形（IPv4）がよく使われる。">IP アドレス</span>といいます。</p>
+<p>そして「<b>このあたり一帯の住所</b>」をまとめて書く書き方が <span class="term" data-tip="CIDR（サイダー）：IP アドレスの範囲を「10.0.0.0/16」のように書く書き方。/ のあとの数字が大きいほど範囲がせまい。">CIDR（サイダー）</span>です。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🏘️</span>たとえ話：町名と番地</div>
+  <p><code>10.0.0.0/16</code> は「<b>10.0 町</b>まるごと」。<code>10.0.1.0/24</code> は「<b>10.0 町 1 丁目</b>だけ」。<br>
+  <b>/ のあとの数字が大きいほど、範囲がせまく</b>なります（/16 は約6万5千個、/24 は256個の住所）。</p>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th>書き方</th><th>住所の数</th><th>よく使う場面</th></tr>
+  <tr><td><code>10.0.0.0/16</code></td><td>65,536 個</td><td>VPC 全体（町まるごと）</td></tr>
+  <tr><td><code>10.0.1.0/24</code></td><td>256 個<br><small class="muted">うち5個は AWS が予約するので、使えるのは251個</small></td><td>サブネット（1丁目だけ）</td></tr>
+</table></div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>IP アドレス</dt><dd>ネットワーク上の住所。<b>パブリック IP</b>＝インターネットから見える住所、<b>プライベート IP</b>＝内側だけで使う住所。</dd>
+    <dt>CIDR</dt><dd>住所の範囲の書き方。「/数字」が大きいほどせまい。</dd>
+    <dt>ルーティング</dt><dd>データを「どの道を通って届けるか」決めること。</dd>
+  </dl>
+</div>
+
+<h2>2. VPC ＝ 自分専用のネットワーク</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonVirtualPrivateCloud.svg" alt=""><div><div class="name">Amazon VPC<span class="yomi">Virtual Private Cloud／ブイピーシー</span></div><div class="one">AWS の中に作る、<b>自分だけの区切られたネットワーク</b>。ほかの人のシステムとはまじわらない。1つのリージョンの中に作り、その中の AZ にまたがれる。</div></div></div>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🏢</span>たとえ話：VPC は「自社ビル」</div>
+  <ul style="margin:0">
+    <li><b>VPC</b>＝ AWS という大きな街に建てた<b>自社ビル</b>。</li>
+    <li><b>サブネット</b>＝ ビルの中の<b>フロア</b>。1階は<b>お客さんが入れるロビー（パブリック）</b>、上の階は<b>社員だけの事務所（プライベート）</b>。</li>
+    <li><b>インターネットゲートウェイ</b>＝ ビルの<b>正面玄関</b>。</li>
+    <li><b>NAT ゲートウェイ</b>＝ 社員が外へ買い物に行くための<b>「出口専用」の通用口</b>。外からは入れない。</li>
+    <li><b>ルートテーブル</b>＝ 各フロアの<b>案内板</b>（「外へ行くなら玄関へ」）。</li>
+  </ul>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">よくある VPC の形（2つの AZ に分けて止まりにくくする）</div>
+  <div class="flow">
+    <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">利用者</div>
+    <div class="arr">→<small>インターネット</small></div>
+    <div class="node"><img src="../assets/aws-icons/resource/AmazonVPCInternetGateway.svg" alt="">インターネット<br>ゲートウェイ<small>正面玄関</small></div>
+  </div>
+  <div class="flow"><div class="arr">↓</div></div>
+  <div class="grp region">
+    <div class="glabel"><img src="../assets/aws-icons/architecture-group/Region.svg" alt=""><span class="gtxt">リージョン（東京）</span></div>
+    <div class="grp vpc">
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/VirtualprivatecloudVPC.svg" alt=""><span class="gtxt">VPC 10.0.0.0/16</span></div>
+      <div class="flow">
+        <div class="node"><img src="../assets/aws-icons/resource/ElasticLoadBalancingApplicationLoadBalancer.svg" alt="">ALB<small>2つの AZ の公開サブネットにまたがる</small></div>
+      </div>
+      <div class="grp-row">
+        <div class="grp az"><div class="glabel">AZ-a</div>
+          <div class="grp public">
+            <div class="glabel"><img src="../assets/aws-icons/architecture-group/Publicsubnet.svg" alt=""><span class="gtxt">パブリックサブネット 10.0.1.0/24</span></div>
+            <div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonVPCNATGateway.svg" alt="">NAT ゲートウェイ<small>出口専用</small></div></div>
+          </div>
+          <div class="grp private">
+            <div class="glabel"><img src="../assets/aws-icons/architecture-group/Privatesubnet.svg" alt=""><span class="gtxt">プライベートサブネット 10.0.11.0/24</span></div>
+            <div class="flow wrap-ok">
+              <div class="grp sg"><div class="glabel">SG（門番）</div><div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div></div></div>
+              <div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS<small>本番</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="grp az"><div class="glabel">AZ-c</div>
+          <div class="grp public">
+            <div class="glabel"><img src="../assets/aws-icons/architecture-group/Publicsubnet.svg" alt=""><span class="gtxt">パブリックサブネット 10.0.2.0/24</span></div>
+            <div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonVPCNATGateway.svg" alt="">NAT ゲートウェイ<small>出口専用</small></div></div>
+          </div>
+          <div class="grp private">
+            <div class="glabel"><img src="../assets/aws-icons/architecture-group/Privatesubnet.svg" alt=""><span class="gtxt">プライベートサブネット 10.0.12.0/24</span></div>
+            <div class="flow wrap-ok">
+              <div class="grp sg"><div class="glabel">SG（門番）</div><div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div></div></div>
+              <div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS<small>予備（スタンバイ）</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cap">利用者 → 玄関（IGW）→ ALB → 奥の部屋の EC2 → RDS。EC2 と RDS は<b>プライベートサブネット</b>に置くので、インターネットから直接は入れません。<br>EC2 がソフトの更新などで外に出たいときは、<b>NAT ゲートウェイ</b>を通って出ます。</div>
+</div>
+
+<h3>パブリックとプライベートは何がちがう？</h3>
+<p>じつは、サブネットそのものに「公開」というスイッチがあるわけではありません。<b>そのサブネットの<span class="term" data-tip="ルートテーブル：「この宛先へのデータは、この出口へ」という道案内の表。サブネットごとに1つ割り当てる。">ルートテーブル</span>に「インターネット行き（0.0.0.0/0）は IGW へ」という道が書いてあるかどうか</b>で決まります。</p>
+<div class="table-wrap"><table>
+  <tr><th>種類</th><th>ルートテーブルの中身</th><th>置くもの</th></tr>
+  <tr><td><b>パブリック</b>サブネット</td><td><code>0.0.0.0/0 → インターネットゲートウェイ</code></td><td>ロードバランサー、NAT ゲートウェイ、踏み台サーバー</td></tr>
+  <tr><td><b>プライベート</b>サブネット</td><td><code>0.0.0.0/0 → NAT ゲートウェイ</code>（または外への道なし）</td><td>アプリのサーバー（EC2）、データベース（RDS）</td></tr>
+</table></div>
+<p class="muted"><code>0.0.0.0/0</code> は「すべての住所」＝「インターネットのどこでも」という意味です。</p>
+
+<div class="svc"><img src="../assets/aws-icons/resource/AmazonVPCInternetGateway.svg" alt=""><div><div class="name">インターネットゲートウェイ（IGW）</div><div class="one">VPC とインターネットをつなぐ<b>玄関</b>。VPC に1つつける。<b>出入りの両方</b>ができる。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/resource/AmazonVPCNATGateway.svg" alt=""><div><div class="name">NAT ゲートウェイ<span class="yomi">ナット</span></div><div class="one">プライベートサブネットのサーバーが<b>外へ出るだけ</b>のための出口。<b>外から中へは入れない</b>。パブリックサブネットに置く。AZ ごとに置くと、AZ が1つ止まっても安心。<br><small class="muted"><span class="term" data-tip="NAT（Network Address Translation）：内側の住所（プライベート IP）を、外で使える住所に書きかえて通すしくみ。">NAT</span>＝住所の書きかえ係。</small></div></div></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：「玄関は出入り、NAT は出るだけ」</div>
+  <p><b>IGW ＝ 入 ・ 出</b>（パブリック用）／ <b>NAT ＝ 出 だけ</b>（プライベート用）。<br>「<b>ナット（NAT）く</b>して、出ていくだけ」—— 納得して出ていく社員の姿をイメージ。</p>
+</div>
+
+<h2>3. 2つの門番：セキュリティグループと ネットワーク ACL</h2>
+<p>VPC には、通っていいデータ・だめなデータを決める<b>門番</b>が2種類います。<b>試験で必ず比べられます</b>。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🚪</span>たとえ話：部屋の鍵と、フロアの警備員</div>
+  <ul style="margin:0">
+    <li><b>セキュリティグループ</b>＝ <b>部屋（サーバー）ごとの受付係</b>。<b>記憶力がいい</b>ので、「さっき中から出かけた人が帰ってきた」ら顔パスで通す。名簿には<b>「入っていい人」だけ</b>を書く。</li>
+    <li><b>ネットワーク ACL</b>＝ <b>フロア（サブネット）の入口の警備員</b>。<b>記憶しない</b>ので、行きも帰りもそれぞれチェック。名簿には<b>「入っていい人」も「入ってはだめな人」も</b>書ける。番号の小さいルールから順に見る。</li>
+  </ul>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th></th><th>セキュリティグループ（SG）</th><th>ネットワーク ACL（NACL）</th></tr>
+  <tr><td><b>守る単位</b></td><td><b>インスタンス</b>（サーバー）ごと</td><td><b>サブネット</b>ごと</td></tr>
+  <tr><td><b>ルール</b></td><td><b>許可だけ</b>書ける</td><td><b>許可と拒否</b>の両方書ける</td></tr>
+  <tr><td><b>記憶するか</b></td><td><span class="term" data-tip="ステートフル：通信の「行き」を覚えていて、その「帰り」は自動で通す性質。">ステートフル</span>（帰りは自動で通す）</td><td><span class="term" data-tip="ステートレス：通信を覚えない性質。行きと帰りを、それぞれ別にルールで許可する必要がある。">ステートレス</span>（帰りも別に許可が必要）</td></tr>
+  <tr><td><b>ルールの見方</b></td><td>全部のルールをまとめて判断</td><td>番号の小さい順に見て、最初に当てはまったもので決定</td></tr>
+  <tr><td><b>最初の状態</b></td><td>入ってくる通信：<b>すべて拒否</b>／出ていく通信：すべて許可</td><td>デフォルトの NACL は<b>すべて許可</b></td></tr>
+</table></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：頭文字で「SG は イ・キョ・フル」</div>
+  <p><b>SG</b>：<b>イ</b>ンスタンス単位 ／ 許<b>可</b>のみ ／ ステート<b>フル</b> →「<b>いきょうふる</b>（胃きょう古る）」<br>
+  <b>NACL</b>：その<b>全部が逆</b>（サブネット単位／許可と拒否／ステートレス）。片方だけ覚えれば、もう片方は「逆」で出せます。</p>
+</div>
+
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <ul style="margin:0">
+    <li>「<b>特定の IP アドレスを拒否（ブロック）したい</b>」→ <b>ネットワーク ACL</b>（SG は拒否が書けない）</li>
+    <li>「Web サーバーには 443番（HTTPS）だけ通したい」→ <b>セキュリティグループ</b></li>
+    <li>「DB は Web サーバーからだけ受けつけたい」→ DB の SG に「<b>Web サーバーの SG から</b>」と書く（SG は相手に SG を指定できる）</li>
+    <li>「プライベートサブネットの EC2 からインターネットへ更新をダウンロード」→ <b>NAT ゲートウェイ</b></li>
+  </ul>
+</div>
+
+<h2>4. VPC どうし・AWS サービスとつなぐ</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonVirtualPrivateCloud.svg" alt=""><div><div class="name">VPC ピアリング<span class="yomi">Peering</span></div><div class="one">2つの VPC を<b>1対1</b>で直接つなぐ。別のアカウントや別のリージョンとでも OK。ただし<b>「友だちの友だち」には行けない</b>（A–B、B–C がつながっていても A から C へは行けない）。住所（CIDR）が重なっているとつなげない。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTransitGateway.svg" alt=""><div><div class="name">AWS Transit Gateway<span class="yomi">トランジットゲートウェイ</span></div><div class="one">たくさんの VPC やオンプレミスを、<b>真ん中の1か所（ハブ）</b>でまとめてつなぐ。空港の「ハブ空港」のイメージ。VPC が多いときはピアリングを何本も張るよりこちら。</div></div></div>
+
+<div class="diagram">
+  <div class="dtitle">ピアリング（線がたくさん） vs Transit Gateway（真ん中に集める）</div>
+  <div class="grp-row">
+    <div class="grp plain"><div class="glabel">VPC ピアリング</div>
+      <div class="flow wrap-ok">
+        <div class="node sm"><img src="../assets/aws-icons/architecture-group/VirtualprivatecloudVPC.svg" alt="">VPC A</div>
+        <div class="arr">↔</div>
+        <div class="node sm"><img src="../assets/aws-icons/architecture-group/VirtualprivatecloudVPC.svg" alt="">VPC B</div>
+        <div class="arr">↔</div>
+        <div class="node sm"><img src="../assets/aws-icons/architecture-group/VirtualprivatecloudVPC.svg" alt="">VPC C</div>
+      </div>
+      <div class="cap">A と C を話させたいなら、A↔C の線も別に必要</div>
+    </div>
+    <div class="grp plain"><div class="glabel">Transit Gateway</div>
+      <div class="flow wrap-ok">
+        <div class="node sm"><img src="../assets/aws-icons/architecture-group/VirtualprivatecloudVPC.svg" alt="">VPC A</div>
+        <div class="arr">↔</div>
+        <div class="node"><img src="../assets/aws-icons/architecture-service/AWSTransitGateway.svg" alt="">Transit Gateway<small>ハブ</small></div>
+        <div class="arr">↔</div>
+        <div class="node sm"><img src="../assets/aws-icons/architecture-group/VirtualprivatecloudVPC.svg" alt="">VPC B・C・…<br>オンプレミス</div>
+      </div>
+      <div class="cap">みんな真ん中につなぐだけ</div>
+    </div>
+  </div>
+</div>
+
+<div class="svc"><img src="../assets/aws-icons/resource/AmazonVPCEndpoints.svg" alt=""><div><div class="name">VPC エンドポイント</div><div class="one">VPC の中から S3 などの AWS サービスへ、<b>インターネットを通らずに</b>行くための専用の通路。2種類ある：<br>・<b>ゲートウェイ型</b>：<b>S3 と DynamoDB 専用</b>。追加料金なし。<br>・<b>インターフェース型</b>：多くのサービスに使える。中身は <b>AWS PrivateLink</b>。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSPrivateLink.svg" alt=""><div><div class="name">AWS PrivateLink<span class="yomi">プライベートリンク</span></div><div class="one">AWS のサービスや、<b>ほかの会社の VPC にあるサービス</b>を、自分の VPC 内の住所（プライベート IP）で安全に使えるようにするしくみ。</div></div></div>
+
+<h2>5. 会社（オンプレミス）とつなぐ</h2>
+<div class="table-wrap"><table>
+  <tr><th>サービス</th><th>どうつなぐ？</th><th>速さ・安定</th><th>準備にかかる時間</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSSitetoSiteVPN.svg" alt=""><b>Site-to-Site VPN</b></td><td><b>インターネットの上</b>に、<span class="term" data-tip="暗号化：データを、鍵を持っている人しか読めない形に変えること。">暗号化</span>した「見えないトンネル」を通す</td><td>ふつう（インターネットの混み具合に左右される）</td><td><b>すぐ</b>（数分〜数時間）</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSDirectConnect.svg" alt=""><b>Direct Connect</b></td><td>会社と AWS を<b>専用線</b>（自分たち専用の回線）で物理的につなぐ</td><td><b>速くて安定</b>。インターネットを通らない</td><td><b>数週間〜</b>かかることも</td></tr>
+</table></div>
+<div class="box story">
+  <div class="box-title"><span class="em">🚗</span>たとえ話：一般道のトンネルと、専用道路</div>
+  <p><b>VPN</b> は一般道（インターネット）の中に、<b>目かくしのトンネル</b>をつくって走るイメージ。すぐ作れるけど、道が混めばおそくなる。<br>
+  <b>Direct Connect</b> は会社から AWS まで<b>自分専用の道路</b>をひくイメージ。工事に時間はかかるけど、いつもすいていて速い。</p>
+</div>
+<div class="diagram">
+  <div class="grp-row">
+    <div class="grp onprem"><div class="glabel"><img src="../assets/aws-icons/architecture-group/Corporatedatacenter.svg" alt=""><span class="gtxt">会社</span></div>
+      <div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonVPCCustomerGateway.svg" alt="">カスタマー<br>ゲートウェイ<small>会社側の機器</small></div></div>
+    </div>
+    <div class="flow col" style="justify-content:center">
+      <div class="arr">⇄<small>VPN（ネット経由）</small></div>
+      <div class="arr">⇄<small>Direct Connect（専用線）</small></div>
+    </div>
+    <div class="grp vpc"><div class="glabel"><img src="../assets/aws-icons/architecture-group/VirtualprivatecloudVPC.svg" alt=""><span class="gtxt">VPC</span></div>
+      <div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonVPCVPNGateway.svg" alt="">仮想プライベート<br>ゲートウェイ<small>AWS 側の入口</small></div></div>
+    </div>
+  </div>
+  <div class="cap">「専用線が工事中のあいだは VPN でつなぐ」「Direct Connect の予備として VPN を用意する」という組み合わせもよく出ます。</div>
+</div>
+
+<h2>6. お客さんを速く・正しく案内する</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonRoute53.svg" alt=""><div><div class="name">Amazon Route 53<span class="yomi">ルートフィフティースリー</span></div><div class="one"><span class="term" data-tip="DNS：「example.com」のような名前を、コンピューターの住所（IP アドレス）に変える、インターネットの電話帳のようなしくみ。">DNS</span> サービス。「www.example.com はどこ？」と聞かれたら住所を答える<b>電話帳</b>。ドメインの購入（登録）や、相手が元気かどうかの<b>ヘルスチェック</b>もできる。名前の「53」は DNS が使う<span class="term" data-tip="ポート番号：1台のコンピューターの中で、どのサービスあての通信かを区別する番号。マンションの部屋番号のようなもの。">ポート番号</span>から。</div></div></div>
+
+<div class="table-wrap"><table>
+  <tr><th>ルーティングポリシー（案内のしかた）</th><th>かんたんに言うと</th></tr>
+  <tr><td>シンプル</td><td>1つの答えを返すだけ</td></tr>
+  <tr><td>加重（Weighted）</td><td>「新しい版に1割、古い版に9割」のように<b>割合で</b>振り分け</td></tr>
+  <tr><td>レイテンシー</td><td>利用者にとって<b>いちばん速い</b>リージョンへ</td></tr>
+  <tr><td>フェイルオーバー</td><td>本番がこわれたら<b>予備</b>へ切りかえ（ヘルスチェックと組み合わせる）</td></tr>
+  <tr><td>位置情報（Geolocation）</td><td>利用者が<b>いる国・地域</b>で振り分け（「日本の人には日本語サイト」）</td></tr>
+  <tr><td>地理的近接性・複数値回答・IP ベース</td><td>距離で振り分け／複数の答えを返す／利用者の IP の範囲で振り分け</td></tr>
+</table></div>
+
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonCloudFront.svg" alt=""><div><div class="name">Amazon CloudFront<span class="yomi">クラウドフロント</span></div><div class="one"><span class="term" data-tip="CDN（Content Delivery Network）：画像や動画などを世界中の拠点にコピーして置き、利用者の近くから届けるしくみ。">CDN</span>。世界中の<b>エッジロケーション</b>に画像・動画・Web ページを<b>キャッシュ</b>して、近くから速く届ける。S3 や ALB を元データ（<span class="term" data-tip="オリジン：CloudFront がコピーする元のデータがある場所。S3 バケットや ALB など。">オリジン</span>）にする。たとえるなら<b>全国のコンビニ</b>。DDoS 対策の Shield Standard が自動でつき、WAF も組み合わせられる。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSGlobalAccelerator.svg" alt=""><div><div class="name">AWS Global Accelerator<span class="yomi">グローバルアクセラレーター</span></div><div class="one">利用者を近くのエッジから<b>AWS 専用の高速道路（バックボーン）</b>にのせて、アプリまで速く届ける。<b>固定の IP アドレスが2つ</b>もらえる。<b>キャッシュはしない</b>。ゲームなど <span class="term" data-tip="TCP / UDP：データの送り方のルール。HTTP（Webページ）以外の通信、たとえばゲームや通話にも使われる。">TCP/UDP</span> の通信や、すばやい切りかえが必要なときに使う。</div></div></div>
+<p>ロードバランサー（ELB：ALB・NLB など）は、サーバーに仕事を振り分ける係です。くわしくは <a href="03-compute.html">第3章 コンピューティング</a> を見てください。</p>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <ul style="margin:0">
+    <li><b>CloudFront と Global Accelerator</b>：どちらもエッジを使うが、<b>キャッシュする（CloudFront）／しない（Global Accelerator）</b>。「固定 IP が欲しい」「HTTP 以外」→ Global Accelerator。</li>
+    <li><b>NAT ゲートウェイはパブリックサブネットに置く</b>（使うのはプライベートのサーバーだけど、置き場所はパブリック）。</li>
+    <li><b>VPC ピアリングは「友だちの友だち」に行けない</b>（推移的なルーティングはできない）。</li>
+    <li><b>SG では拒否が書けない</b>。「拒否」と出たら NACL を思い出す。</li>
+  </ul>
+</div>
+
+<div class="recall">
+  <h2>🙌 手ぶら復習</h2>
+  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。</p>
+  <details class="q"><summary><code>10.0.0.0/16</code> と <code>10.0.1.0/24</code>、範囲が広いのはどっち？</summary><div class="a">/16 のほう（約6万5千個）。/ のあとの数字が大きいほどせまい（/24 は256個）。</div></details>
+  <details class="q"><summary>VPC を自社ビルにたとえると、サブネット・IGW・NAT ゲートウェイ・ルートテーブルはそれぞれ何？</summary><div class="a">サブネット＝フロア、IGW＝正面玄関（出入り両方）、NAT ゲートウェイ＝出口専用の通用口、ルートテーブル＝案内板。</div></details>
+  <details class="q"><summary>サブネットが「パブリック」になる条件は？</summary><div class="a">ルートテーブルに「0.0.0.0/0 → インターネットゲートウェイ」の道があること。</div></details>
+  <details class="q"><summary>プライベートサブネットの EC2 が、外からは入られずに外へ出るには？ それはどこに置く？</summary><div class="a">NAT ゲートウェイを使う。NAT ゲートウェイはパブリックサブネットに置く。</div></details>
+  <details class="q"><summary>セキュリティグループとネットワーク ACL のちがいを3つ。</summary><div class="a">SG＝インスタンス単位・許可のみ・ステートフル。NACL＝サブネット単位・許可と拒否・ステートレス。</div></details>
+  <details class="q"><summary>特定の IP アドレスからの通信をブロックしたい。使うのは？</summary><div class="a">ネットワーク ACL（拒否ルールが書ける）。</div></details>
+  <details class="q"><summary>たくさんの VPC とオンプレミスをまとめてつなぐサービスは？</summary><div class="a">AWS Transit Gateway（ハブとしてまとめる）。</div></details>
+  <details class="q"><summary>S3 へインターネットを通らずに行く、追加料金なしの方法は？</summary><div class="a">ゲートウェイ型の VPC エンドポイント（S3 と DynamoDB 用）。</div></details>
+  <details class="q"><summary>Site-to-Site VPN と Direct Connect のちがいは？</summary><div class="a">VPN＝インターネット上の暗号化トンネル。すぐ使えるが安定性はふつう。Direct Connect＝専用線。速く安定だが準備に時間がかかる。</div></details>
+  <details class="q"><summary>CloudFront と Global Accelerator のちがいは？</summary><div class="a">CloudFront はエッジでキャッシュして配信する CDN。Global Accelerator はキャッシュせず、固定 IP と AWS の高速網で TCP/UDP 通信を速くする。</div></details>
+  <details class="q"><summary>Route 53 で「本番がダウンしたら予備サイトへ」を実現するルーティングは？</summary><div class="a">フェイルオーバールーティング（ヘルスチェックと組み合わせる）。</div></details>
+</div>
+
+<div id="study-log"></div>
+<nav id="pager"></nav>
+</main>
+<script src="../assets/site.js"></script>
+</body>
+</html>

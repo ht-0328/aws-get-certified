@@ -140,11 +140,11 @@ dl.words dd { margin: 0; color: var(--ink-2); }
 .term::after {
   content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
   width: max-content; max-width: min(300px, 80vw); background: var(--navy); color: #fff; font-size: .82rem; line-height: 1.6;
-  padding: 8px 12px; border-radius: 10px; opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 30; font-weight: 400; white-space: normal;
+  padding: 8px 12px; border-radius: 10px; display: none; pointer-events: none; z-index: 30; font-weight: 400; white-space: normal;
 }
 :root[data-theme="dark"] .term::after { background: #39414f; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .term::after { background: #39414f; } }
-.term:hover::after, .term:focus::after, .term.open::after { opacity: 1; }
+.term:hover::after, .term:focus::after, .term.open::after { display: block; }
 .term.tip-left::after { left: 0; transform: none; }
 .term.tip-right::after { left: auto; right: 0; transform: none; }
 
