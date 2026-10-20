@@ -13,86 +13,87 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第2章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第2章 セキュリティとIAM</h1>
-<p class="lead">AWS の試験で<b>いちばん配点が大きい分野の一つ</b>がセキュリティです。「だれが・何を守るのか」「だれに・何をさせてよいのか」を、たとえ話と図でおさえましょう。</p>
+<p class="lead">セキュリティは、CLF・SAA のいずれでも配点が最も大きい分野の一つです。本章では「誰が何を守るのか（責任の分担）」と「誰に何を許可するのか（アクセス管理）」を軸に、主要なセキュリティサービスを整理します。</p>
 
 <div class="box map">
-  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>
   <ol style="margin:0">
-    <li>責任共有モデル（AWS とお客さんの役割分担）</li>
-    <li>IAM（だれに、何をさせてよいか）</li>
-    <li>たくさんのアカウントをまとめる（Organizations・IAM Identity Center）</li>
-    <li>カギと秘密を守る（KMS・CloudHSM・Secrets Manager・ACM）</li>
-    <li>攻撃から守る（Shield・WAF）</li>
-    <li>見張りと調査（GuardDuty・Inspector・Macie・Security Hub・Detective）</li>
+    <li>責任共有モデル（AWS と利用者の責任分担）</li>
+    <li>IAM（認証とアクセス権限の管理）</li>
+    <li>複数アカウントの管理（Organizations・IAM Identity Center）</li>
+    <li>暗号鍵と機密情報の管理（KMS・CloudHSM・Secrets Manager・ACM）</li>
+    <li>外部からの攻撃への対策（Shield・WAF）</li>
+    <li>脅威の検出と調査（GuardDuty・Inspector・Macie・Security Hub・Detective）</li>
     <li>その他（Artifact・Cognito）</li>
   </ol>
 </div>
 
-<h2>1. 責任共有モデル —— だれが何を守る？</h2>
-<p>クラウドでは、セキュリティを <b>AWS とお客さん（あなた）で分担</b>します。これを<span class="term" data-tip="責任共有モデル（Shared Responsibility Model）：セキュリティの責任を AWS と利用者で分け合う考え方。">責任共有モデル</span>といいます。</p>
+<h2>1. 責任共有モデル：誰が何を守るのか</h2>
+<p>クラウドでは、セキュリティの責任を <b>AWS と利用者で分担</b>します。この考え方を<span class="term" data-tip="責任共有モデル（Shared Responsibility Model）：セキュリティの責任を AWS と利用者で分担する考え方。">責任共有モデル</span>といいます。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🏢</span>たとえ話：マンションを借りる</div>
-  <p><b>AWS は大家さん</b>。建物の頑丈さ、オートロック、エレベーターの点検（＝データセンター・機械・ネットワークの土台）に責任をもちます。</p>
-  <p><b>あなたは住人</b>。自分の部屋のカギをかける、だれに合カギを渡すか決める、部屋の中の大事なもの（＝データ・設定・パスワード）を守るのはあなたの責任です。</p>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
+  <p>賃貸マンションに置き換えると分かりやすくなります。<b>AWS は建物の所有者</b>として、建物の構造・共用部の入退室管理・設備の保守（＝データセンター、物理機器、基盤ネットワーク）に責任を負います。</p>
+  <p><b>利用者は入居者</b>として、自室の施錠、合鍵を誰に渡すか、室内に置いた資産（＝データ、設定、認証情報）の管理に責任を負います。</p>
 </div>
 
 <div class="box hook">
   <div class="box-title"><span class="em">🔑</span>覚え方：「クラウド<b>の</b>」と「クラウド<b>の中</b>」</div>
   <p>AWS ＝ Security <b>OF</b> the Cloud（クラウド<b>そのもの</b>のセキュリティ）<br>
-  お客さん ＝ Security <b>IN</b> the Cloud（クラウド<b>の中に置いたもの</b>のセキュリティ）</p>
-  <p>「<b>AWS は箱、あなたは中身</b>」と覚えましょう。</p>
+  利用者 ＝ Security <b>IN</b> the Cloud（クラウド<b>上に置いたもの</b>のセキュリティ）</p>
+  <p>「<b>AWS は器、利用者は中身</b>」と整理しておくと判断しやすくなります。</p>
 </div>
 
 <div class="diagram">
-  <div class="dtitle">サービスによって、お客さんの担当はこう変わる</div>
+  <div class="dtitle">サービスの種類による利用者の責任範囲の違い</div>
   <div class="table-wrap" style="margin:0">
   <table style="text-align:center;font-size:.85rem">
-    <tr><th style="text-align:left;white-space:normal">守るもの</th>
+    <tr><th style="text-align:left;white-space:normal">対象</th>
       <th style="white-space:normal"><img class="ico-s" style="display:block;margin:0 auto 4px" src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2<br><small class="muted">IaaS</small></th>
       <th style="white-space:normal"><img class="ico-s" style="display:block;margin:0 auto 4px" src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS<br><small class="muted">マネージド</small></th>
       <th style="white-space:normal"><img class="ico-s" style="display:block;margin:0 auto 4px" src="../assets/aws-icons/architecture-service/AWSLambda.svg" alt="">Lambda<br><small class="muted">サーバーレス</small></th></tr>
-    <tr><td style="text-align:left">データ・だれに使わせるか（IAM）</td><td style="background:var(--blue-soft)">お客さん</td><td style="background:var(--blue-soft)">お客さん</td><td style="background:var(--blue-soft)">お客さん</td></tr>
-    <tr><td style="text-align:left">アプリ・プログラムのコード</td><td style="background:var(--blue-soft)">お客さん</td><td style="background:var(--blue-soft)">お客さん<br><small>（DBの使い方・設定）</small></td><td style="background:var(--blue-soft)">お客さん</td></tr>
-    <tr><td style="text-align:left">ファイアウォール設定（セキュリティグループ）</td><td style="background:var(--blue-soft)">お客さん</td><td style="background:var(--blue-soft)">お客さん</td><td style="background:var(--accent-soft)">AWS<br><small>（VPC につなぐ場合はお客さん）</small></td></tr>
-    <tr><td style="text-align:left">OS（土台のソフト）の更新・パッチ</td><td style="background:var(--blue-soft)">お客さん</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td></tr>
-    <tr><td style="text-align:left">サーバーの機械・仮想化のしくみ</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td></tr>
-    <tr><td style="text-align:left">データセンターの建物・電源・警備</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td></tr>
+    <tr><td style="text-align:left">データ・アクセス権限（IAM）</td><td style="background:var(--blue-soft)">利用者</td><td style="background:var(--blue-soft)">利用者</td><td style="background:var(--blue-soft)">利用者</td></tr>
+    <tr><td style="text-align:left">アプリケーションのコード</td><td style="background:var(--blue-soft)">利用者</td><td style="background:var(--blue-soft)">利用者<br><small>（DB の設定・利用方法）</small></td><td style="background:var(--blue-soft)">利用者</td></tr>
+    <tr><td style="text-align:left">ファイアウォール設定（セキュリティグループ）</td><td style="background:var(--blue-soft)">利用者</td><td style="background:var(--blue-soft)">利用者</td><td style="background:var(--accent-soft)">AWS<br><small>（VPC に接続する場合は利用者）</small></td></tr>
+    <tr><td style="text-align:left">OS の更新・パッチ適用</td><td style="background:var(--blue-soft)">利用者</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td></tr>
+    <tr><td style="text-align:left">物理サーバー・仮想化基盤</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td></tr>
+    <tr><td style="text-align:left">データセンターの建物・電源・物理的警備</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td><td style="background:var(--accent-soft)">AWS</td></tr>
   </table></div>
-  <div class="cap"><span style="background:var(--blue-soft);padding:0 6px;border-radius:4px">青＝お客さん</span>　<span style="background:var(--accent-soft);padding:0 6px;border-radius:4px">オレンジ＝AWS</span><br>AWS がやってくれる部分が多い（＝<span class="term" data-tip="マネージドサービス：面倒な管理（更新・故障対応など）を AWS が代わりにやってくれるサービス。">マネージド</span>）ほど、お客さんの担当は減ります。でも<b>データとアクセス権限は、どのサービスでも必ずお客さん</b>の担当です。</div>
+  <div class="cap"><span style="background:var(--blue-soft);padding:0 6px;border-radius:4px">青＝利用者</span>　<span style="background:var(--accent-soft);padding:0 6px;border-radius:4px">オレンジ＝AWS</span><br>AWS が管理を引き受ける範囲が広い（＝<span class="term" data-tip="マネージドサービス：OS の更新や障害対応などの運用管理を AWS が代行するサービス。">マネージド</span>）サービスほど、利用者の責任範囲は狭くなります。ただし<b>データとアクセス権限は、どのサービスでも利用者の責任</b>です。</div>
 </div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>OS</dt><dd>オペレーティングシステム。Windows や Linux のような、コンピューターを動かす土台のソフト。</dd>
-    <dt>パッチ</dt><dd>ソフトの弱点（バグや穴）をふさぐための修正プログラム。</dd>
-    <dt>ファイアウォール</dt><dd>「防火壁」の意味。許可した通信だけを通し、それ以外をブロックするしくみ。</dd>
-    <dt>暗号化</dt><dd>データを、カギを持っている人しか読めない形に変えること。</dd>
+    <dt>OS</dt><dd>オペレーティングシステム。Windows や Linux など、ハードウェアを制御しアプリケーションの実行基盤となるソフトウェア。</dd>
+    <dt>パッチ</dt><dd>ソフトウェアの不具合や脆弱性を修正するための更新プログラム。</dd>
+    <dt>ファイアウォール</dt><dd>あらかじめ定めた規則に従って通信を許可・遮断する仕組み。</dd>
+    <dt>暗号化</dt><dd>鍵を持つ者だけが元の内容を復元できるよう、データを変換すること。</dd>
   </dl>
 </div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
   <ul style="margin:0">
-    <li>「EC2 の OS にパッチを当てるのはだれ？」→ <b>お客さん</b></li>
-    <li>「RDS のデータベースソフトにパッチを当てるのはだれ？」→ <b>AWS</b></li>
-    <li>「データセンターの物理的なセキュリティは？」→ <b>AWS</b></li>
-    <li>「IAM ユーザーの管理・データの暗号化設定は？」→ <b>お客さん</b></li>
-    <li><b>両方</b>の責任（共有コントロール）：パッチ管理・設定管理・社員教育（AWS は自社の社員、お客さんは自社の社員）</li>
+    <li>「EC2 の OS にパッチを適用するのは誰か」→ <b>利用者</b></li>
+    <li>「RDS のデータベースエンジンにパッチを適用するのは誰か」→ <b>AWS</b></li>
+    <li>「データセンターの物理的セキュリティは誰の責任か」→ <b>AWS</b></li>
+    <li>「IAM ユーザーの管理、データの暗号化設定は誰の責任か」→ <b>利用者</b></li>
+    <li><b>共有される</b>統制（共有コントロール）：パッチ管理、構成管理、従業員教育（それぞれが自社の範囲について責任を負う）</li>
   </ul>
 </div>
 
-<h2>2. IAM —— だれに、何をさせてよいか</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSIdentityandAccessManagement.svg" alt=""><div><div class="name">IAM<span class="yomi">アイアム／Identity and Access Management</span></div><div class="one">AWS を<b>だれが</b>使えて、<b>何をしてよいか</b>を決めるサービス。無料。リージョンに関係なく使える<span class="term" data-tip="グローバルサービス：特定のリージョンに属さず、世界共通で使えるサービス。">グローバルサービス</span>。</div></div></div>
+<h2>2. IAM：誰に何を許可するか</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSIdentityandAccessManagement.svg" alt=""><div><div class="name">IAM<span class="yomi">アイアム／Identity and Access Management</span></div><div class="one">AWS を<b>誰が</b>利用でき、<b>どの操作を許可するか</b>を管理するサービス。無料。特定のリージョンに属さない<span class="term" data-tip="グローバルサービス：特定のリージョンに属さず、全リージョン共通で利用されるサービス。">グローバルサービス</span>です。</div></div></div>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🏨</span>たとえ話：ホテルのカードキー</div>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
+  <p>オフィスの入館管理に置き換えると、IAM の各要素は次のように対応します。</p>
   <ul style="margin:0">
-    <li><b>ユーザー</b>＝ 名札をつけた<b>1人のスタッフ</b>。</li>
-    <li><b>グループ</b>＝「清掃係」「フロント係」などの<b>係</b>。係ごとにカードキーの権限を決めれば、人が増えても楽。</li>
-    <li><b>ポリシー</b>＝「この係は3階の部屋に入ってよい」という<b>許可のルール表</b>。</li>
-    <li><b>ロール</b>＝<b>一時的に貸し出す腕章</b>。腕章をつけている間だけ、その権限が使える。人だけでなく、EC2 などの AWS サービスにも貸せる。</li>
+    <li><b>ユーザー</b>＝ 社員証を持つ<b>個々の従業員</b>。</li>
+    <li><b>グループ</b>＝「経理部」「開発部」などの<b>部署</b>。部署単位で入館権限を設定すれば、人の増減に容易に対応できる。</li>
+    <li><b>ポリシー</b>＝「この部署はサーバールームに入室可」といった<b>権限の規定</b>。</li>
+    <li><b>ロール</b>＝ 必要なときだけ発行される<b>一時入館証</b>。保持している間だけ権限が有効になり、人だけでなく EC2 などの AWS サービスにも付与できる。</li>
   </ul>
 </div>
 
@@ -100,223 +101,224 @@
   <div class="dtitle">ユーザー・グループ・ポリシー・ロールの関係</div>
   <div class="grp-row">
     <div class="grp plain">
-      <div class="glabel">人に権限をあたえる</div>
+      <div class="glabel">人に権限を付与する</div>
       <div class="flow wrap-ok">
-        <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">ユーザーたち<small>Aさん・Bさん</small></div>
+        <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">ユーザー<small>A さん・B さん</small></div>
         <div class="arr">→<small>所属</small></div>
         <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">グループ<small>開発チーム</small></div>
-        <div class="arr">←<small>付ける</small></div>
-        <div class="node"><img src="../assets/aws-icons/resource/AWSIdentityAccessManagementPermissions.svg" alt="">ポリシー<small>S3 を読んでよい</small></div>
+        <div class="arr">←<small>アタッチ</small></div>
+        <div class="node"><img src="../assets/aws-icons/resource/AWSIdentityAccessManagementPermissions.svg" alt="">ポリシー<small>S3 の読み取りを許可</small></div>
       </div>
     </div>
     <div class="grp plain">
-      <div class="glabel">サービスに権限をあたえる</div>
+      <div class="glabel">サービスに権限を付与する</div>
       <div class="flow wrap-ok">
         <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2</div>
-        <div class="arr">→<small>引き受ける</small></div>
+        <div class="arr">→<small>引き受け</small></div>
         <div class="node"><img src="../assets/aws-icons/resource/AWSIdentityAccessManagementRole.svg" alt="">ロール<small>一時的な権限</small></div>
-        <div class="arr ok">→<small>アクセスOK</small></div>
+        <div class="arr ok">→<small>アクセス許可</small></div>
         <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">S3</div>
       </div>
     </div>
   </div>
-  <div class="cap">EC2 のプログラムから S3 を使うときは、パスワード（アクセスキー）をサーバーに書きこむのではなく、<b>ロール</b>を使うのが正解です。</div>
+  <div class="cap">EC2 上のプログラムから S3 を利用する場合は、アクセスキーをサーバーに保存するのではなく、<b>IAM ロール</b>を付与するのが正しい方法です。</div>
 </div>
 
 <div class="table-wrap"><table>
-  <tr><th>部品</th><th>なに？</th><th>ポイント</th></tr>
-  <tr><td><b>ルートユーザー</b></td><td>アカウントを作ったときの<b>最強のユーザー</b>（メールアドレスでログイン）</td><td>ふだんは<b>使わない</b>。MFA を設定してしまっておく。</td></tr>
-  <tr><td><b>IAM ユーザー</b></td><td>1人（または1つのプログラム）用のログイン情報</td><td>1人1ユーザー。使い回さない。</td></tr>
-  <tr><td><b>IAM グループ</b></td><td>ユーザーのまとまり</td><td>グループにポリシーを付けると管理が楽。グループの中にグループは入れられない。</td></tr>
-  <tr><td><b>IAM ポリシー</b></td><td>許可・拒否のルール（<span class="term" data-tip="JSON（ジェイソン）：データを {&quot;名前&quot;: &quot;値&quot;} の形で書く、決まった書き方。">JSON</span> で書く）</td><td>「<b>明示的な拒否（Deny）</b>」がいちばん強い。何も書いていなければ拒否。</td></tr>
-  <tr><td><b>IAM ロール</b></td><td>一時的に借りる権限</td><td>EC2・Lambda などのサービスや、別アカウントの人に貸す。期限つきの<span class="term" data-tip="認証情報（にんしょうじょうほう）：本人であることを証明するための情報。パスワードやアクセスキーなど。">認証情報</span>が自動で発行される。</td></tr>
+  <tr><th>要素</th><th>概要</th><th>要点</th></tr>
+  <tr><td><b>ルートユーザー</b></td><td>アカウント作成時に作られる、<b>すべての権限を持つユーザー</b>（メールアドレスでサインイン）</td><td>日常業務では<b>使用しない</b>。MFA を設定して厳重に保管する。</td></tr>
+  <tr><td><b>IAM ユーザー</b></td><td>個人（または1つのアプリケーション）用の認証情報</td><td>1人につき1ユーザー。共有しない。</td></tr>
+  <tr><td><b>IAM グループ</b></td><td>ユーザーの集合</td><td>グループにポリシーを付与すると管理が容易。グループを入れ子にはできない。</td></tr>
+  <tr><td><b>IAM ポリシー</b></td><td>許可・拒否の規則（<span class="term" data-tip="JSON（ジェイソン）：{&quot;キー&quot;: &quot;値&quot;} の形式でデータを記述するテキスト形式。">JSON</span> で記述）</td><td>「<b>明示的な拒否（Deny）</b>」が最優先。どこにも許可がなければ拒否される（暗黙の拒否）。</td></tr>
+  <tr><td><b>IAM ロール</b></td><td>一時的に引き受ける権限</td><td>EC2・Lambda などのサービスや、別アカウントの利用者に付与する。有効期限付きの<span class="term" data-tip="認証情報：本人であることを証明するための情報。パスワードやアクセスキーなど。">認証情報</span>が自動発行される。</td></tr>
 </table></div>
 
-<h3>ルートユーザーでしかできないこと</h3>
-<p>ルートユーザーは強すぎるので、ふだんは IAM ユーザー（や IAM Identity Center）で作業します。ただし、次のような<b>アカウントそのものに関わる操作</b>はルートユーザーでしかできません。</p>
+<h3>ルートユーザーでしか実行できない操作</h3>
+<p>ルートユーザーは権限が強すぎるため、通常の作業は IAM ユーザー（または IAM Identity Center）で行います。ただし、次のような<b>アカウント自体に関わる操作</b>はルートユーザーでしか実行できません。</p>
 <ul>
   <li>アカウントの<b>解約（閉鎖）</b></li>
   <li><b>サポートプランの変更</b></li>
   <li>ルートユーザーのメールアドレスなど、アカウント設定の変更</li>
 </ul>
 
-<h3>セキュリティの基本ルール</h3>
+<h3>セキュリティの基本原則</h3>
 <div class="box hook">
   <div class="box-title"><span class="em">🔑</span>覚え方：IAM の3原則「<b>最小・二重・使わない</b>」</div>
   <ol style="margin:0">
-    <li><b>最小</b>権限の原則：仕事に<b>必要な分だけ</b>の権限をあたえる。<br><small class="muted">（ホテルの清掃係に、金庫のカギまで渡さない）</small></li>
-    <li><b>二重</b>のカギ＝ <b>MFA</b>：パスワード＋スマホのアプリなど、2つで本人確認する。<br><small class="muted">MFA（多要素認証）＝「知っているもの（パスワード）」と「持っているもの（スマホ）」など、ちがう種類の証拠を組み合わせて本人確認すること。</small></li>
-    <li>ルートユーザーは<b>使わない</b>：アクセスキーも作らない。</li>
+    <li><b>最小</b>権限の原則：業務に<b>必要な範囲だけ</b>の権限を付与する。</li>
+    <li><b>二重</b>の本人確認＝ <b>MFA</b>：パスワードに加えて認証アプリなどを組み合わせる。<br><small class="muted">MFA（多要素認証）＝「知っているもの（パスワード）」「持っているもの（スマートフォン等）」など、種類の異なる要素を組み合わせて本人確認する方式。</small></li>
+    <li>ルートユーザーは<b>使わない</b>：ルートユーザーのアクセスキーも作成しない。</li>
   </ol>
 </div>
 <div class="flow wrap-ok" style="margin:1em 0">
-  <div class="node"><img src="../assets/aws-icons/resource/User.svg" alt="">パスワード<small>知っているもの</small></div>
+  <div class="node"><img src="../assets/aws-icons/resource/User.svg" alt="">パスワード<small>知識要素</small></div>
   <div class="arr">＋</div>
-  <div class="node"><img src="../assets/aws-icons/resource/AWSIdentityAccessManagementMFAToken.svg" alt="">MFA デバイス<small>持っているもの</small></div>
+  <div class="node"><img src="../assets/aws-icons/resource/AWSIdentityAccessManagementMFAToken.svg" alt="">MFA デバイス<small>所持要素</small></div>
   <div class="arr ok">→</div>
-  <div class="node"><img src="../assets/aws-icons/architecture-service/AWSManagementConsole.svg" alt="">ログインOK</div>
+  <div class="node"><img src="../assets/aws-icons/architecture-service/AWSManagementConsole.svg" alt="">サインイン</div>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
   <ul style="margin:0">
-    <li>「EC2 から S3 にアクセスさせたい。アクセスキーを EC2 に保存する」→ <b>×</b>。正解は <b>IAM ロール</b>を EC2 に付ける。</li>
-    <li>「管理者全員でルートユーザーを共有する」→ <b>×</b>。1人1つの IAM ユーザー（または Identity Center のユーザー）を作る。</li>
-    <li>IAM は<b>リージョンごとではなく、グローバル</b>。</li>
+    <li>「EC2 から S3 にアクセスさせるため、アクセスキーを EC2 に保存する」→ <b>誤り</b>。正しくは <b>IAM ロール</b>を EC2 に付与する。</li>
+    <li>「管理者全員でルートユーザーを共有する」→ <b>誤り</b>。1人1つの IAM ユーザー（または Identity Center のユーザー）を作成する。</li>
+    <li>IAM は<b>リージョン単位ではなく、グローバル</b>なサービスである。</li>
   </ul>
 </div>
 
-<h2>3. たくさんのアカウントをまとめる</h2>
-<p>会社が大きくなると、「開発用」「本番用」「経理用」など、AWS アカウントを<b>いくつも</b>持つのがふつうです。それをまとめて管理するサービスがあります。</p>
+<h2>3. 複数アカウントの管理</h2>
+<p>組織の規模が大きくなると、「開発用」「本番用」「経理用」など、AWS アカウントを<b>複数</b>運用するのが一般的です。これらを一元管理するためのサービスがあります。</p>
 
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSOrganizations.svg" alt=""><div><div class="name">AWS Organizations<span class="yomi">オーガニゼーションズ</span></div><div class="one">複数のアカウントを<b>1つの会社（組織）としてまとめる</b>。請求を1つにまとめる<span class="term" data-tip="一括請求（コンソリデーティッド・ビリング）：複数アカウントの料金をまとめて1枚の請求書にすること。利用量が合算されるので、まとめ割引も受けやすい。">一括請求</span>ができ、<b>SCP</b> でアカウントごとに「やってはいけないこと」を決められる。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSIAMIdentityCenter.svg" alt=""><div><div class="name">IAM Identity Center<span class="yomi">アイデンティティセンター（旧 AWS SSO）</span></div><div class="one"><b>1回ログインするだけで、複数のアカウントやアプリに入れる</b>しくみ（<span class="term" data-tip="シングルサインオン（SSO）：1回のログインで、いくつものシステムを使えるようにするしくみ。">シングルサインオン</span>）。会社の社員名簿（Microsoft Entra ID など）ともつなげられる。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSOrganizations.svg" alt=""><div><div class="name">AWS Organizations<span class="yomi">オーガニゼーションズ</span></div><div class="one">複数のアカウントを<b>1つの組織として一元管理</b>する。請求をまとめる<span class="term" data-tip="一括請求（Consolidated Billing）：複数アカウントの料金を1つの請求にまとめる機能。利用量が合算されるため、ボリューム割引も適用されやすい。">一括請求</span>や、<b>SCP</b> によるアカウント単位の操作制限が可能。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSIAMIdentityCenter.svg" alt=""><div><div class="name">IAM Identity Center<span class="yomi">アイデンティティセンター（旧 AWS SSO）</span></div><div class="one"><b>1回のサインインで複数のアカウントやアプリケーションにアクセス</b>できる仕組み（<span class="term" data-tip="シングルサインオン（SSO）：1回の認証で複数のシステムを利用できるようにする仕組み。">シングルサインオン</span>）を提供する。Microsoft Entra ID などの既存の ID 基盤とも連携できる。</div></div></div>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🏫</span>たとえ話：学校と校則</div>
-  <p><b>Organizations</b> は「学校」、各アカウントは「クラス」。<b>SCP（サービスコントロールポリシー）</b>は<b>校則</b>です。担任の先生（IAM）が「スマホOK」と言っても、校則で「スマホ禁止」なら使えません。<b>SCP は「ここまでしかできない」という上限を決めるだけ</b>で、権限を<b>あたえる</b>ものではありません。</p>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
+  <p><b>Organizations</b> を企業グループ、各アカウントを子会社とすると、<b>SCP（サービスコントロールポリシー）</b>はグループ全体の<b>社内規程</b>にあたります。子会社の管理者（IAM）が許可していても、規程で禁止されている操作は実行できません。<b>SCP は「実行できる操作の上限」を定めるだけ</b>で、権限を<b>付与する</b>ものではありません。</p>
 </div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
   <ul style="margin:0">
-    <li>「複数アカウントの請求をまとめたい／まとめ割引を受けたい」→ <b>Organizations の一括請求</b></li>
-    <li>「特定のアカウントで、特定のサービスやリージョンを使えなくしたい」→ <b>SCP</b></li>
-    <li>「社員が1回のログインで複数アカウントに入れるようにしたい」→ <b>IAM Identity Center</b></li>
+    <li>「複数アカウントの請求をまとめたい／ボリューム割引を受けたい」→ <b>Organizations の一括請求</b></li>
+    <li>「特定のアカウントで、特定のサービスやリージョンを使用禁止にしたい」→ <b>SCP</b></li>
+    <li>「従業員が1回のサインインで複数アカウントにアクセスできるようにしたい」→ <b>IAM Identity Center</b></li>
   </ul>
 </div>
 
-<h2>4. カギと秘密を守る</h2>
-<p>データを<b>暗号化</b>するには「カギ」が必要です。そのカギや、パスワードなどの「秘密」を安全にしまうサービスです。</p>
+<h2>4. 暗号鍵と機密情報の管理</h2>
+<p>データを<b>暗号化</b>するには鍵が必要です。ここでは、その鍵やパスワードなどの機密情報を安全に管理するサービスを扱います。</p>
 
 <div class="table-wrap"><table>
-  <tr><th>サービス</th><th>たとえ</th><th>なにをする？</th></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSKeyManagementService.svg" alt=""><b>KMS</b><br><small class="muted">Key Management Service</small></td><td>銀行の<b>貸し金庫</b>（AWS が管理）</td><td>暗号化のカギを作って管理する。S3・EBS・RDS などとかんたんに連携。だれがカギを使ったかは CloudTrail に記録される。</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCloudHSM.svg" alt=""><b>CloudHSM</b></td><td><b>自分専用の金庫</b>を丸ごと借りる</td><td>カギをしまう専用の機械（<span class="term" data-tip="HSM（ハードウェア・セキュリティ・モジュール）：暗号のカギを安全に保管・処理するための専用機械。">HSM</span>）を<b>自分だけで</b>使う。カギの管理は完全に自分。きびしいルールがある会社向け。</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSSecretsManager.svg" alt=""><b>Secrets Manager</b></td><td><b>パスワード帳</b>＋自動で書きかえ</td><td>データベースのパスワードなどの<b>秘密情報</b>を保管。<b>定期的に自動で変更（ローテーション）</b>できるのが特長。</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCertificateManager.svg" alt=""><b>ACM</b><br><small class="muted">Certificate Manager</small></td><td>お店の<b>営業許可証</b></td><td>サイトを https（鍵マーク）にするための <span class="term" data-tip="SSL/TLS 証明書：「このサイトは本物です」と証明し、通信を暗号化するための電子的な証明書。">SSL/TLS 証明書</span>を発行・<b>自動更新</b>。ELB や CloudFront で使う公開証明書は無料。</td></tr>
+  <tr><th>サービス</th><th>位置づけ</th><th>機能</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSKeyManagementService.svg" alt=""><b>KMS</b><br><small class="muted">Key Management Service</small></td><td>AWS が運用する<b>鍵管理サービス</b></td><td>暗号鍵の作成・管理。S3・EBS・RDS などと容易に連携できる。鍵の使用履歴は CloudTrail に記録される。</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCloudHSM.svg" alt=""><b>CloudHSM</b></td><td><b>専有の</b>鍵管理ハードウェア</td><td>鍵を保管する専用機器（<span class="term" data-tip="HSM（Hardware Security Module）：暗号鍵を安全に生成・保管・処理するための専用ハードウェア。">HSM</span>）を<b>単独で</b>利用する。鍵の管理は完全に利用者側。厳格な規制要件がある場合に用いる。</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSSecretsManager.svg" alt=""><b>Secrets Manager</b></td><td>機密情報の保管と<b>自動更新</b></td><td>データベースのパスワードなどの<b>シークレット</b>を保管する。<b>定期的な自動ローテーション（更新）</b>ができる点が特長。</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCertificateManager.svg" alt=""><b>ACM</b><br><small class="muted">Certificate Manager</small></td><td><b>証明書</b>の発行・管理</td><td>HTTPS 通信に必要な <span class="term" data-tip="SSL/TLS 証明書：サイトの運営者が正当であることを証明し、通信の暗号化に用いる電子証明書。">SSL/TLS 証明書</span>を発行し、<b>自動更新</b>する。ELB や CloudFront で使うパブリック証明書は無料。</td></tr>
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：カギ4兄弟</div>
-  <p><b>K</b>MS ＝ <b>K</b>ey（カギ）／ Cloud<b>HSM</b> ＝ <b>H</b>ardware（専用機械）／ <b>Secrets</b> ＝ 秘密（パスワード）／ <b>AC</b>M ＝ <b>C</b>ertificate（証明書）</p>
-  <p>名前の中に答えが書いてある！ 英単語の意味で覚えると忘れにくいです。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：名前の英単語で区別する</div>
+  <p><b>K</b>MS ＝ <b>K</b>ey（鍵）／ Cloud<b>HSM</b> ＝ <b>H</b>ardware（専用機器）／ <b>Secrets</b> Manager ＝ 機密情報（パスワード）／ <b>AC</b>M ＝ <b>C</b>ertificate（証明書）</p>
+  <p>いずれもサービス名に役割が表れているため、英単語の意味と対応づけておくと区別しやすくなります。</p>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
-  <p>「パスワードを<b>自動でローテーション</b>したい」→ <b>Secrets Manager</b>。似たサービスの Systems Manager の Parameter Store も値を保存できますが、自動ローテーションの機能は Secrets Manager の強みです。<br>「<b>専用のハードウェア</b>」「<b>自分だけ</b>がカギを管理」→ <b>CloudHSM</b>。</p>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
+  <p>「パスワードを<b>自動でローテーション</b>したい」→ <b>Secrets Manager</b>。Systems Manager の Parameter Store も値を保存できますが、自動ローテーションは Secrets Manager の特長です。<br>「<b>専用のハードウェア</b>」「鍵を<b>利用者だけ</b>で管理」→ <b>CloudHSM</b>。</p>
 </div>
 
-<h2>5. 攻撃から守る —— Shield と WAF</h2>
-<p>インターネットに公開したサイトは、いろいろな攻撃を受けます。代表的なのが <span class="term" data-tip="DDoS（ディードス）攻撃：たくさんのコンピューターから一斉に大量のアクセスを送りつけて、サイトをパンクさせる攻撃。">DDoS 攻撃</span>です。</p>
+<h2>5. 外部からの攻撃への対策：Shield と WAF</h2>
+<p>インターネットに公開したシステムは、さまざまな攻撃の対象になります。代表的なものが <span class="term" data-tip="DDoS 攻撃（分散型サービス妨害攻撃）：多数のコンピューターから大量の通信を送りつけ、サービスを利用不能にする攻撃。">DDoS 攻撃</span>です。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🏯</span>たとえ話：お城の守り</div>
-  <p><b>Shield（シールド）</b>＝ お城の<b>大きな盾・城壁</b>。大軍がおしよせて門をふさぐ（DDoS）のを防ぐ。</p>
-  <p><b>WAF（ワフ）</b>＝ 城門の<b>門番</b>。1人ずつ荷物を調べて、あやしい荷物（悪意のあるリクエスト）を持った人を入れない。</p>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
+  <p><b>Shield</b> は<b>防波堤</b>にあたります。押し寄せる大量の通信（DDoS）を受け止め、システムに到達させないようにします。</p>
+  <p><b>WAF</b> は<b>入口での検査</b>にあたります。個々のリクエストの内容を規則に照らして確認し、悪意のあるものを通しません。</p>
 </div>
 
 <div class="diagram">
   <div class="flow wrap-ok">
     <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">攻撃者・利用者</div>
     <div class="arr">→</div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSShield.svg" alt="">Shield<small>大量アクセスを防ぐ</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSShield.svg" alt="">Shield<small>大量の通信を防御</small></div>
     <div class="arr">→</div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSWAF.svg" alt="">WAF<small>中身をチェック</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSWAF.svg" alt="">WAF<small>リクエスト内容を検査</small></div>
     <div class="arr">→</div>
     <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonCloudFront.svg" alt="">CloudFront<small>/ ALB など</small></div>
     <div class="arr ok">→</div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">あなたのサイト</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">Web サイト</div>
   </div>
-  <div class="cap">Shield が「量」の攻撃を、WAF が「中身」の攻撃を止めます。</div>
+  <div class="cap">Shield は「量」による攻撃を、WAF は「内容」による攻撃を防ぎます。</div>
 </div>
 
 <div class="table-wrap"><table>
-  <tr><th>サービス</th><th>守るもの</th><th>料金・特長</th></tr>
-  <tr><td><b>Shield Standard</b></td><td>よくある DDoS 攻撃</td><td><b>無料・自動</b>。すべてのお客さんに最初から付いている。</td></tr>
-  <tr><td><b>Shield Advanced</b></td><td>大規模・高度な DDoS 攻撃</td><td><b>有料</b>。24時間365日の専門チーム（SRT）のサポート、攻撃で増えた料金の補償など。</td></tr>
-  <tr><td><b>WAF</b></td><td><span class="term" data-tip="SQLインジェクション：入力欄にデータベースへの命令をまぎれこませて、データを盗んだり壊したりする攻撃。">SQL インジェクション</span>・<span class="term" data-tip="クロスサイトスクリプティング（XSS）：Webページに悪いプログラムを埋めこみ、見た人のブラウザで動かす攻撃。">XSS</span> など、Web の中身をねらう攻撃</td><td>ルールを書いて、特定の IP アドレスや国、あやしいリクエストをブロック。CloudFront・ALB・API Gateway などに付ける。</td></tr>
+  <tr><th>サービス</th><th>防ぐ対象</th><th>料金・特長</th></tr>
+  <tr><td><b>Shield Standard</b></td><td>一般的な DDoS 攻撃</td><td><b>無料・自動適用</b>。すべての AWS 利用者に標準で有効。</td></tr>
+  <tr><td><b>Shield Advanced</b></td><td>大規模・高度な DDoS 攻撃</td><td><b>有料</b>。24時間365日対応の専門チーム（SRT）による支援、攻撃に伴う利用料増加の補償などがある。</td></tr>
+  <tr><td><b>WAF</b></td><td><span class="term" data-tip="SQL インジェクション：入力欄にデータベース操作命令を紛れ込ませ、データの窃取や改ざんを行う攻撃。">SQL インジェクション</span>・<span class="term" data-tip="クロスサイトスクリプティング（XSS）：Web ページに悪意あるスクリプトを埋め込み、閲覧者のブラウザで実行させる攻撃。">XSS</span> など、Web アプリケーションを狙う攻撃</td><td>規則（ルール）を定義し、特定の IP アドレスや国、不審なリクエストを遮断する。CloudFront・ALB・API Gateway などに適用する。</td></tr>
 </table></div>
 
-<h2>6. 見張りと調査 —— 「見張り系」サービス</h2>
-<p>名前が似ていてまちがえやすいゾーンです。<b>「だれが・何を見ているか」</b>でグループ分けして覚えましょう。</p>
+<h2>6. 脅威の検出と調査</h2>
+<p>名称が似ており混同しやすい分野です。<b>「何を対象に、何をするサービスか」</b>で分類して整理します。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🕵️</span>たとえ話：警備会社のチーム</div>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
+  <p>組織のセキュリティ部門の役割分担に置き換えると、次のように対応します。</p>
   <ul style="margin:0">
-    <li><b>GuardDuty（ガードデューティ）</b>＝ <b>警備員（ガードマン）</b>。防犯カメラ（ログ）を24時間見て、<b>あやしい動き</b>を見つけたら知らせる。</li>
-    <li><b>Inspector（インスペクター）</b>＝ <b>建物の検査官</b>。EC2 やコンテナに<b>弱点（脆弱性）</b>がないか検査する。</li>
-    <li><b>Macie（メイシー）</b>＝ <b>金庫の中身係</b>。S3 の中に、クレジットカード番号などの<b>個人情報</b>がまぎれていないか探す。</li>
-    <li><b>Detective（ディテクティブ）</b>＝ <b>探偵</b>。事件が起きた<b>あと</b>に、原因や流れを調べる。</li>
-    <li><b>Security Hub（セキュリティハブ）</b>＝ <b>警備本部</b>。みんなの報告を<b>1か所に集めて</b>、全体の点数を出す。</li>
+    <li><b>GuardDuty</b>＝ <b>監視担当</b>。ログを継続的に分析し、<b>不審な挙動</b>を検出して通知する。</li>
+    <li><b>Inspector</b>＝ <b>診断担当</b>。EC2 やコンテナなどに<b>脆弱性</b>がないかを検査する。</li>
+    <li><b>Macie</b>＝ <b>データ保護担当</b>。S3 に<b>個人情報などの機密データ</b>が含まれていないかを検出する。</li>
+    <li><b>Detective</b>＝ <b>調査担当</b>。問題が発生した<b>後</b>に、原因と経緯を分析する。</li>
+    <li><b>Security Hub</b>＝ <b>統括部門</b>。各サービスの検出結果を<b>一元的に集約</b>し、全体の状況を評価する。</li>
   </ul>
 </div>
 
 <div class="diagram">
-  <div class="dtitle">見張り系サービスは Security Hub に集まる</div>
+  <div class="dtitle">検出系サービスの結果は Security Hub に集約される</div>
   <div class="flow wrap-ok">
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonGuardDuty.svg" alt="">GuardDuty<small>あやしい動き</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonInspector.svg" alt="">Inspector<small>弱点の検査</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonMacie.svg" alt="">Macie<small>S3 の個人情報</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonGuardDuty.svg" alt="">GuardDuty<small>脅威の検出</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonInspector.svg" alt="">Inspector<small>脆弱性の検査</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonMacie.svg" alt="">Macie<small>S3 の機密データ</small></div>
   </div>
-  <div class="flow"><div class="arr">↓<small>報告</small></div></div>
+  <div class="flow"><div class="arr">↓<small>検出結果</small></div></div>
   <div class="flow wrap-ok">
-    <div class="node lg"><img src="../assets/aws-icons/architecture-service/AWSSecurityHub.svg" alt="">Security Hub<small>まとめて表示・点数化</small></div>
-    <div class="arr">→<small>深掘り</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonDetective.svg" alt="">Detective<small>原因を調査</small></div>
+    <div class="node lg"><img src="../assets/aws-icons/architecture-service/AWSSecurityHub.svg" alt="">Security Hub<small>集約・スコア化</small></div>
+    <div class="arr">→<small>詳細分析</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonDetective.svg" alt="">Detective<small>原因の調査</small></div>
   </div>
 </div>
 
 <div class="table-wrap"><table>
-  <tr><th>サービス</th><th>何を見る？</th><th>問題文のキーワード</th></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonGuardDuty.svg" alt=""><b>GuardDuty</b></td><td>CloudTrail・VPC フローログ・DNS ログなどを<span class="term" data-tip="機械学習：たくさんのデータからコンピューターがパターンを学び、ふだんとちがう動きなどを見つける技術。">機械学習</span>で分析</td><td>「<b>脅威を検出</b>」「不正なアクセス」「あやしい通信」</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonInspector.svg" alt=""><b>Inspector</b></td><td>EC2・コンテナイメージ・Lambda のソフトの弱点</td><td>「<b>脆弱性</b>（ぜいじゃくせい）をスキャン」<br><small class="muted">脆弱性＝セキュリティ上の弱点・穴。</small></td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonMacie.svg" alt=""><b>Macie</b></td><td>S3 の中のデータ</td><td>「<b>個人情報（PII）</b>」「機密データを S3 で見つける」</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSSecurityHub.svg" alt=""><b>Security Hub</b></td><td>各サービスの結果をまとめる＋ベストプラクティスとのズレをチェック</td><td>「<b>一元的に</b>セキュリティの状態を確認」</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonDetective.svg" alt=""><b>Detective</b></td><td>見つかった問題の原因</td><td>「<b>根本原因を調査</b>」「調べる」</td></tr>
+  <tr><th>サービス</th><th>分析対象</th><th>問題文のキーワード</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonGuardDuty.svg" alt=""><b>GuardDuty</b></td><td>CloudTrail・VPC フローログ・DNS ログなどを<span class="term" data-tip="機械学習：大量のデータからパターンを学習し、予測や異常検知を行う技術。">機械学習</span>で分析</td><td>「<b>脅威を検出</b>」「不正アクセス」「不審な通信」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonInspector.svg" alt=""><b>Inspector</b></td><td>EC2・コンテナイメージ・Lambda のソフトウェアの脆弱性</td><td>「<b>脆弱性</b>（ぜいじゃくせい）をスキャン」<br><small class="muted">脆弱性＝攻撃に悪用されうるセキュリティ上の欠陥。</small></td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonMacie.svg" alt=""><b>Macie</b></td><td>S3 に保存されたデータ</td><td>「<b>個人情報（PII）</b>」「S3 上の機密データを検出」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSSecurityHub.svg" alt=""><b>Security Hub</b></td><td>各サービスの検出結果の集約、ベストプラクティスへの準拠状況の確認</td><td>「セキュリティの状態を<b>一元的に</b>把握」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonDetective.svg" alt=""><b>Detective</b></td><td>検出された問題の原因</td><td>「<b>根本原因を調査</b>」</td></tr>
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：「<b>ガ・イ・メ</b>が見つけて、<b>ハブ</b>に集めて、<b>探偵</b>が調べる」</div>
-  <p>GuardDuty（<b>ガ</b>ードマン）・Inspector（<b>イ</b>ンスペクター＝検査官）・Macie（<b>メ</b>イシー＝S3の中身）→ Security <b>Hub</b> → <b>Detective</b>（探偵）</p>
-  <p>Macie は「<b>M</b>acie ＝ <b>M</b>y 個人情報を S3 で探す」と覚えてもOK。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：「検出 → 集約 → 調査」の流れで並べる</div>
+  <p><b>検出</b>：GuardDuty（脅威）・Inspector（脆弱性）・Macie（機密データ）→ <b>集約</b>：Security Hub → <b>調査</b>：Detective</p>
+  <p>Macie は「<b>M</b>acie ＝ S3 内の <b>M</b>（My）個人情報を探す」と結びつけると区別しやすくなります。</p>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
-  <p>GuardDuty は「<b>見つける</b>」だけで、攻撃を<b>止める</b>わけではありません。止めるのは WAF やセキュリティグループなど。また、「だれがどの操作をしたかの<b>記録</b>」は CloudTrail（第7章）で、GuardDuty はその記録を<b>分析する側</b>です。</p>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
+  <p>GuardDuty は脅威を<b>検出</b>するサービスであり、攻撃を<b>遮断</b>するものではありません。遮断は WAF やセキュリティグループなどが担います。また、「誰がどの操作をしたかの<b>記録</b>」は CloudTrail（第7章）の役割で、GuardDuty はその記録を<b>分析する側</b>です。</p>
 </div>
 
 <h2>7. その他のセキュリティサービス</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSArtifact.svg" alt=""><div><div class="name">AWS Artifact<span class="yomi">アーティファクト</span></div><div class="one">AWS が受けた<b>第三者の監査レポート</b>（ISO・SOC・PCI DSS など）を<b>ダウンロードできる</b>ポータル。「AWS がルールを守っている証明書がほしい」→ Artifact。<br><small class="muted">監査（かんさ）＝外部の専門家が、決まりを守っているかチェックすること。</small></div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonCognito.svg" alt=""><div><div class="name">Amazon Cognito<span class="yomi">コグニート</span></div><div class="one">あなたが作る<b>アプリの利用者</b>のログイン機能（会員登録・サインイン・Google ログインなど）をかんたんに作れる。IAM は「AWS を操作する人」、Cognito は「<b>アプリを使うお客さん</b>」のためのもの。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSArtifact.svg" alt=""><div><div class="name">AWS Artifact<span class="yomi">アーティファクト</span></div><div class="one">AWS が取得した<b>第三者監査レポート</b>（ISO・SOC・PCI DSS など）を<b>ダウンロードできる</b>ポータル。「AWS のコンプライアンス準拠を示す資料が必要」→ Artifact。<br><small class="muted">監査＝外部の専門家が、規程や基準への準拠状況を検証すること。</small></div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonCognito.svg" alt=""><div><div class="name">Amazon Cognito<span class="yomi">コグニート</span></div><div class="one">自社で開発する<b>アプリケーションの利用者</b>向けの認証機能（会員登録・サインイン・外部 ID 連携など）を提供する。IAM は「AWS を操作する人」、Cognito は「<b>アプリケーションのエンドユーザー</b>」を対象とする。</div></div></div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント（まとめ）</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方（まとめ）</div>
   <ul style="margin:0">
-    <li>「コンプライアンスのレポートを入手」→ <b>Artifact</b></li>
-    <li>「モバイルアプリに会員登録・ログイン機能を追加」→ <b>Cognito</b></li>
-    <li>「DDoS 対策を無料で」→ <b>Shield Standard</b>／「専門チームの支援がほしい」→ <b>Shield Advanced</b></li>
-    <li>「SQL インジェクションを防ぐ」→ <b>WAF</b></li>
-    <li>「暗号化キーを管理」→ <b>KMS</b>／「専用ハードウェアで」→ <b>CloudHSM</b></li>
+    <li>「コンプライアンスレポートを入手したい」→ <b>Artifact</b></li>
+    <li>「モバイルアプリに会員登録・サインイン機能を追加したい」→ <b>Cognito</b></li>
+    <li>「DDoS 対策を追加費用なしで」→ <b>Shield Standard</b>／「専門チームの支援が必要」→ <b>Shield Advanced</b></li>
+    <li>「SQL インジェクションを防ぎたい」→ <b>WAF</b></li>
+    <li>「暗号鍵を管理したい」→ <b>KMS</b>／「専用ハードウェアで管理したい」→ <b>CloudHSM</b></li>
   </ul>
 </div>
 
 <div class="recall">
-  <h2>🙌 手ぶら復習</h2>
-  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。</p>
-  <details class="q"><summary>責任共有モデルで、AWS とお客さんの担当をひと言でいうと？</summary><div class="a">AWS は「クラウドの（OF）」セキュリティ＝箱。お客さんは「クラウドの中の（IN）」セキュリティ＝中身（データ・設定・権限）。</div></details>
-  <details class="q"><summary>EC2 と RDS で、OS やデータベースソフトのパッチを当てるのはそれぞれだれ？</summary><div class="a">EC2 はお客さん。RDS は AWS（マネージドサービスなので）。</div></details>
-  <details class="q"><summary>IAM のユーザー・グループ・ポリシー・ロールを、ホテルでたとえると？</summary><div class="a">ユーザー＝スタッフ1人、グループ＝係、ポリシー＝許可のルール表、ロール＝一時的に貸し出す腕章。</div></details>
-  <details class="q"><summary>EC2 から S3 にアクセスさせる正しい方法は？</summary><div class="a">EC2 に IAM ロールを付ける（アクセスキーを保存しない）。</div></details>
-  <details class="q"><summary>IAM の3原則は？</summary><div class="a">最小権限の原則／MFA を使う／ルートユーザーはふだん使わない（最小・二重・使わない）。</div></details>
-  <details class="q"><summary>ルートユーザーでしかできない操作の例を2つ。</summary><div class="a">アカウントの解約、サポートプランの変更（ほか、ルートのメールアドレスなどアカウント設定の変更）。</div></details>
-  <details class="q"><summary>SCP は権限を「あたえる」もの？</summary><div class="a">あたえない。Organizations のアカウントで「ここまでしかできない」という上限（校則）を決めるだけ。</div></details>
-  <details class="q"><summary>Shield と WAF のちがいは？</summary><div class="a">Shield は DDoS（大量アクセス）から守る盾。Standard は無料・自動、Advanced は有料で専門チーム付き。WAF は SQL インジェクションなど Web リクエストの中身をチェックする門番。</div></details>
-  <details class="q"><summary>見張り系5つ（GuardDuty・Inspector・Macie・Security Hub・Detective）の役割は？</summary><div class="a">GuardDuty＝あやしい動きの検出、Inspector＝脆弱性の検査、Macie＝S3 の個人情報を発見、Security Hub＝結果を一元化、Detective＝原因の調査。</div></details>
-  <details class="q"><summary>パスワードを自動でローテーションしたいときのサービスは？ 証明書の場合は？</summary><div class="a">Secrets Manager。証明書は ACM（自動更新）。</div></details>
-  <details class="q"><summary>AWS の監査レポートを入手するサービスは？ アプリのお客さんのログイン機能は？</summary><div class="a">AWS Artifact。ログイン機能は Amazon Cognito。</div></details>
+  <h2>🧠 想起練習</h2>
+  <p class="muted">本文を見ずに答えを思い出してから、各項目を開いて確認してください。</p>
+  <details class="q"><summary>責任共有モデルにおける AWS と利用者の責任範囲を、一言で説明してください。</summary><div class="a">AWS は「クラウドの（OF）」セキュリティ＝基盤。利用者は「クラウドの中の（IN）」セキュリティ＝データ・設定・アクセス権限。</div></details>
+  <details class="q"><summary>EC2 と RDS で、OS やデータベースエンジンのパッチ適用を担うのはそれぞれ誰ですか。</summary><div class="a">EC2 は利用者。RDS は AWS（マネージドサービスのため）。</div></details>
+  <details class="q"><summary>IAM のユーザー・グループ・ポリシー・ロールの役割をそれぞれ説明してください。</summary><div class="a">ユーザー＝個人の認証情報、グループ＝ユーザーの集合、ポリシー＝許可・拒否の規則、ロール＝サービスや他アカウントが一時的に引き受ける権限。</div></details>
+  <details class="q"><summary>EC2 から S3 にアクセスさせる正しい方法は何ですか。</summary><div class="a">EC2 に IAM ロールを付与する（アクセスキーを保存しない）。</div></details>
+  <details class="q"><summary>IAM の3原則を挙げてください。</summary><div class="a">最小権限の原則／MFA の使用／ルートユーザーを日常的に使わない（最小・二重・使わない）。</div></details>
+  <details class="q"><summary>ルートユーザーでしか実行できない操作の例を2つ挙げてください。</summary><div class="a">アカウントの解約、サポートプランの変更（ほかに、ルートユーザーのメールアドレスなどアカウント設定の変更）。</div></details>
+  <details class="q"><summary>SCP は権限を付与するものですか。</summary><div class="a">付与しない。Organizations 配下のアカウントで実行できる操作の上限を定めるだけである。</div></details>
+  <details class="q"><summary>Shield と WAF の違いは何ですか。</summary><div class="a">Shield は DDoS 攻撃（大量の通信）を防ぐ。Standard は無料・自動、Advanced は有料で専門チームの支援付き。WAF は SQL インジェクションなど、Web リクエストの内容を検査して攻撃を防ぐ。</div></details>
+  <details class="q"><summary>GuardDuty・Inspector・Macie・Security Hub・Detective の役割をそれぞれ説明してください。</summary><div class="a">GuardDuty＝脅威の検出、Inspector＝脆弱性の検査、Macie＝S3 の機密データの検出、Security Hub＝検出結果の一元化、Detective＝原因の調査。</div></details>
+  <details class="q"><summary>パスワードを自動でローテーションしたい場合のサービスは何ですか。証明書の場合は何ですか。</summary><div class="a">Secrets Manager。証明書は ACM（自動更新）。</div></details>
+  <details class="q"><summary>AWS の監査レポートを入手するサービスと、アプリケーション利用者の認証機能を提供するサービスは何ですか。</summary><div class="a">監査レポートは AWS Artifact。認証機能は Amazon Cognito。</div></details>
 </div>
 
 <div id="study-log"></div>

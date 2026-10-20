@@ -13,134 +13,127 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第1章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第1章 クラウドとAWSの全体像</h1>
-<p class="lead">AWS の勉強は、まず「そもそもクラウドって何？」「AWS は世界のどこにあるの？」から始めます。ここがすべての土台です。</p>
+<p class="lead">クラウドコンピューティングの基本的な考え方と、AWS のインフラストラクチャが世界中にどのように配置されているかを扱います。以降のすべての章の前提となる内容です。</p>
 
 <div class="box map">
-  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>
   <ol style="margin:0">
-    <li>クラウドとは？（オンプレミスとのちがい）</li>
-    <li>クラウドの6つのメリット</li>
-    <li>サービスの種類（IaaS・PaaS・SaaS）と使い方の形</li>
-    <li>AWS は世界のどこにある？（リージョン・AZ・エッジロケーション）</li>
-    <li>AWS をさわる3つの方法</li>
+    <li>クラウドとは何か（オンプレミスとの違い）</li>
+    <li>クラウドコンピューティングの6つの利点</li>
+    <li>サービスモデル（IaaS・PaaS・SaaS）とデプロイモデル</li>
+    <li>AWS グローバルインフラストラクチャ（リージョン・AZ・エッジロケーション）</li>
+    <li>AWS の操作方法</li>
   </ol>
 </div>
 
-<h2>1. クラウドとは？</h2>
-<p>会社が仕事でコンピューターを使うとき、昔は<b>自分でサーバー（仕事用の強いコンピューター）を買って、自分の建物に置いて</b>いました。これを<span class="term" data-tip="オンプレミス（on-premises）：「自分の敷地内に」という意味。サーバーを自社で買って、自社で置いて、自社で管理するやり方。">オンプレミス</span>といいます。</p>
-<p>それに対して<b>クラウド</b>は、<b>インターネットの向こうにある AWS のコンピューターを、使いたいときに、使った分だけ借りる</b>やり方です。</p>
+<h2>1. クラウドとは何か</h2>
+<p>企業が業務システムを運用する方法として、従来は<b>自社でサーバーを購入し、自社の施設に設置して運用する</b>形態が一般的でした。これを<span class="term" data-tip="オンプレミス（on-premises）：「自社の構内で」の意。サーバーなどの設備を自社で保有・設置・管理する運用形態。">オンプレミス</span>と呼びます。</p>
+<p>これに対し<b>クラウド</b>（クラウドコンピューティング）は、AWS のような事業者が保有するコンピューティング資源を、<b>インターネット経由で、必要なときに必要な量だけ利用し、利用量に応じて料金を支払う</b>形態です。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🏠</span>たとえ話：自家発電と電力会社</div>
-  <p>オンプレミスは<b>自宅に発電機を買って置く</b>ようなもの。最初にお金がかかり、こわれたら自分で直し、使わなくても置き場所をとります。</p>
-  <p>クラウドは<b>電力会社から電気を買う</b>ようなもの。コンセントにさせばすぐ使えて、使った分だけ払えばいい。発電所の管理は電力会社（AWS）がやってくれます。</p>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
+  <p>オンプレミスとクラウドの関係は、<b>自家発電設備を持つこと</b>と<b>電力会社から電気を購入すること</b>の関係に近いものです。自家発電では設備の購入費が先にかかり、保守や故障対応も自社で行う必要があります。電力会社から購入する場合は、設備の運用を事業者に任せ、使用量に応じた料金だけを支払います。</p>
 </div>
 
 <div class="diagram">
   <div class="grp-row">
     <div class="grp onprem">
-      <div class="glabel"><img src="../assets/aws-icons/architecture-group/Corporatedatacenter.svg" alt=""><span class="gtxt">オンプレミス（自社の建物）</span></div>
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/Corporatedatacenter.svg" alt=""><span class="gtxt">オンプレミス（自社データセンター）</span></div>
       <div class="flow">
-        <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">社員</div>
+        <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">利用者</div>
         <div class="arr">→</div>
-        <div class="node"><img src="../assets/aws-icons/resource/Servers.svg" alt="">自社サーバー<small>買う・置く・直す<br>すべて自分</small></div>
+        <div class="node"><img src="../assets/aws-icons/resource/Servers.svg" alt="">自社サーバー<small>調達・設置・保守を<br>すべて自社で行う</small></div>
       </div>
     </div>
     <div class="grp cloud">
       <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">AWS クラウド</span></div>
       <div class="flow">
-        <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">社員</div>
-        <div class="arr">→<small>ネット</small></div>
-        <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">借りたサーバー<small>使う分だけ<br>すぐ借りる</small></div>
+        <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">利用者</div>
+        <div class="arr">→<small>インターネット</small></div>
+        <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2 インスタンス<small>必要な分を数分で<br>起動・停止できる</small></div>
       </div>
     </div>
   </div>
-  <div class="cap">左：自分で持つ。右：AWS から借りる。借りるので、いらなくなったらすぐ返せます。</div>
+  <div class="cap">オンプレミスでは設備を保有します。クラウドでは資源を利用し、不要になれば即座に解放できます。</div>
 </div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>サーバー</dt><dd>ほかのコンピューターにサービスを提供する役目のコンピューター。ホームページを表示したり、データを保存したりする。</dd>
-    <dt>オンプレミス</dt><dd>サーバーを自社で買って、自社で置くやり方。「オンプレ」と略す。</dd>
-    <dt>データセンター</dt><dd>サーバーを何千台・何万台と置いている、専用の大きな建物。</dd>
-    <dt>従量課金（じゅうりょうかきん）</dt><dd>使った量に合わせて料金を払うしくみ。水道や電気と同じ。</dd>
+    <dt>サーバー</dt><dd>ネットワークを介して、他のコンピューターにサービス（Web ページの配信、データの保存など）を提供するコンピューター。</dd>
+    <dt>オンプレミス</dt><dd>サーバーなどの設備を自社で保有・設置・管理する運用形態。</dd>
+    <dt>データセンター</dt><dd>多数のサーバーやネットワーク機器を収容し、電源・空調・セキュリティを備えた専用施設。</dd>
+    <dt>従量課金</dt><dd>実際に利用した量に応じて料金が決まる課金方式。</dd>
   </dl>
 </div>
 
-<h2>2. クラウドの6つのメリット</h2>
-<p>AWS は公式に「クラウドの6つのメリット」をあげています。<b>試験にそのまま出る</b>ので、6つ言えるようにしましょう。</p>
+<h2>2. クラウドコンピューティングの6つの利点</h2>
+<p>AWS はクラウドコンピューティングの利点を6つに整理しています。<b>試験でそのまま問われる</b>ため、6つすべてを挙げられるようにしてください。</p>
 
 <div class="table-wrap"><table>
-  <tr><th>#</th><th>メリット（公式の言い方）</th><th>かんたんに言うと</th></tr>
-  <tr><td>1</td><td><b>固定費を変動費にできる</b></td><td>最初にドカンと買わず、使った分だけ払う。<br><small class="muted">固定費＝使っても使わなくても毎月かかるお金。変動費＝使った量で変わるお金。</small></td></tr>
-  <tr><td>2</td><td><b>規模の経済の恩恵を受けられる</b></td><td>AWS は何百万人分をまとめ買いしているので、1人あたりが安くなる。<br><small class="muted">規模の経済＝たくさん作る・買うほど1個あたりが安くなること。</small></td></tr>
-  <tr><td>3</td><td><b>キャパシティの予測が不要</b></td><td>「何台いるか」を前もって当てなくていい。足りなければ増やし、余れば減らす。<br><small class="muted">キャパシティ＝どれだけの量をさばけるか、という能力・容量。</small></td></tr>
-  <tr><td>4</td><td><b>速度と俊敏性の向上</b></td><td>サーバーが数分で手に入るので、新しいことをすぐ試せる。<br><small class="muted">俊敏性（しゅんびんせい）＝すばやく動けること。英語でアジリティ。</small></td></tr>
-  <tr><td>5</td><td><b>データセンターの運用・保守への投資が不要</b></td><td>建物・電気・冷房・故障対応は AWS まかせ。自分は本業に集中できる。</td></tr>
-  <tr><td>6</td><td><b>数分で世界中に展開</b></td><td>ボタン一つで、アメリカやヨーロッパにもサーバーを置ける。</td></tr>
+  <tr><th>#</th><th>利点（公式の表現）</th><th>意味</th></tr>
+  <tr><td>1</td><td><b>固定費を変動費に変える</b></td><td>設備への先行投資の代わりに、利用量に応じた費用を支払う。<br><small class="muted">固定費：利用量にかかわらず発生する費用。変動費：利用量に応じて増減する費用。</small></td></tr>
+  <tr><td>2</td><td><b>規模の経済の恩恵を受ける</b></td><td>AWS が膨大な数の利用者の需要を集約して調達・運用するため、単価が下がり、利用者は低い料金で利用できる。<br><small class="muted">規模の経済：生産・調達の規模が大きいほど、1単位あたりのコストが下がること。</small></td></tr>
+  <tr><td>3</td><td><b>キャパシティの予測が不要になる</b></td><td>必要な処理能力を事前に見積もらなくてよい。需要に応じて増減できるため、過剰投資や容量不足を避けられる。<br><small class="muted">キャパシティ：システムが処理できる量や容量。</small></td></tr>
+  <tr><td>4</td><td><b>速度と俊敏性を向上させる</b></td><td>IT リソースを数分で用意できるため、開発や検証のサイクルを短縮できる。<br><small class="muted">俊敏性（アジリティ）：変化に迅速に対応できる能力。</small></td></tr>
+  <tr><td>5</td><td><b>データセンターの運用・保守への投資が不要になる</b></td><td>施設・電源・空調・ハードウェアの管理を AWS に任せ、自社の事業に注力できる。</td></tr>
+  <tr><td>6</td><td><b>数分で世界中に展開できる</b></td><td>世界各地のリージョンにシステムを短時間で展開し、各地の利用者に低遅延でサービスを提供できる。</td></tr>
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：「へん・き・よ・はや・ほ・せかい」</div>
-  <p><b>変</b>動費 ／ <b>規</b>模の経済 ／ <b>予</b>測不要 ／ <b>速</b>さ ／ <b>保</b>守不要 ／ <b>世界</b>展開</p>
-  <p>イメージ：「<b>へんな き（木）に よるはやく ほしが せかいじゅう</b>」—— 変な木に、夜はやく、星が世界中に光る場面を思いうかべる。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：「変・規・予・速・保・世」</div>
+  <p><b>変</b>動費化 ／ <b>規</b>模の経済 ／ <b>予</b>測不要 ／ <b>速</b>度と俊敏性 ／ <b>保</b>守不要 ／ <b>世</b>界展開</p>
+  <p>前半3つは<b>コスト・容量</b>に関する利点、後半3つは<b>速さ・運用・展開範囲</b>に関する利点と分けて整理すると覚えやすくなります。</p>
 </div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
   <ul style="margin:0">
-    <li>「初期投資を減らしたい」「使った分だけ払いたい」→ <b>固定費を変動費に</b></li>
-    <li>「需要がわからない」「アクセスの増減がはげしい」→ <b>キャパシティの予測が不要</b>（＝<span class="term" data-tip="伸縮性（Elasticity / エラスティシティ）：必要に応じて、自動で増やしたり減らしたりできる性質。">伸縮性</span>）</li>
-    <li>「新しい国でもすぐサービスを始めたい」→ <b>数分で世界中に展開</b></li>
+    <li>「初期投資を抑え、使用した分だけ支払いたい」→ <b>固定費を変動費に変える</b></li>
+    <li>「需要が予測できない」「アクセス量の変動が大きい」→ <b>キャパシティの予測が不要</b>（<span class="term" data-tip="伸縮性（Elasticity）：需要に応じてリソースを自動的に拡大・縮小できる性質。">伸縮性</span>）</li>
+    <li>「新しい国・地域ですぐにサービスを開始したい」→ <b>数分で世界中に展開できる</b></li>
   </ul>
 </div>
 
-<h2>3. サービスの種類と使い方の形</h2>
-<h3>IaaS・PaaS・SaaS —— どこまで自分でやる？</h3>
-<p>クラウドのサービスは、<b>「AWS がどこまで面倒をみてくれるか」</b>で3つに分けられます。</p>
-
-<div class="box story">
-  <div class="box-title"><span class="em">🍕</span>たとえ話：ピザで考える</div>
-  <ul style="margin:0">
-    <li><b>IaaS（イアース）</b>＝ <b>キッチンを借りる</b>。オーブンはあるけど、生地も具も焼くのも自分。</li>
-    <li><b>PaaS（パース）</b>＝ <b>ピザの宅配</b>。焼くところまでお店がやる。自分はどのピザにするか（＝自分のプログラム）を決めるだけ。</li>
-    <li><b>SaaS（サース）</b>＝ <b>レストランで食べる</b>。全部お店。自分は食べる（使う）だけ。</li>
-  </ul>
-</div>
-
-<div class="table-wrap"><table>
-  <tr><th>種類</th><th>意味</th><th>AWS の例</th><th>自分の担当</th></tr>
-  <tr><td><b>IaaS</b></td><td>Infrastructure as a Service<br><small class="muted">インフラ（土台の機械）をサービスとして借りる</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2</td><td>OS・ソフト・データなど、多い</td></tr>
-  <tr><td><b>PaaS</b></td><td>Platform as a Service<br><small class="muted">アプリを動かす土台ごと借りる</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt="">Elastic Beanstalk</td><td>自分のプログラムとデータ</td></tr>
-  <tr><td><b>SaaS</b></td><td>Software as a Service<br><small class="muted">完成したソフトを使うだけ</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonWorkMail.svg" alt="">WorkMail など<br><small class="muted">（身近な例：Gmail）</small></td><td>使い方と入れるデータだけ</td></tr>
-</table></div>
-
-<h3>クラウドの使い方の形（デプロイモデル）</h3>
-<p><span class="term" data-tip="デプロイ（deploy）：もともとは「配置する」という意味。IT では、作ったシステムを使える状態に置くこと。">デプロイ</span>モデルとは、「システムをどこに置くか」の分け方です。</p>
-<div class="table-wrap"><table>
-  <tr><th>形</th><th>説明</th></tr>
-  <tr><td><b>クラウド</b><br><small class="muted">（クラウドネイティブ）</small></td><td>全部クラウドに置く。</td></tr>
-  <tr><td><b>ハイブリッド</b></td><td>オンプレミスとクラウドを<b>つないで両方使う</b>。「古いシステムは社内に残しつつ、新しいものはクラウドで」など。</td></tr>
-  <tr><td><b>オンプレミス</b><br><small class="muted">（プライベートクラウド）</small></td><td>全部自社に置く。クラウドと同じような技術を社内で使うこともある。</td></tr>
-</table></div>
-
-<h2>4. AWS は世界のどこにある？（グローバルインフラ）</h2>
-<p>AWS のコンピューターは世界中の<b>データセンター</b>に置かれています。その置き方には決まった「単位」があり、ここは<b>試験で毎回のように出ます</b>。</p>
-
-<div class="box story">
-  <div class="box-title"><span class="em">🏙️</span>たとえ話：チェーン店のお店づくり</div>
-  <ul style="margin:0">
-    <li><b>リージョン</b>＝「<b>東京エリア</b>」「大阪エリア」のような<b>地域</b>。</li>
-    <li><b>アベイラビリティーゾーン（AZ）</b>＝ その地域の中にある、<b>はなれた場所にある別々の店舗</b>。1つの店が停電しても、ほかの店で営業を続けられる。</li>
-    <li><b>エッジロケーション</b>＝ 街中の<b>小さな受け取り窓口</b>。よく売れる商品だけ置いておき、お客さんに近いところですぐ渡す。</li>
-  </ul>
-</div>
+<h2>3. サービスモデルとデプロイモデル</h2>
+<h3>IaaS・PaaS・SaaS：利用者が管理する範囲の違い</h3>
+<p>クラウドサービスは、<b>事業者がどこまでを管理し、利用者がどこからを管理するか</b>によって3つのモデルに分類されます。</p>
 
 <div class="diagram">
-  <div class="dtitle">リージョン ⊃ AZ ⊃ データセンター</div>
+  <div class="dtitle">管理範囲の比較（色付き＝利用者が管理）</div>
+  <div class="table-wrap" style="margin:0"><table style="text-align:center">
+    <tr><th>レイヤー</th><th>オンプレミス</th><th>IaaS</th><th>PaaS</th><th>SaaS</th></tr>
+    <tr><td>データ</td><td style="background:var(--accent-soft)">利用者</td><td style="background:var(--accent-soft)">利用者</td><td style="background:var(--accent-soft)">利用者</td><td style="background:var(--accent-soft)">利用者</td></tr>
+    <tr><td>アプリケーション</td><td style="background:var(--accent-soft)">利用者</td><td style="background:var(--accent-soft)">利用者</td><td style="background:var(--accent-soft)">利用者</td><td>事業者</td></tr>
+    <tr><td>OS・ミドルウェア</td><td style="background:var(--accent-soft)">利用者</td><td style="background:var(--accent-soft)">利用者</td><td>事業者</td><td>事業者</td></tr>
+    <tr><td>サーバー・ネットワーク・施設</td><td style="background:var(--accent-soft)">利用者</td><td>事業者</td><td>事業者</td><td>事業者</td></tr>
+  </table></div>
+  <div class="cap">右に行くほど事業者の管理範囲が広がり、利用者の運用負担は小さくなります。その代わり、設定の自由度は下がります。</div>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th>モデル</th><th>意味</th><th>AWS の例</th><th>利用者の管理範囲</th></tr>
+  <tr><td><b>IaaS</b></td><td>Infrastructure as a Service<br><small class="muted">サーバーやネットワークなどの基盤を提供</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2</td><td>OS、ミドルウェア、アプリケーション、データ</td></tr>
+  <tr><td><b>PaaS</b></td><td>Platform as a Service<br><small class="muted">アプリケーションの実行環境まで提供</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt="">Elastic Beanstalk</td><td>アプリケーション、データ</td></tr>
+  <tr><td><b>SaaS</b></td><td>Software as a Service<br><small class="muted">完成したソフトウェアを提供</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonWorkMail.svg" alt="">WorkMail など<br><small class="muted">（一般的な例：Gmail、Microsoft 365）</small></td><td>データと利用設定のみ</td></tr>
+</table></div>
+
+<h3>デプロイモデル</h3>
+<p><span class="term" data-tip="デプロイ（deploy）：開発したシステムを実行環境に配置し、利用可能な状態にすること。">デプロイ</span>モデルは、システムをどこに配置するかによる分類です。</p>
+<div class="table-wrap"><table>
+  <tr><th>モデル</th><th>説明</th></tr>
+  <tr><td><b>クラウド</b><br><small class="muted">（クラウドネイティブ）</small></td><td>システムのすべてをクラウド上に構築する。</td></tr>
+  <tr><td><b>ハイブリッド</b></td><td>オンプレミスとクラウドを<b>接続して併用</b>する。既存システムをオンプレミスに残しつつ、新規システムをクラウドで構築する場合などに用いる。</td></tr>
+  <tr><td><b>オンプレミス</b><br><small class="muted">（プライベートクラウド）</small></td><td>すべてを自社設備で運用する。仮想化などクラウドと同様の技術を自社内で用いる場合もある。</td></tr>
+</table></div>
+
+<h2>4. AWS グローバルインフラストラクチャ</h2>
+<p>AWS のインフラストラクチャは、世界各地のデータセンターで構成されています。その配置には階層的な単位があり、<b>試験で頻繁に問われます</b>。</p>
+
+<div class="diagram">
+  <div class="dtitle">リージョン ⊃ アベイラビリティーゾーン ⊃ データセンター</div>
   <div class="grp cloud">
-    <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">AWS クラウド（世界中）</span></div>
+    <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">AWS クラウド</span></div>
     <div class="grp region">
       <div class="glabel"><img src="../assets/aws-icons/architecture-group/Region.svg" alt=""><span class="gtxt">リージョン：アジアパシフィック（東京） ap-northeast-1</span></div>
       <div class="grp-row">
@@ -150,50 +143,50 @@
       </div>
     </div>
     <div class="flow wrap-ok" style="margin-top:12px">
-      <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonCloudFront.svg" alt="">エッジロケーション<small>世界中に数百か所<br>（CloudFront などが使う）</small></div>
+      <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonCloudFront.svg" alt="">エッジロケーション<small>世界各地の主要都市に配置<br>（CloudFront などが利用）</small></div>
     </div>
   </div>
-  <div class="cap">1つのリージョンには、ふつう<b>3つ以上の AZ</b> があります。AZ どうしは数十km はなれていて、電源やネットワークも別々。でも高速な専用回線でつながっています。</div>
+  <div class="cap">1つのリージョンには、原則として<b>3つ以上の AZ</b> があります。各 AZ は物理的に離れた場所にあり、電源やネットワークも独立していますが、AZ 間は低遅延の専用回線で接続されています。</div>
 </div>
 
 <div class="table-wrap"><table>
-  <tr><th>単位</th><th>なに？</th><th>覚えておくこと</th></tr>
-  <tr><td><b>リージョン</b><br><small class="muted">Region</small></td><td>世界の「地域」。東京・大阪・バージニア北部など</td><td>リージョン同士は<b>独立</b>。データは自分で動かさないかぎり、<b>勝手にほかのリージョンへ移らない</b>。</td></tr>
-  <tr><td><b>AZ</b><br><small class="muted">Availability Zone</small></td><td>リージョンの中の、1つ以上のデータセンターのかたまり</td><td><b>複数の AZ に分けて置く（マルチAZ）</b>と、1つがこわれても止まらない＝<span class="term" data-tip="高可用性（こうかようせい）：システムが止まらずに使い続けられること。英語で High Availability。">高可用性</span>。</td></tr>
-  <tr><td><b>エッジロケーション</b><br><small class="muted">Edge Location</small></td><td>利用者の近くにある小さな拠点</td><td><b>CloudFront</b>（コンテンツ配信）や <b>Route 53</b>（DNS）が使う。データを<span class="term" data-tip="キャッシュ：一度使ったデータを近くにコピーして置いておき、次から速く出せるようにすること。">キャッシュ</span>して速く届ける。</td></tr>
+  <tr><th>単位</th><th>概要</th><th>押さえるべき点</th></tr>
+  <tr><td><b>リージョン</b><br><small class="muted">Region</small></td><td>AWS が拠点を置く地理的な地域（東京、大阪、バージニア北部など）</td><td>リージョン同士は<b>互いに独立</b>している。データは利用者が明示的に移動・複製しない限り、<b>他のリージョンへ移動しない</b>。</td></tr>
+  <tr><td><b>アベイラビリティーゾーン（AZ）</b><br><small class="muted">Availability Zone</small></td><td>リージョン内にある、1つ以上のデータセンターから成る独立した区画</td><td><b>複数の AZ にシステムを分散配置（マルチ AZ 構成）</b>すると、1つの AZ に障害が起きても稼働を継続できる。これにより<span class="term" data-tip="高可用性（High Availability）：障害が発生してもシステムが停止せず、継続して利用できる性質。">高可用性</span>を実現する。</td></tr>
+  <tr><td><b>エッジロケーション</b><br><small class="muted">Edge Location</small></td><td>利用者の近くに配置された小規模な拠点</td><td><b>CloudFront</b>（コンテンツ配信）や <b>Route 53</b>（DNS）が利用する。コンテンツを<span class="term" data-tip="キャッシュ：一度取得したデータを利用者の近くに一時的に保存し、次回以降の応答を高速化する仕組み。">キャッシュ</span>して低遅延で配信する。</td></tr>
 </table></div>
 
-<h3>リージョンの選び方 —— 4つの基準</h3>
+<h3>リージョン選択の4つの基準</h3>
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：「ほう・ち・サ・か」（法・地・サ・価）</div>
+  <div class="box-title"><span class="em">🔑</span>覚え方：「法・地・サ・価」</div>
   <ol style="margin:0">
-    <li><b>法</b>律・ルール（コンプライアンス）：「データは日本国内に置くこと」という決まりがあれば、日本のリージョンしか選べない。<br><small class="muted">コンプライアンス＝法律や決まりを守ること。</small></li>
-    <li><b>地</b>理的な近さ（レイテンシー）：お客さんに近いほど速い。<br><small class="muted">レイテンシー＝データが届くまでの待ち時間。小さいほど速い。</small></li>
-    <li><b>サ</b>ービスがあるか：新しいサービスは、まだ一部のリージョンにしかないことがある。</li>
-    <li>価<b>格</b>：リージョンによって料金がちがう。</li>
+    <li><b>法</b>令・規制への準拠（コンプライアンス）：データを国内に保管する義務がある場合、選べるリージョンは限定される。<br><small class="muted">コンプライアンス：法令や業界規制、社内規程を遵守すること。</small></li>
+    <li><b>地</b>理的な近さ（レイテンシー）：利用者に近いリージョンほど応答が速い。<br><small class="muted">レイテンシー：要求を送ってから応答が返るまでの遅延時間。</small></li>
+    <li><b>サ</b>ービスの提供状況：新しいサービスは一部のリージョンでのみ提供されている場合がある。</li>
+    <li><b>価</b>格：同じサービスでも、リージョンによって料金が異なる。</li>
   </ol>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
-  <p>「どのリージョンを選ぶか」に<b>関係ないもの</b>を選ぶ問題がよく出ます。たとえば「AZ の数」や「サポートプランの種類」は、ふつうリージョン選びの基準ではありません。上の4つを確実に言えるようにしましょう。</p>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
+  <p>リージョン選択の基準として<b>適切でないもの</b>を選ばせる問題がよく出題されます。「AZ の数」や「サポートプランの種類」は、通常リージョン選択の基準には含まれません。上記の4つを正確に挙げられるようにしてください。</p>
 </div>
 
-<h2>5. AWS をさわる3つの方法</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSManagementConsole.svg" alt=""><div><div class="name">マネジメントコンソール<span class="yomi">Management Console</span></div><div class="one">ブラウザで開く<b>画面</b>。マウスでクリックして操作。はじめての人向け。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSCommandLineInterface.svg" alt=""><div><div class="name">AWS CLI<span class="yomi">コマンドライン インターフェース</span></div><div class="one">黒い画面に<b>文字の命令（コマンド）</b>を打って操作。くり返し作業を自動にしやすい。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSToolsandSDKs.svg" alt=""><div><div class="name">SDK<span class="yomi">ソフトウェア開発キット</span></div><div class="one">Python や Java などの<b>プログラムの中から</b> AWS を操作するための部品セット。</div></div></div>
-<p>どの方法でも、裏では同じ <span class="term" data-tip="API（エーピーアイ）：ソフトウェア同士がやりとりするための「窓口」と「決まりごと」。">API</span> を呼び出しています。</p>
+<h2>5. AWS の操作方法</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSManagementConsole.svg" alt=""><div><div class="name">AWS マネジメントコンソール<span class="yomi">Management Console</span></div><div class="one">Web ブラウザから利用する<b>GUI</b>。画面操作でリソースを作成・管理する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSCommandLineInterface.svg" alt=""><div><div class="name">AWS CLI<span class="yomi">Command Line Interface</span></div><div class="one">ターミナルから<b>コマンド</b>で操作するツール。スクリプト化により作業を自動化しやすい。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSToolsandSDKs.svg" alt=""><div><div class="name">AWS SDK<span class="yomi">Software Development Kit</span></div><div class="one">Python や Java などの<b>プログラムから</b> AWS を操作するためのライブラリ群。</div></div></div>
+<p>いずれの方法も、内部では同じ AWS の <span class="term" data-tip="API（Application Programming Interface）：ソフトウェア同士が機能を呼び出し合うための窓口と、その呼び出し方の取り決め。">API</span> を呼び出しています。</p>
 
 <div class="recall">
-  <h2>🙌 手ぶら復習</h2>
-  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。思い出すのに苦労するほど、記憶は強くなります。</p>
-  <details class="q"><summary>オンプレミスとクラウドのちがいを、たとえ話で説明すると？</summary><div class="a">オンプレミスは自宅に発電機を置く（買う・置く・直すを全部自分で）。クラウドは電力会社から電気を買う（使った分だけ払い、管理は AWS）。</div></details>
-  <details class="q"><summary>クラウドの6つのメリットは？</summary><div class="a">①固定費を変動費に ②規模の経済 ③キャパシティ予測が不要 ④速度と俊敏性 ⑤データセンター運用への投資が不要 ⑥数分で世界展開（へん・き・よ・はや・ほ・せかい）</div></details>
-  <details class="q"><summary>IaaS・PaaS・SaaS をピザでたとえると？ AWS の例は？</summary><div class="a">IaaS＝キッチンを借りる（EC2）、PaaS＝宅配ピザ（Elastic Beanstalk）、SaaS＝レストランで食べる。</div></details>
-  <details class="q"><summary>リージョン・AZ・エッジロケーションの関係は？</summary><div class="a">リージョン（地域）の中に複数の AZ（はなれたデータセンター群）がある。エッジロケーションは利用者の近くの小さな拠点で、CloudFront や Route 53 が使う。</div></details>
-  <details class="q"><summary>システムを止まりにくくするには、AZ をどう使う？</summary><div class="a">複数の AZ に分けて置く（マルチAZ）。1つの AZ に障害が起きても、ほかの AZ で動き続ける＝高可用性。</div></details>
-  <details class="q"><summary>リージョンを選ぶ4つの基準は？</summary><div class="a">法律・ルール（コンプライアンス）／お客さんへの近さ（レイテンシー）／使いたいサービスがあるか／価格（ほう・ち・サ・か）。</div></details>
+  <h2>🧠 想起練習</h2>
+  <p class="muted">本文を見ずに答えを思い出してから、各項目を開いて確認してください。思い出すのに労力がかかるほど、記憶は強化されます。</p>
+  <details class="q"><summary>オンプレミスとクラウドの違いを説明してください。</summary><div class="a">オンプレミスは設備を自社で保有・設置・管理する形態。クラウドは事業者の資源をインターネット経由で必要な分だけ利用し、従量課金で支払う形態で、設備の運用は事業者が担う。</div></details>
+  <details class="q"><summary>クラウドコンピューティングの6つの利点を挙げてください。</summary><div class="a">①固定費を変動費に変える ②規模の経済の恩恵 ③キャパシティの予測が不要 ④速度と俊敏性の向上 ⑤データセンターの運用・保守への投資が不要 ⑥数分で世界中に展開（変・規・予・速・保・世）</div></details>
+  <details class="q"><summary>IaaS・PaaS・SaaS の違いと、AWS における IaaS・PaaS の代表例は何ですか。</summary><div class="a">利用者が管理する範囲が異なる。IaaS は OS 以上を利用者が管理（例：EC2）、PaaS はアプリケーションとデータのみ管理（例：Elastic Beanstalk）、SaaS は完成したソフトウェアを利用するだけ。</div></details>
+  <details class="q"><summary>リージョン、AZ、エッジロケーションの関係を説明してください。</summary><div class="a">リージョンは地理的な地域で、その中に物理的に離れた複数の AZ（1つ以上のデータセンターから成る区画）がある。エッジロケーションは利用者の近くの小規模拠点で、CloudFront や Route 53 が利用する。</div></details>
+  <details class="q"><summary>システムの可用性を高めるには、AZ をどのように使いますか。</summary><div class="a">複数の AZ に分散配置する（マルチ AZ 構成）。1つの AZ に障害が発生しても、他の AZ で稼働を継続できる。</div></details>
+  <details class="q"><summary>リージョンを選択する際の4つの基準は何ですか。</summary><div class="a">コンプライアンス（法令・規制）、レイテンシー（利用者との距離）、サービスの提供状況、料金（法・地・サ・価）。</div></details>
 </div>
 
 <div id="study-log"></div>

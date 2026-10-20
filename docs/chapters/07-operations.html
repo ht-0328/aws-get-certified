@@ -13,155 +13,155 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第7章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第7章 監視・運用・自動化</h1>
-<p class="lead">システムは作って終わりではありません。「ちゃんと動いているか見張る」「だれが何をしたか記録する」「同じものを何度でも自動で作る」—— この章は、AWS を<b>うまく運転し続ける</b>ための道具です。</p>
+<p class="lead">システムは構築して終わりではなく、稼働状況の監視、操作の記録、環境の再現といった運用が続きます。この章では、AWS 環境を<b>安定して運用し続けるためのサービス</b>を扱います。</p>
 
 <div class="box map">
-  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>
   <ol style="margin:0">
-    <li>見張りの3兄弟：CloudWatch・CloudTrail・Config</li>
-    <li>まとめて管理する：Systems Manager</li>
-    <li>自動で作る：CloudFormation・CDK（コードでインフラ）</li>
-    <li>アドバイスとお知らせ：Trusted Advisor・Health Dashboard・X-Ray</li>
-    <li>たくさんのアカウントを管理：Organizations・Control Tower・Service Catalog</li>
-    <li>よい設計の教科書：Well-Architected フレームワーク（6つの柱）</li>
+    <li>監視と記録の3サービス：CloudWatch・CloudTrail・Config</li>
+    <li>サーバー群の一元管理：Systems Manager</li>
+    <li>インフラのコード化：CloudFormation・CDK</li>
+    <li>助言と通知：Trusted Advisor・Health Dashboard・X-Ray</li>
+    <li>複数アカウントの管理：Organizations・Control Tower・Service Catalog</li>
+    <li>設計の指針：Well-Architected フレームワーク（6つの柱）</li>
   </ol>
 </div>
 
-<h2>1. 見張りの3兄弟：CloudWatch・CloudTrail・Config</h2>
-<p>名前が似ていて<b>いちばんまちがえやすい</b>ところです。<b>グループ分類法</b>で、3つまとめて「何を見張るか」のちがいで覚えましょう。</p>
+<h2>1. 監視と記録の3サービス：CloudWatch・CloudTrail・Config</h2>
+<p>名称が似ているため、<b>最も混同しやすい</b>箇所です。3つをひとまとまりとして、「何を対象とするか」の違いで整理します。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🏬</span>たとえ話：お店の見張り</div>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
   <ul style="margin:0">
-    <li><b>CloudWatch</b>＝ <b>体温計・血圧計と警報ベル</b>。「サーバーの調子（CPU が何%か）」をはかり、悪くなったらベルを鳴らす。</li>
-    <li><b>CloudTrail</b>＝ <b>防犯カメラ</b>。「<b>だれが・いつ・何をしたか</b>」（どの操作をしたか）を録画する。</li>
-    <li><b>Config</b>＝ <b>お店の配置の記録写真と、ルールのチェック係</b>。「棚がいつどう変わったか」を記録し、「非常口の前に物を置かない」などのルールを守れているかチェックする。</li>
+    <li><b>CloudWatch</b>：計器盤と警報装置。CPU 使用率などの稼働状況を計測し、異常があれば警報を出します。</li>
+    <li><b>CloudTrail</b>：操作ログ（監査証跡）。「<b>誰が・いつ・どの操作を行ったか</b>」を記録します。</li>
+    <li><b>Config</b>：構成管理台帳。リソースの設定が「いつ・どう変わったか」を記録し、社内ルールに準拠しているかを継続的に評価します。</li>
   </ul>
 </div>
 
 <div class="table-wrap"><table>
-  <tr><th>サービス</th><th>何を見る？</th><th>こんな質問に答える</th></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonCloudWatch.svg" alt=""><b>CloudWatch</b></td><td><b>性能・状態</b>（数値やログ）</td><td>「CPU 使用率は今どれくらい？」「高くなったら知らせて」</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCloudTrail.svg" alt=""><b>CloudTrail</b></td><td><b>操作の記録</b>（API の呼び出し）</td><td>「<b>だれが</b>この EC2 を消したの？」</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSConfig.svg" alt=""><b>Config</b></td><td><b>設定とその変化</b></td><td>「このセキュリティグループの設定は<b>いつ・どう変わった</b>？」「ルール違反の設定はある？」</td></tr>
+  <tr><th>サービス</th><th>対象</th><th>答えられる問い</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonCloudWatch.svg" alt=""><b>CloudWatch</b></td><td><b>性能・稼働状況</b>（メトリクスやログ）</td><td>「現在の CPU 使用率は？」「閾値を超えたら通知してほしい」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCloudTrail.svg" alt=""><b>CloudTrail</b></td><td><b>操作の記録</b>（API の呼び出し）</td><td>「この EC2 を<b>誰が</b>削除したのか？」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSConfig.svg" alt=""><b>Config</b></td><td><b>設定とその変更履歴</b></td><td>「このセキュリティグループの設定は<b>いつ・どのように変わった</b>か？」「ルールに違反した設定はあるか？」</td></tr>
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：「ウォッチは体、トレイルは足あと、コンフィグは設定」</div>
-  <p><b>Watch</b>（見る）＝ 体調を見る。<br><b>Trail</b>（足あと・小道）＝ だれかが歩いた<b>足あと</b>が残る。<br><b>Config</b>（configuration＝設定）＝ <b>設定</b>そのもの。<br>英語の意味がそのままヒントになっています。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：英単語の意味から推測する</div>
+  <p><b>Watch</b>（観察する）＝稼働状況を観察する。<br><b>Trail</b>（足跡・痕跡）＝操作の痕跡が残る。<br><b>Config</b>（configuration＝設定）＝設定そのものを記録する。<br>英語の意味がそのまま役割を表しています。</p>
 </div>
 
-<h3>CloudWatch をもう少しくわしく</h3>
+<h3>CloudWatch の詳細</h3>
 <div class="diagram">
-  <div class="dtitle">CloudWatch でアラームを鳴らす流れ</div>
+  <div class="dtitle">CloudWatch アラームによる通知の流れ</div>
   <div class="flow wrap-ok mobile-col">
-    <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2<small>CPU 90%!</small></div>
+    <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2<small>CPU 使用率 90%</small></div>
     <div class="arr">→<small>メトリクス</small></div>
-    <div class="node"><img src="../assets/aws-icons/resource/AmazonCloudWatchAlarm.svg" alt="">CloudWatch<br>アラーム<small>80% をこえたら</small></div>
+    <div class="node"><img src="../assets/aws-icons/resource/AmazonCloudWatchAlarm.svg" alt="">CloudWatch<br>アラーム<small>閾値 80%</small></div>
     <div class="arr">→<small>通知</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleNotificationService.svg" alt="">SNS<small>メールで知らせる</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleNotificationService.svg" alt="">SNS<small>メールで通知</small></div>
   </div>
-  <div class="cap">アラームは通知だけでなく、Auto Scaling でサーバーを増やす、EC2 を再起動する、などの「行動」にもつなげられます。</div>
+  <div class="cap">アラームは通知だけでなく、Auto Scaling によるインスタンスの追加や EC2 の再起動といったアクションにも連携できます。</div>
 </div>
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>メトリクス</dt><dd>CPU 使用率など、時間ごとに記録される<b>数値</b>のデータ。</dd>
-    <dt>アラーム</dt><dd>メトリクスが決めた値（<span class="term" data-tip="しきい値：「ここをこえたら合図を出す」と決めておく境目の値。">しきい値</span>）をこえたときに、通知や自動の処理をするしかけ。</dd>
-    <dt>CloudWatch Logs</dt><dd>アプリやサーバーが書き出す<b>ログ（文字の記録）</b>を集めて保存・検索する機能。</dd>
-    <dt>ダッシュボード</dt><dd>いろいろなグラフを1画面にまとめて見られるページ。</dd>
+    <dt>メトリクス</dt><dd>CPU 使用率など、時系列で記録される<b>数値データ</b>。</dd>
+    <dt>アラーム</dt><dd>メトリクスがあらかじめ定めた値（<span class="term" data-tip="閾値（しきいち）：動作を切り替える基準となる境界値。この値を超えたら通知する、などと設定する。">閾値</span>）を超えたときに、通知や自動処理を実行する仕組み。</dd>
+    <dt>CloudWatch Logs</dt><dd>アプリケーションやサーバーが出力する<b>ログ（テキストの記録）</b>を収集・保存・検索する機能。</dd>
+    <dt>ダッシュボード</dt><dd>複数のグラフを 1 画面にまとめて表示する機能。</dd>
   </dl>
 </div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
   <ul style="margin:0">
-    <li>「<b>だれが</b>リソースを削除したか調べたい」「<b>監査</b>のために API 操作を記録」→ <b>CloudTrail</b></li>
-    <li>「CPU 使用率を監視して、しきい値をこえたら通知」→ <b>CloudWatch アラーム</b></li>
-    <li>「設定の<b>変更履歴</b>」「社内ルールに<b>準拠しているか</b>（コンプライアンス）を継続チェック」→ <b>AWS Config</b></li>
+    <li>「リソースを<b>誰が</b>削除したかを調べたい」「<b>監査</b>のために API 操作を記録したい」→ <b>CloudTrail</b></li>
+    <li>「CPU 使用率を監視し、閾値を超えたら通知したい」→ <b>CloudWatch アラーム</b></li>
+    <li>「設定の<b>変更履歴</b>を残したい」「社内ルールへの<b>準拠状況</b>（コンプライアンス）を継続的に評価したい」→ <b>AWS Config</b></li>
   </ul>
 </div>
 
-<h2>2. まとめて管理する：Systems Manager</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSSystemsManager.svg" alt=""><div><div class="name">AWS Systems Manager<span class="yomi">システムズマネージャー</span></div><div class="one">たくさんのサーバー（EC2 や会社のサーバー）を<b>まとめて操作・管理</b>する道具箱。たとえば：<br>・<b>Session Manager</b>：<span class="term" data-tip="SSH：サーバーに遠くからログインして操作するための方法。ふつうは鍵とポート22番を使う。">SSH</span> の鍵やポートを開けずに、ブラウザから安全にサーバーへログイン<br>・<b>Patch Manager</b>：<span class="term" data-tip="パッチ：ソフトの不具合や弱点を直すための修正プログラム。">パッチ</span>（修正プログラム）を一斉にあてる<br>・<b>Run Command</b>：たくさんのサーバーに同じ命令を一度に送る<br>・<b>Parameter Store</b>：設定値やパスワードを安全にしまっておく</div></div></div>
+<h2>2. サーバー群の一元管理：Systems Manager</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSSystemsManager.svg" alt=""><div><div class="name">AWS Systems Manager</div><div class="one">EC2 やオンプレミスのサーバーを<b>一元的に操作・管理</b>するための機能群。主な機能は次のとおり。<br>・<b>Session Manager</b>：<span class="term" data-tip="SSH（Secure Shell）：ネットワーク越しにサーバーへ安全にログインして操作するためのプロトコル。通常は鍵ペアとポート 22 番を使う。">SSH</span> の鍵管理やポートの開放なしに、ブラウザなどから安全にサーバーへ接続する<br>・<b>Patch Manager</b>：<span class="term" data-tip="パッチ：ソフトウェアの不具合や脆弱性を修正するための更新プログラム。">パッチ</span>の適用を一括で自動化する<br>・<b>Run Command</b>：複数のサーバーに同じコマンドを一斉に実行する<br>・<b>Parameter Store</b>：設定値やパスワードなどを安全に保管する</div></div></div>
 
-<h2>3. 自動で作る：CloudFormation と CDK</h2>
-<p>画面でポチポチ作ると、同じものをもう一度作るのが大変で、まちがいも起きます。そこで<b>インフラの設計図を文字（コード）で書いて、自動で作る</b>考え方が生まれました。これを <span class="term" data-tip="IaC（Infrastructure as Code）：サーバーやネットワークなどのインフラを、プログラムのようにコード（文字）で書いて管理すること。">IaC（アイエーシー）</span>といいます。</p>
+<h2>3. インフラのコード化：CloudFormation と CDK</h2>
+<p>マネジメントコンソールで手作業で構築すると、同じ環境の再現に手間がかかり、設定ミスも起こりやすくなります。そこで、<b>インフラの構成をコードとして記述し、自動で構築する</b>手法が使われます。これを <span class="term" data-tip="IaC（Infrastructure as Code）：サーバーやネットワークなどのインフラ構成をコードで記述し、バージョン管理や自動構築を可能にする手法。">IaC（Infrastructure as Code）</span>といいます。</p>
 
 <div class="box story">
-  <div class="box-title"><span class="em">🧱</span>たとえ話：レゴの組み立て説明書</div>
-  <p><b>CloudFormation</b> は<b>レゴの説明書</b>。説明書（<b>テンプレート</b>）があれば、だれが何度作っても同じ形ができる。できあがった作品（まとまり）を<b>スタック</b>と呼び、まとめてこわす（削除する）こともできる。</p>
+  <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
+  <p><b>CloudFormation</b> は、建築における設計図と施工の関係に近いものです。設計図（<b>テンプレート</b>）があれば、誰が何度構築しても同じ構成が得られます。テンプレートから作成されたリソースの集合を<b>スタック</b>と呼び、スタック単位でまとめて削除することもできます。</p>
 </div>
 
 <div class="diagram">
   <div class="flow wrap-ok mobile-col">
-    <div class="node"><img src="../assets/aws-icons/resource/AWSCloudFormationTemplate.svg" alt="">テンプレート<small>設計図（YAML/JSON）</small></div>
+    <div class="node"><img src="../assets/aws-icons/resource/AWSCloudFormationTemplate.svg" alt="">テンプレート<small>構成の定義（YAML/JSON）</small></div>
     <div class="arr">→</div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSCloudFormation.svg" alt="">CloudFormation<small>説明書どおりに組み立て</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSCloudFormation.svg" alt="">CloudFormation<small>定義に従って構築</small></div>
     <div class="arr">→</div>
-    <div class="node"><img src="../assets/aws-icons/resource/AWSCloudFormationStack.svg" alt="">スタック<small>VPC・EC2・RDS…のセット</small></div>
+    <div class="node"><img src="../assets/aws-icons/resource/AWSCloudFormationStack.svg" alt="">スタック<small>VPC・EC2・RDS などの集合</small></div>
   </div>
-  <div class="cap">同じテンプレートで「開発用」「本番用」「別のリージョン」に、同じ環境をすぐ作れます。</div>
+  <div class="cap">同じテンプレートから、開発環境・本番環境・別リージョンの環境を同一の構成で作成できます。</div>
 </div>
 
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSCloudFormation.svg" alt=""><div><div class="name">AWS CloudFormation<span class="yomi">クラウドフォーメーション</span></div><div class="one">テンプレート（<span class="term" data-tip="YAML / JSON：データを書くための決まった書式。人にもコンピューターにも読みやすい。">YAML か JSON</span>）に書いた AWS リソースを自動で作る。CloudFormation 自体は無料（作ったリソースの料金だけかかる）。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSCloudDevelopmentKit.svg" alt=""><div><div class="name">AWS CDK<span class="yomi">Cloud Development Kit</span></div><div class="one">Python や TypeScript などの<b>ふつうのプログラミング言語</b>で設計図を書ける。書いたものは裏で CloudFormation のテンプレートに変換される。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt=""><div><div class="name">（参考）Elastic Beanstalk</div><div class="one">プログラムを渡すだけで、サーバーなどを自動で用意してくれる PaaS。<b>「インフラを気にせずアプリを動かしたい」</b>ならこちら、<b>「インフラをコードで細かく管理したい」</b>なら CloudFormation。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSCloudFormation.svg" alt=""><div><div class="name">AWS CloudFormation</div><div class="one">テンプレート（<span class="term" data-tip="YAML / JSON：構造化されたデータを記述するためのテキスト形式。人間にも機械にも読みやすい。">YAML または JSON</span>）に記述した AWS リソースを自動で構築する。CloudFormation 自体の利用は無料で、作成したリソースの料金のみがかかる。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSCloudDevelopmentKit.svg" alt=""><div><div class="name">AWS CDK<span class="yomi">Cloud Development Kit</span></div><div class="one">Python や TypeScript などの<b>汎用プログラミング言語</b>でインフラを定義できる。記述した内容は CloudFormation のテンプレートに変換されて実行される。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt=""><div><div class="name">（参考）Elastic Beanstalk</div><div class="one">アプリケーションのコードをアップロードするだけで、実行環境を自動で構築する PaaS。<b>「インフラを意識せずにアプリケーションを動かしたい」</b>なら Elastic Beanstalk、<b>「インフラをコードで細かく管理したい」</b>なら CloudFormation。</div></div></div>
 
-<h2>4. アドバイスとお知らせ</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor<span class="yomi">トラステッドアドバイザー</span></div><div class="one">あなたの AWS の使い方を見て、<b>「ここをこうするともっといいですよ」とアドバイス</b>してくれる。5つの分野：<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスの制限（上限）</b>（＋運用上の優秀性）。全部のチェックを使うには <b>Business 以上のサポートプラン</b>が必要。</div></div></div>
+<h2>4. 助言と通知</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor</div><div class="one">利用中の AWS 環境を自動で点検し、<b>ベストプラクティスに基づく改善提案</b>を行う。対象分野は<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）</b>（加えて運用上の優秀性）。すべてのチェック項目を利用するには <b>Business 以上のサポートプラン</b>が必要。</div></div></div>
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の5分野「コ・パ・セ・た・せ」</div>
-  <p><b>コ</b>スト／<b>パ</b>フォーマンス／<b>セ</b>キュリティ／<b>耐</b>障害性／サービス<b>制</b>限 → 「<b>こぱせ たせ</b>（こっぱ、ちゃんと足せ）」—— アドバイザーが「小銭をちゃんと足せ」と言っている場面を思いうかべる。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の5分野「コ・パ・セ・耐・上」</div>
+  <p><b>コ</b>スト／<b>パ</b>フォーマンス／<b>セ</b>キュリティ／<b>耐</b>障害性／サービスの<b>上</b>限。Well-Architected の柱と重なる項目が多いので、対応づけて覚えると効率的です。</p>
 </div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSHealthDashboard.svg" alt=""><div><div class="name">AWS Health Dashboard<span class="yomi">ヘルスダッシュボード</span></div><div class="one">AWS 側で起きている<b>障害やメンテナンスのお知らせ</b>を見る画面。とくに「<b>あなたのリソースに関係のある</b>」お知らせを教えてくれる。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSXRay.svg" alt=""><div><div class="name">AWS X-Ray<span class="yomi">エックスレイ</span></div><div class="one">アプリの中で、リクエストが<b>どこを通って、どこで時間がかかったか</b>をレントゲンのように見る。たくさんの部品に分かれたアプリ（<span class="term" data-tip="マイクロサービス：1つの大きなアプリを、小さな独立した部品（サービス）に分けて作る作り方。">マイクロサービス</span>）の「どこがおそいか」探しに使う。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSHealthDashboard.svg" alt=""><div><div class="name">AWS Health Dashboard</div><div class="one">AWS 側で発生している<b>障害や予定されたメンテナンスの情報</b>を確認する画面。特に「<b>自分のアカウントのリソースに影響するもの</b>」を通知する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSXRay.svg" alt=""><div><div class="name">AWS X-Ray</div><div class="one">アプリケーション内でリクエストが<b>どのコンポーネントを経由し、どこで時間を要したか</b>を可視化する（分散トレーシング）。<span class="term" data-tip="マイクロサービス：1 つのアプリケーションを、独立して開発・デプロイできる小さなサービスの集合として構成する設計手法。">マイクロサービス</span>構成でのボトルネックの特定に使う。</div></div></div>
 
-<h2>5. たくさんのアカウントを管理する</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSOrganizations.svg" alt=""><div><div class="name">AWS Organizations<span class="yomi">オーガニゼーションズ</span></div><div class="one">たくさんの AWS アカウントを<b>1つのグループ</b>にまとめる。<b>一括請求</b>（請求書を1枚にまとめ、使用量合算で割引も受けやすい）と、<b>SCP</b>（<span class="term" data-tip="SCP（サービスコントロールポリシー）：Organizations でアカウントごとに「使ってよい操作の上限」を決めるルール。">サービスコントロールポリシー</span>）で「この部署のアカウントではこのサービス禁止」のような制限ができる。くわしくは <a href="02-security-iam.html">第2章</a>。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSControlTower.svg" alt=""><div><div class="name">AWS Control Tower<span class="yomi">コントロールタワー</span></div><div class="one">複数アカウントの環境（<span class="term" data-tip="ランディングゾーン：セキュリティなどのルールが最初から整った、複数アカウントの土台となる環境。">ランディングゾーン</span>）を、<b>ベストプラクティスどおりに自動で組み立てる</b>。Organizations の上に乗る「空港の管制塔」。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSServiceCatalog.svg" alt=""><div><div class="name">AWS Service Catalog<span class="yomi">サービスカタログ</span></div><div class="one">会社が<b>「使ってよい」と認めた構成だけ</b>をカタログ（メニュー表）にして、社員はそこから選んで使う。社食のメニュー表のイメージ。</div></div></div>
+<h2>5. 複数アカウントの管理</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSOrganizations.svg" alt=""><div><div class="name">AWS Organizations</div><div class="one">複数の AWS アカウントを<b>組織として一元管理</b>する。<b>一括請求</b>（請求を 1 つにまとめ、使用量の合算によりボリュームディスカウントを受けやすくなる）と、<b>SCP</b>（<span class="term" data-tip="SCP（サービスコントロールポリシー）：Organizations で、各アカウントに許可される操作の上限を定めるポリシー。">サービスコントロールポリシー</span>）による「特定のアカウントでは特定のサービスを使用禁止にする」といった制御ができる。詳しくは <a href="02-security-iam.html">第2章</a>。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSControlTower.svg" alt=""><div><div class="name">AWS Control Tower</div><div class="one">セキュリティやガバナンスの設定が整った複数アカウント環境（<span class="term" data-tip="ランディングゾーン：セキュリティやログ収集などの基本設定があらかじめ整備された、マルチアカウント環境の土台。">ランディングゾーン</span>）を、<b>ベストプラクティスに沿って自動で構築</b>する。Organizations を基盤として動作する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSServiceCatalog.svg" alt=""><div><div class="name">AWS Service Catalog</div><div class="one">組織が<b>承認した構成だけ</b>をカタログとして公開し、利用者はその中から選んで環境を作成する。統制を保ちながらセルフサービスでの利用を可能にする。</div></div></div>
 
-<h2>6. よい設計の教科書：Well-Architected フレームワーク</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSWellArchitectedTool.svg" alt=""><div><div class="name">AWS Well-Architected フレームワーク<span class="yomi">ウェルアーキテクテッド</span></div><div class="one">AWS が長年の経験からまとめた<b>「よい設計」の考え方</b>。<b>6つの柱</b>からなる。<b>Well-Architected Tool</b> を使うと、質問に答えるだけで自分の設計をチェックできる（無料）。</div></div></div>
+<h2>6. 設計の指針：Well-Architected フレームワーク</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSWellArchitectedTool.svg" alt=""><div><div class="name">AWS Well-Architected フレームワーク</div><div class="one">AWS が多数の事例から体系化した<b>優れた設計のための原則とベストプラクティス</b>。<b>6つの柱</b>で構成される。<b>Well-Architected Tool</b> を使うと、設問に回答する形式で自分のワークロードを評価できる（無料）。</div></div></div>
 
 <div class="table-wrap"><table>
-  <tr><th>#</th><th>柱</th><th>ひとことで</th></tr>
-  <tr><td>1</td><td><b>運</b>用上の優秀性<br><small class="muted">Operational Excellence</small></td><td>うまく運用し、改善し続ける（自動化・小さな変更をこまめに）</td></tr>
-  <tr><td>2</td><td><b>セ</b>キュリティ<br><small class="muted">Security</small></td><td>データとシステムを守る（最小権限・暗号化・記録）</td></tr>
-  <tr><td>3</td><td><b>信</b>頼性<br><small class="muted">Reliability</small></td><td>こわれても自動で立ち直る（マルチAZ・バックアップ）</td></tr>
-  <tr><td>4</td><td><b>パ</b>フォーマンス効率<br><small class="muted">Performance Efficiency</small></td><td>目的に合ったサービスを選び、速く動かす</td></tr>
-  <tr><td>5</td><td><b>コ</b>スト最適化<br><small class="muted">Cost Optimization</small></td><td>ムダなお金を使わない</td></tr>
-  <tr><td>6</td><td><b>サ</b>ステナビリティ<br><small class="muted">Sustainability</small></td><td>環境への負荷（電気の使いすぎなど）を減らす</td></tr>
+  <tr><th>#</th><th>柱</th><th>要点</th></tr>
+  <tr><td>1</td><td><b>運</b>用上の優秀性<br><small class="muted">Operational Excellence</small></td><td>運用を自動化し、小さな変更を頻繁に行いながら継続的に改善する</td></tr>
+  <tr><td>2</td><td><b>セ</b>キュリティ<br><small class="muted">Security</small></td><td>データとシステムを保護する（最小権限・暗号化・追跡可能性）</td></tr>
+  <tr><td>3</td><td><b>信</b>頼性<br><small class="muted">Reliability</small></td><td>障害から自動的に復旧できるようにする（マルチ AZ・バックアップ）</td></tr>
+  <tr><td>4</td><td><b>パ</b>フォーマンス効率<br><small class="muted">Performance Efficiency</small></td><td>要件に適したリソースを選択し、効率よく性能を引き出す</td></tr>
+  <tr><td>5</td><td><b>コ</b>スト最適化<br><small class="muted">Cost Optimization</small></td><td>不要な支出を避け、費用対効果を高める</td></tr>
+  <tr><td>6</td><td><b>サ</b>ステナビリティ<br><small class="muted">Sustainability</small></td><td>エネルギー消費などの環境負荷を最小化する</td></tr>
 </table></div>
 <div class="box hook">
   <div class="box-title"><span class="em">🔑</span>覚え方：「運・セ・信・パ・コ・サ」</div>
-  <p>勉強法のページでも出てきた頭字法です。「<b>うん、せしん（世心）ぱこさ</b>」。6番目の<b>サステナビリティは 2021 年に追加</b>された新しい柱、とセットで覚えましょう。</p>
+  <p>学習方法のページで紹介した頭字法です。あわせて、6番目の<b>サステナビリティは 2021 年に追加された</b>柱であることも押さえておきます。</p>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
   <ul style="margin:0">
-    <li><b>CloudWatch と CloudTrail</b>：「性能の監視」なら Watch、「だれが操作したか」なら Trail。<b>名前の Cloud にまどわされない</b>。</li>
-    <li><b>Config と CloudTrail</b>：Config は「<b>設定がどう変わったか</b>」、CloudTrail は「<b>だれが操作したか</b>」。両方を組み合わせて調べることも多い。</li>
-    <li><b>Trusted Advisor と Well-Architected Tool</b>：Trusted Advisor は<b>自動で実際の環境を点検</b>、Well-Architected Tool は<b>質問に答えて設計を見直す</b>。</li>
-    <li><b>Health Dashboard と CloudWatch</b>：AWS 側の障害情報は Health Dashboard、自分のリソースの数値は CloudWatch。</li>
+    <li><b>CloudWatch と CloudTrail</b>：「性能の監視」なら CloudWatch、「誰が操作したか」なら CloudTrail。<b>共通の「Cloud」に惑わされない</b>こと。</li>
+    <li><b>Config と CloudTrail</b>：Config は「<b>設定がどう変わったか</b>」、CloudTrail は「<b>誰が操作したか</b>」。両者を組み合わせて調査することも多い。</li>
+    <li><b>Trusted Advisor と Well-Architected Tool</b>：Trusted Advisor は<b>実際の環境を自動で点検</b>し、Well-Architected Tool は<b>設問への回答を通じて設計を見直す</b>。</li>
+    <li><b>Health Dashboard と CloudWatch</b>：AWS 側の障害情報は Health Dashboard、自分のリソースのメトリクスは CloudWatch。</li>
   </ul>
 </div>
 
 <div class="recall">
-  <h2>🙌 手ぶら復習</h2>
-  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。</p>
-  <details class="q"><summary>CloudWatch・CloudTrail・Config を、お店の見張りにたとえると？</summary><div class="a">CloudWatch＝体温計と警報ベル（性能の監視）、CloudTrail＝防犯カメラ（だれが何をしたか）、Config＝配置の記録写真とルールチェック（設定の変化と準拠チェック）。</div></details>
-  <details class="q"><summary>「EC2 を削除したのはだれか」を調べるサービスは？</summary><div class="a">AWS CloudTrail。</div></details>
-  <details class="q"><summary>CPU 使用率が80%をこえたらメールで知らせるには？</summary><div class="a">CloudWatch のメトリクスにアラームを設定し、SNS でメール通知する。</div></details>
-  <details class="q"><summary>SSH の鍵やポートを開けずにサーバーへログインできる機能は？</summary><div class="a">Systems Manager の Session Manager。</div></details>
-  <details class="q"><summary>IaC とは？ AWS の代表的なサービスは？</summary><div class="a">インフラをコードで書いて自動で作る・管理する考え方。CloudFormation（テンプレート）と CDK（プログラミング言語で書ける）。</div></details>
-  <details class="q"><summary>Trusted Advisor がアドバイスする5つの分野は？</summary><div class="a">コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスの制限（こぱせ たせ）。</div></details>
-  <details class="q"><summary>Well-Architected フレームワークの6つの柱は？</summary><div class="a">運用上の優秀性・セキュリティ・信頼性・パフォーマンス効率・コスト最適化・サステナビリティ（運・セ・信・パ・コ・サ）。</div></details>
-  <details class="q"><summary>複数アカウント環境をベストプラクティスどおり自動で組み立てるサービスは？</summary><div class="a">AWS Control Tower。</div></details>
-  <details class="q"><summary>会社が認めた構成だけを社員に選ばせたい。使うサービスは？</summary><div class="a">AWS Service Catalog。</div></details>
-  <details class="q"><summary>アプリのどこでリクエストに時間がかかっているかを調べるサービスは？</summary><div class="a">AWS X-Ray。</div></details>
+  <h2>🧠 想起練習</h2>
+  <p class="muted">本文を見ずに答えを思い出してから、各項目を開いて確認してください。</p>
+  <details class="q"><summary>CloudWatch・CloudTrail・Config は、それぞれ何を対象とするサービスか。</summary><div class="a">CloudWatch＝性能・稼働状況の監視（メトリクス・ログ・アラーム）、CloudTrail＝誰が・いつ・何をしたかという API 操作の記録、Config＝リソース設定の変更履歴とルールへの準拠評価。</div></details>
+  <details class="q"><summary>「EC2 を削除したのは誰か」を調べるサービスは何か。</summary><div class="a">AWS CloudTrail。</div></details>
+  <details class="q"><summary>CPU 使用率が 80% を超えたらメールで通知するにはどうするか。</summary><div class="a">CloudWatch のメトリクスにアラームを設定し、SNS でメール通知する。</div></details>
+  <details class="q"><summary>SSH の鍵やポートを開放せずにサーバーへ接続できる機能は何か。</summary><div class="a">Systems Manager の Session Manager。</div></details>
+  <details class="q"><summary>IaC とは何か。AWS の代表的なサービスは何か。</summary><div class="a">インフラの構成をコードで記述し、自動で構築・管理する手法。CloudFormation（テンプレート）と CDK（汎用プログラミング言語で記述）。</div></details>
+  <details class="q"><summary>Trusted Advisor が点検する5つの分野は何か。</summary><div class="a">コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）。</div></details>
+  <details class="q"><summary>Well-Architected フレームワークの6つの柱は何か。</summary><div class="a">運用上の優秀性・セキュリティ・信頼性・パフォーマンス効率・コスト最適化・サステナビリティ（運・セ・信・パ・コ・サ）。</div></details>
+  <details class="q"><summary>複数アカウント環境をベストプラクティスに沿って自動構築するサービスは何か。</summary><div class="a">AWS Control Tower。</div></details>
+  <details class="q"><summary>組織が承認した構成だけを利用者に選ばせたい。使うサービスは何か。</summary><div class="a">AWS Service Catalog。</div></details>
+  <details class="q"><summary>アプリケーションのどこでリクエストの処理に時間がかかっているかを調べるサービスは何か。</summary><div class="a">AWS X-Ray。</div></details>
 </div>
 
 <div id="study-log"></div>

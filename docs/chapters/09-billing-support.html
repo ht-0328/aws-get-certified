@@ -13,265 +13,246 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第9章</div>
 <p><span class="badge clf">CLF</span></p>
 <h1>第9章 料金とサポート</h1>
-<p class="lead">クラウドプラクティショナー（CLF）試験では、<b>「お金」と「困ったときの助け」</b>の分野が全体の約12%を占めます。覚えれば確実に点になる、コスパのいい章です。</p>
+<p class="lead">クラウドプラクティショナー（CLF）試験では、<b>請求・料金・サポート</b>の分野が出題全体の約12%を占めます。暗記中心で確実に得点につながる分野です。</p>
 
 <div class="box map">
-  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>
   <ol style="margin:0">
-    <li>料金の3つの基本（何にお金がかかる？）</li>
-    <li>無料利用枠（2025年に大きく変わった）</li>
-    <li>割引のしくみ（購入オプションのおさらい／一括請求）</li>
-    <li>お金を「見積もる・見る・守る」ツール</li>
-    <li>サポートプラン（困ったときの助け）と Trusted Advisor</li>
-    <li>そのほかの助け（Marketplace・パートナー・re:Post など）</li>
+    <li>料金を決める3つの要素</li>
+    <li>無料利用枠（2025年に制度変更）</li>
+    <li>割引の仕組み（購入オプションの整理／一括請求）</li>
+    <li>コストを「見積もる・把握する・管理する」ツール</li>
+    <li>サポートプランと Trusted Advisor</li>
+    <li>その他の支援（Marketplace・パートナー・re:Post など）</li>
   </ol>
 </div>
 
-<h2>1. 料金の3つの基本</h2>
-<p>AWS の料金は、ほぼすべて次の<b>3つ</b>で決まります。</p>
+<h2>1. 料金を決める3つの要素</h2>
+<p>AWS の料金は、ほぼすべて次の<b>3つの要素</b>で決まります。</p>
 
 <div class="diagram">
-  <div class="dtitle">AWS で お金がかかる3つのもの</div>
+  <div class="dtitle">AWS の料金を構成する3つの要素</div>
   <div class="flow wrap-ok">
-    <div class="node lg" style="max-width:170px"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">① コンピューティング<small>サーバーを動かした<b>時間</b><br>（秒・時間単位）</small></div>
-    <div class="node lg"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">② ストレージ<small>保存したデータの<b>量</b><br>（GB × 月）</small></div>
-    <div class="node lg"><img src="../assets/aws-icons/resource/Internet.svg" alt="">③ データ転送<small>AWS から<b>外へ出す</b><br>データの量</small></div>
+    <div class="node lg" style="max-width:170px"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">① コンピューティング<small>サーバーの<b>稼働時間</b><br>（秒・時間単位）</small></div>
+    <div class="node lg"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">② ストレージ<small>保存したデータの<b>容量</b><br>（GB × 月）</small></div>
+    <div class="node lg"><img src="../assets/aws-icons/resource/Internet.svg" alt="">③ データ転送<small>AWS から<b>外部へ送信した</b><br>データの量</small></div>
   </div>
   <div class="grp cloud" style="margin-top:14px">
-    <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">データ転送のルール</span></div>
+    <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">データ転送の課金ルール</span></div>
     <div class="flow">
       <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">インターネット<small>（利用者）</small></div>
       <div class="flow col">
-        <div class="arr ok">→<small>入れる（イン）＝ 無料</small></div>
-        <div class="arr ng">←<small>出す（アウト）＝ 有料</small></div>
+        <div class="arr ok">→<small>受信（イン）＝ 無料</small></div>
+        <div class="arr ng">←<small>送信（アウト）＝ 有料</small></div>
       </div>
       <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">AWS</div>
     </div>
   </div>
-  <div class="cap">AWS に<b>入ってくる</b>データ（インバウンド）は基本<b>無料</b>、AWS から<b>出ていく</b>データ（アウトバウンド）は<b>有料</b>。</div>
-</div>
-
-<div class="box story">
-  <div class="box-title"><span class="em">🏨</span>たとえ話：ホテルの料金</div>
-  <p>① 部屋に<b>泊まった日数</b>（コンピューティング）、② <b>預けた荷物の量</b>（ストレージ）、③ 荷物を<b>外に送り出す宅配便代</b>（データ転送のアウト）。<br>
-  荷物を<b>持ち込むのはタダ</b>、でも<b>送り出すと送料がかかる</b>。お客さんに来てほしいホテルらしいルールです。</p>
+  <div class="cap">AWS に<b>入ってくる</b>データ（インバウンド）は原則<b>無料</b>、AWS から<b>出ていく</b>データ（アウトバウンド）は<b>有料</b>です。</div>
 </div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>インバウンド</dt><dd>外から<b>入ってくる</b>通信。AWS では基本無料。</dd>
-    <dt>アウトバウンド</dt><dd>中から<b>出ていく</b>通信。AWS では有料（量が多いほど1GBあたりは安くなる）。</dd>
-    <dt>従量課金</dt><dd>使った分だけ払うしくみ。AWS の基本。</dd>
-    <dt>TCO</dt><dd>Total Cost of Ownership（総保有コスト）。機械代だけでなく、<b>電気・場所・人件費</b>まで全部ふくめた本当のコスト。オンプレとクラウドを比べるときに使う。</dd>
+    <dt>インバウンド</dt><dd>外部から AWS へ入ってくる通信。原則無料。</dd>
+    <dt>アウトバウンド</dt><dd>AWS から外部へ出ていく通信。有料（転送量が多いほど 1GB あたりの単価は下がる）。</dd>
+    <dt>従量課金</dt><dd>使用量に応じて料金を支払う方式。AWS の基本的な料金体系。</dd>
+    <dt>TCO</dt><dd>Total Cost of Ownership（総保有コスト）。機器の購入費だけでなく、電力・設置場所・運用人件費まで含めた総コスト。オンプレミスとクラウドの比較に用いる。</dd>
   </dl>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
-  <p>「<b>AWS へのデータのアップロード（インバウンド）</b>は有料？」→ <b>基本無料</b>です。また、同じリージョンの中でも <b>AZ をまたぐ</b>通信や、<b>リージョン間</b>の通信には料金がかかることがあります。</p>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
+  <p>「AWS への<b>データのアップロード（インバウンド）</b>は有料か」という問いに対しては、<b>原則無料</b>が正解です。一方、同一リージョン内でも<b>AZ をまたぐ通信</b>や、<b>リージョン間の通信</b>には料金が発生する場合があります。</p>
 </div>
 
-<h2>2. 無料利用枠（フリーティア）</h2>
-<p>AWS には、はじめての人が試せる<span class="term" data-tip="無料利用枠（Free Tier / フリーティア）：一定の量や期間まで、無料でAWSを使える制度。">無料利用枠</span>があります。<b>2025年7月15日から、新しく作るアカウントのしくみが変わりました</b>。</p>
+<h2>2. 無料利用枠（Free Tier）</h2>
+<p>AWS には、一定の範囲内で無料で利用できる<span class="term" data-tip="無料利用枠（Free Tier）：一定の使用量や期間まで AWS を無料で利用できる制度。">無料利用枠</span>があります。<b>2025年7月15日以降に作成するアカウントから、制度が変更されました</b>。</p>
 
 <div class="table-wrap"><table>
-  <tr><th></th><th>2025年7月15日以降に作ったアカウント（今のしくみ）</th><th>それより前のアカウント（昔のしくみ）</th></tr>
-  <tr><td><b>中心となるもの</b></td><td><b>クレジット</b>（AWS で使える「ポイント」）。登録時に <b>100ドル分</b>、さらに EC2・Lambda・Bedrock・Budgets などを試すと<b>最大100ドル分</b>追加（合計で最大200ドル）</td><td>サービスごとの<b>「12か月無料」</b>枠（例：小さい EC2 を月750時間まで）</td></tr>
-  <tr><td><b>プランの選択</b></td><td><b>無料プラン</b>：最大6か月 または クレジットを使い切るまで。お金はかからないが一部サービスは使えない<br><b>有料プラン</b>：全サービスが使え、クレジット分を超えたら請求</td><td>選択なし（12か月をすぎると自動で通常料金）</td></tr>
-  <tr><td><b>ずっと無料</b></td><td colspan="2"><b>常に無料</b>のサービス（例：Lambda の月100万リクエスト、DynamoDB の一定量など）は、どちらでも使える</td></tr>
+  <tr><th></th><th>2025年7月15日以降に作成したアカウント（現行制度）</th><th>それ以前のアカウント（旧制度）</th></tr>
+  <tr><td><b>中心となる仕組み</b></td><td><b>クレジット</b>（AWS の利用料金に充当できる残高）。登録時に <b>100ドル分</b>、さらに EC2・Lambda・Bedrock・Budgets などを試用すると<b>最大100ドル分</b>が追加（合計最大200ドル）</td><td>サービスごとの<b>「12か月無料」</b>枠（例：小規模な EC2 を月750時間まで）</td></tr>
+  <tr><td><b>プランの選択</b></td><td><b>無料プラン</b>：最大6か月、またはクレジットを使い切るまで。課金は発生しないが一部サービスは利用不可<br><b>有料プラン</b>：全サービスを利用でき、クレジットを超えた分が請求される</td><td>選択なし（12か月経過後は自動的に通常料金）</td></tr>
+  <tr><td><b>常時無料</b></td><td colspan="2"><b>常時無料</b>のサービス（例：Lambda の月100万リクエスト、DynamoDB の一定量など）は、どちらの制度でも利用できる</td></tr>
 </table></div>
-<p class="muted">※細かい条件は変わることがあるので、使う前に AWS 公式の「AWS 無料利用枠」ページで確認してください。試験では「<b>無料利用枠には、常に無料・期間限定（12か月など）・トライアルの種類がある</b>」という昔からの分け方で出ることもあります。</p>
+<p class="muted">※詳細な条件は変更される可能性があるため、利用前に AWS 公式の「AWS 無料利用枠」ページを確認してください。試験では「<b>無料利用枠には、常時無料・期間限定（12か月など）・トライアルの3種類がある</b>」という従来の区分で出題される場合もあります。</p>
 
-<h2>3. 割引のしくみ</h2>
-<h3>購入オプションのおさらい（くわしくは第3章）</h3>
+<h2>3. 割引の仕組み</h2>
+<h3>購入オプションの整理（詳しくは第3章）</h3>
 <div class="table-wrap"><table>
-  <tr><th>買い方</th><th>しくみ</th><th>割引</th><th>向いている使い方</th></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt=""><b>オンデマンド</b></td><td>使った分だけ。約束なし</td><td>なし（定価）</td><td>短期間・予測できない・お試し</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/SavingsPlans.svg" alt=""><b>Savings Plans</b></td><td>「1時間あたり〇ドル分使います」を<b>1年か3年</b>約束</td><td>最大約72%</td><td>ずっと使う。インスタンスの種類を<b>あとから変えたい</b></td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/ReservedInstanceReporting.svg" alt=""><b>リザーブドインスタンス（RI）</b></td><td>特定のインスタンスを<b>1年か3年</b>予約</td><td>最大約72%</td><td>ずっと同じ構成で使う</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonEC2SpotInstance.svg" alt=""><b>スポットインスタンス</b></td><td>AWS の<b>空き容量</b>を安く使う。AWS の都合で<b>中断</b>されることあり</td><td>最大約90%</td><td>止まってもいい処理（バッチ・分析など）</td></tr>
-  <tr><td><b>Dedicated Hosts</b></td><td>物理サーバーを<b>まるごと専用</b>に</td><td>なし（高い）</td><td>今あるソフトのライセンスを持ち込みたい、規則で専用が必要</td></tr>
+  <tr><th>購入方法</th><th>仕組み</th><th>割引率</th><th>適した用途</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt=""><b>オンデマンド</b></td><td>使用した分だけ支払う。契約期間の縛りなし</td><td>なし（定価）</td><td>短期間・需要が予測できない・検証用途</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/SavingsPlans.svg" alt=""><b>Savings Plans</b></td><td>「1時間あたり〇ドル分を利用する」と<b>1年または3年</b>コミット</td><td>最大約72%</td><td>継続的に利用し、インスタンスの種類を<b>後から変更したい</b></td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/ReservedInstanceReporting.svg" alt=""><b>リザーブドインスタンス（RI）</b></td><td>特定のインスタンス構成を<b>1年または3年</b>予約</td><td>最大約72%</td><td>同じ構成で継続的に利用する</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonEC2SpotInstance.svg" alt=""><b>スポットインスタンス</b></td><td>AWS の<b>余剰キャパシティ</b>を割安に利用。AWS 側の都合で<b>中断</b>される場合がある</td><td>最大約90%</td><td>中断されても問題ない処理（バッチ・分析など）</td></tr>
+  <tr><td><b>Dedicated Hosts</b></td><td>物理サーバーを<b>専有</b>する</td><td>なし（割高）</td><td>既存ソフトウェアのライセンスを持ち込みたい、規制上専有が必要</td></tr>
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：割引は「約束の強さ」に比例する</div>
-  <p>何も約束しない（オンデマンド）＝ 定価。<b>1〜3年使うと約束</b>（Savings Plans / RI）＝ 約7割引。<b>いつ追い出されても文句を言わない</b>（スポット）＝ 約9割引。<br>
-  「<b>長く・ゆるく約束 → 安い</b>、<b>追い出しOK → もっと安い</b>」と覚えます。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：割引率は「利用者が引き受ける制約」の大きさに比例する</div>
+  <p>制約なし（オンデマンド）＝ 定価。<b>1〜3年の利用をコミット</b>（Savings Plans / RI）＝ 最大約72%引き。<b>いつ中断されても受け入れる</b>（スポット）＝ 最大約90%引き。</p>
 </div>
 
 <h3>一括請求（AWS Organizations）</h3>
-<p>会社でたくさんの AWS アカウントを使っているとき、<b>AWS Organizations の一括請求</b>（<span class="term" data-tip="一括請求（Consolidated Billing）：複数のアカウントの料金を、1つの管理アカウントにまとめて請求するしくみ。">コンソリデーティッドビリング</span>）を使うと：</p>
+<p>企業で複数の AWS アカウントを利用している場合、<b>AWS Organizations の一括請求</b>（<span class="term" data-tip="一括請求（Consolidated Billing）：複数アカウントの料金を、1つの管理アカウントにまとめて請求する仕組み。">Consolidated Billing</span>）を使うと、次のメリットがあります。</p>
 <ul>
-  <li>請求書が<b>1枚</b>にまとまる（支払いは管理アカウントがまとめて行う）</li>
-  <li>全アカウントの使用量を<b>合計して</b>計算されるので、<b>ボリューム割引</b>（たくさん使うほど安くなる）を受けやすい</li>
-  <li>リザーブドインスタンスや Savings Plans の割引を<b>アカウント間で分け合える</b></li>
-  <li>一括請求そのものに<b>追加料金はかからない</b></li>
+  <li>請求が<b>1つ</b>にまとまる（支払いは管理アカウントが一括で行う）</li>
+  <li>全アカウントの使用量が<b>合算</b>されるため、<b>ボリューム割引</b>（使用量が多いほど単価が下がる）を受けやすい</li>
+  <li>リザーブドインスタンスや Savings Plans の割引を<b>アカウント間で共有</b>できる</li>
+  <li>一括請求の機能自体に<b>追加料金はかからない</b></li>
 </ul>
 
 <div class="diagram">
-  <div class="dtitle">一括請求のイメージ</div>
+  <div class="dtitle">一括請求の構成</div>
   <div class="flow wrap-ok">
     <div class="flow col">
       <div class="node sm"><img src="../assets/aws-icons/architecture-group/AWSAccount.svg" alt="">開発用アカウント</div>
       <div class="node sm"><img src="../assets/aws-icons/architecture-group/AWSAccount.svg" alt="">本番用アカウント</div>
       <div class="node sm"><img src="../assets/aws-icons/architecture-group/AWSAccount.svg" alt="">分析用アカウント</div>
     </div>
-    <div class="arr">→<small>使用量を合計</small></div>
-    <div class="node lg"><img src="../assets/aws-icons/architecture-service/AWSOrganizations.svg" alt="">管理アカウント<small>請求書は1枚<br>ボリューム割引</small></div>
+    <div class="arr">→<small>使用量を合算</small></div>
+    <div class="node lg"><img src="../assets/aws-icons/architecture-service/AWSOrganizations.svg" alt="">管理アカウント<small>請求は1つ<br>ボリューム割引</small></div>
   </div>
-  <div class="cap">家族のスマホ代を「家族まとめて割」で1つの請求にするのと同じ発想です。</div>
+  <div class="cap">各アカウントの使用量が合算され、管理アカウントにまとめて請求されます。</div>
 </div>
 
-<h2>4. お金を「見積もる・見る・守る」ツール</h2>
-<p>料金ツールは<b>時間の流れ</b>で3つのグループに分けると覚えやすくなります。</p>
-
-<div class="box story">
-  <div class="box-title"><span class="em">👛</span>たとえ話：おこづかいの管理</div>
-  <ul style="margin:0">
-    <li><b>使う前</b>に「いくらかかるかな？」と<b>計算する</b>＝ 見積もり → <b>Pricing Calculator</b></li>
-    <li><b>使ったあと</b>に家計簿で「何に使った？」を<b>ふり返る</b>＝ 見える化 → <b>Cost Explorer</b>・<b>CUR</b>・<b>Billing コンソール</b></li>
-    <li><b>使いすぎないよう</b>に「今月は3,000円まで！」と<b>決めて見張る</b>＝ 守る → <b>Budgets</b>・<b>Cost Anomaly Detection</b></li>
-  </ul>
-</div>
+<h2>4. コストを「見積もる・把握する・管理する」ツール</h2>
+<p>料金関連のツールは、<b>利用のどの段階で使うか</b>によって3つに分類すると整理しやすくなります。</p>
 
 <div class="table-wrap"><table>
-  <tr><th>いつ</th><th>サービス</th><th>何をする？</th></tr>
-  <tr><td><b>使う前</b></td><td><img class="ico-s" src="../assets/aws-icons/category/CloudFinancialManagement.svg" alt="">AWS Pricing Calculator</td><td>これから作る構成の<b>月額料金を見積もる</b>（無料・ログイン不要）</td></tr>
-  <tr><td rowspan="3"><b>使ったあと</b></td><td><img class="ico-s" src="../assets/aws-icons/category/CloudFinancialManagement.svg" alt="">Billing and Cost Management コンソール</td><td>今月の<b>請求額・請求書</b>を見る、支払い方法を設定する画面</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCostExplorer.svg" alt="">AWS Cost Explorer</td><td>コストを<b>グラフで分析</b>。サービス別・月別に見る。過去の傾向から<b>今後の予測</b>も出せる。RI や Savings Plans の<b>おすすめ</b>も出る</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCostandUsageReport.svg" alt="">AWS Cost and Usage Report（CUR）</td><td><b>いちばん細かい</b>使用量・料金のデータを S3 にファイルで出力。自分で詳しく分析する用（今は「データエクスポート」機能の中の CUR 2.0）</td></tr>
-  <tr><td rowspan="2"><b>使いすぎ防止</b></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSBudgets.svg" alt="">AWS Budgets</td><td><b>予算を決めて</b>、こえそう・こえたら<b>メールなどで通知</b>。対応を自動で実行することも可能</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/category/CloudFinancialManagement.svg" alt="">AWS Cost Anomaly Detection</td><td>機械学習で<b>「いつもとちがう」急な料金の増え方</b>を見つけて知らせる</td></tr>
+  <tr><th>段階</th><th>サービス</th><th>機能</th></tr>
+  <tr><td><b>利用前（見積もる）</b></td><td><img class="ico-s" src="../assets/aws-icons/category/CloudFinancialManagement.svg" alt="">AWS Pricing Calculator</td><td>これから構築する構成の<b>月額料金を見積もる</b>（無料・ログイン不要）</td></tr>
+  <tr><td rowspan="3"><b>利用後（把握する）</b></td><td><img class="ico-s" src="../assets/aws-icons/category/CloudFinancialManagement.svg" alt="">Billing and Cost Management コンソール</td><td>当月の<b>請求額や請求書</b>の確認、支払い方法の設定を行う画面</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCostExplorer.svg" alt="">AWS Cost Explorer</td><td>コストを<b>グラフで分析</b>する。サービス別・月別の表示に加え、過去の傾向から<b>将来のコストを予測</b>できる。RI や Savings Plans の<b>推奨</b>も表示される</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSCostandUsageReport.svg" alt="">AWS Cost and Usage Report（CUR）</td><td><b>最も詳細な</b>使用量・料金データを S3 にファイル出力する。独自の詳細分析向け（現在は「データエクスポート」機能内の CUR 2.0）</td></tr>
+  <tr><td rowspan="2"><b>超過防止（管理する）</b></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSBudgets.svg" alt="">AWS Budgets</td><td><b>予算を設定</b>し、超過しそうなとき・超過したときに<b>メールなどで通知</b>する。対応アクションの自動実行も可能</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/category/CloudFinancialManagement.svg" alt="">AWS Cost Anomaly Detection</td><td>機械学習により<b>通常と異なる急激なコスト増加</b>を検知して通知する</td></tr>
 </table></div>
 
 <h3>コスト配分タグ</h3>
-<p>AWS のリソース（サーバーなど）には<span class="term" data-tip="タグ：リソースにつける「名札」。「キー（項目名）」と「値」のペアでできている。例：部署=営業部。">タグ</span>という名札をつけられます。「部署=営業部」「プロジェクト=新サイト」のようなタグを<b>コスト配分タグ</b>として有効にすると、<b>部署別・プロジェクト別に料金を分けて</b>集計できます（Cost Explorer などで使える）。</p>
+<p>AWS のリソースには<span class="term" data-tip="タグ：リソースに付与するメタデータ。キー（項目名）と値の組で構成される。例：Department=Sales。">タグ</span>を付与できます。「部署=営業部」「プロジェクト=新サイト」のようなタグを<b>コスト配分タグ</b>として有効化すると、<b>部署別・プロジェクト別にコストを分けて</b>集計できます（Cost Explorer などで利用可能）。</p>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：「みつもり・みる・まもる」の3M</div>
-  <p><b>見積もり</b>＝Pricing <b>Calculator</b>（電卓）／ <b>見る</b>＝Cost <b>Explorer</b>（探検家がグラフを探検）／ <b>守る</b>＝<b>Budgets</b>（予算の見張り番）</p>
-  <p>Calculator は「電卓」、Explorer は「探検家」、Budget は「予算」。<b>英語の意味そのまま</b>です。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：サービス名の英語の意味で対応づける</div>
+  <p><b>見積もる</b>＝Pricing <b>Calculator</b>（計算機）／ <b>把握する</b>＝Cost <b>Explorer</b>（探索して分析する）／ <b>管理する</b>＝<b>Budgets</b>（予算）</p>
 </div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
   <ul style="margin:0">
-    <li>「AWS に移行したら<b>いくらかかるか見積もりたい</b>」→ <b>Pricing Calculator</b></li>
-    <li>「過去の<b>コストの傾向をグラフ</b>で見たい」「<b>将来のコストを予測</b>」→ <b>Cost Explorer</b></li>
-    <li>「予算を<b>こえたらアラート</b>」→ <b>Budgets</b></li>
-    <li>「<b>最も詳細</b>な請求データ」→ <b>Cost and Usage Report</b></li>
+    <li>「AWS に移行した場合の<b>費用を見積もりたい</b>」→ <b>Pricing Calculator</b></li>
+    <li>「過去の<b>コストの傾向をグラフ</b>で確認したい」「<b>将来のコストを予測</b>したい」→ <b>Cost Explorer</b></li>
+    <li>「予算を<b>超えたらアラート</b>を出したい」→ <b>Budgets</b></li>
+    <li>「<b>最も詳細</b>な請求データが欲しい」→ <b>Cost and Usage Report</b></li>
     <li>「<b>部署ごと</b>にコストを分けたい」→ <b>コスト配分タグ</b></li>
-    <li>「複数アカウントの<b>請求をまとめて</b>、<b>ボリューム割引</b>」→ <b>Organizations の一括請求</b></li>
+    <li>「複数アカウントの<b>請求をまとめ</b>、<b>ボリューム割引</b>を受けたい」→ <b>Organizations の一括請求</b></li>
   </ul>
 </div>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
-  <p><b>Budgets と CloudWatch の請求アラーム</b>はどちらも「料金が〇ドルをこえたら通知」ができますが、<b>予算管理なら Budgets</b> が基本の答え。<br>
-  <b>Cost Explorer は見るだけ</b>（通知はしない）、<b>Budgets は見張って知らせる</b>、と分けて覚えましょう。</p>
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
+  <p><b>Budgets と CloudWatch の請求アラーム</b>は、どちらも「料金が〇ドルを超えたら通知」を実現できますが、<b>予算管理が目的なら Budgets</b> が標準的な解答です。<br>
+  また、<b>Cost Explorer は分析・可視化のツール</b>であり通知機能は持ちません。<b>通知まで行うのは Budgets</b> です。</p>
 </div>
 
-<h2>5. サポートプラン —— 困ったときの助け</h2>
-<p>AWS で困ったとき、AWS の技術者に相談できる<b>サポートプラン</b>があります。</p>
+<h2>5. サポートプラン</h2>
+<p>AWS の技術者に問い合わせるためには、<b>サポートプラン</b>の契約が必要です。プランによって応答時間や受けられる支援が異なります。</p>
 
 <div class="box warn">
-  <div class="box-title"><span class="em">⚠️</span>大事：2025年12月にプランの種類が新しくなりました</div>
-  <p>AWS は2025年12月にサポートプランを<b>「Basic（無料）＋ 3つの有料プラン」</b>に作り直すと発表しました。ただし、<b>CLF-C02 試験の問題は昔のプラン名で出る可能性が高い</b>ので、ここでは<b>両方</b>説明します。昔のプラン（Developer・Business・Enterprise On-Ramp）は <b>2027年1月1日まで</b>使える予定です。</p>
+  <div class="box-title"><span class="em">⚠️</span>2025年12月にプラン体系が刷新されました</div>
+  <p>AWS は2025年12月に、サポートプランを<b>「Basic（無料）＋ 3つの有料プラン」</b>へ再編すると発表しました。ただし、<b>CLF-C02 試験では旧プラン名で出題される可能性が高い</b>ため、ここでは<b>両方</b>を説明します。旧プラン（Developer・Business・Enterprise On-Ramp）は <b>2027年1月1日まで</b>利用できる予定です。</p>
 </div>
 
-<h3>試験でよく出る：昔からの5つのプラン</h3>
+<h3>試験で頻出の従来の5プラン</h3>
 <div class="table-wrap"><table>
-  <tr><th>プラン</th><th>だれ向け？</th><th>いちばん速い応答</th><th>とくちょう</th></tr>
-  <tr><td><b>ベーシック</b><br><small class="muted">（Basic）</small></td><td>全員（無料）</td><td>技術サポートなし<br><small class="muted">（請求・アカウントの問い合わせのみ）</small></td><td>ドキュメント、re:Post、<b>Health Dashboard</b>、Trusted Advisor の<b>基本チェックのみ</b></td></tr>
-  <tr><td><b>デベロッパー</b><br><small class="muted">（Developer）</small></td><td>お試し・開発中</td><td>システム障害：<b>12営業時間</b>以内<br><small class="muted">（一般的な質問は24営業時間）</small></td><td><b>平日日中のメール</b>のみ</td></tr>
-  <tr><td><b>ビジネス</b><br><small class="muted">（Business）</small></td><td>本番で使っている</td><td>本番システム停止：<b>1時間</b>以内</td><td><b>24時間365日</b>電話・チャット・メール。Trusted Advisor <b>全チェック</b></td></tr>
-  <tr><td><b>エンタープライズ On-Ramp</b></td><td>大事な仕事で使っている</td><td>ビジネスに重大な停止：<b>30分</b>以内</td><td><b>TAM のチーム</b>（プール）から助言</td></tr>
-  <tr><td><b>エンタープライズ</b><br><small class="muted">（Enterprise）</small></td><td>会社の中心で使っている</td><td>ビジネスに重大な停止：<b>15分</b>以内</td><td><b>専任の TAM</b>、<b>コンシェルジュ</b>（請求・アカウントの専門窓口）</td></tr>
+  <tr><th>プラン</th><th>想定される利用者</th><th>最短の応答時間</th><th>特徴</th></tr>
+  <tr><td><b>ベーシック</b><br><small class="muted">（Basic）</small></td><td>全利用者（無料）</td><td>技術サポートなし<br><small class="muted">（請求・アカウントの問い合わせのみ）</small></td><td>ドキュメント、re:Post、<b>Health Dashboard</b>、Trusted Advisor の<b>基本チェックのみ</b></td></tr>
+  <tr><td><b>デベロッパー</b><br><small class="muted">（Developer）</small></td><td>検証・開発段階</td><td>システム障害：<b>12営業時間</b>以内<br><small class="muted">（一般的な質問は24営業時間）</small></td><td><b>営業時間内のメール</b>のみ</td></tr>
+  <tr><td><b>ビジネス</b><br><small class="muted">（Business）</small></td><td>本番環境で利用</td><td>本番システム停止：<b>1時間</b>以内</td><td><b>24時間365日</b>の電話・チャット・メール。Trusted Advisor の<b>全チェック</b></td></tr>
+  <tr><td><b>エンタープライズ On-Ramp</b></td><td>重要な業務で利用</td><td>ビジネスクリティカルなシステム停止：<b>30分</b>以内</td><td><b>TAM のチーム</b>（プール）による支援</td></tr>
+  <tr><td><b>エンタープライズ</b><br><small class="muted">（Enterprise）</small></td><td>基幹業務で利用</td><td>ビジネスクリティカルなシステム停止：<b>15分</b>以内</td><td><b>専任の TAM</b>、<b>コンシェルジュ</b>（請求・アカウント専門窓口）</td></tr>
 </table></div>
 
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>TAM</dt><dd>Technical Account Manager（テクニカルアカウントマネージャー）。その会社の<b>担当になってくれる AWS の技術者</b>。設計の相談や、先回りしたアドバイスをくれる。<b>エンタープライズ系のプランだけ</b>。</dd>
-    <dt>コンシェルジュ</dt><dd>ホテルの「何でも相談係」のように、<b>請求やアカウントの相談</b>にのってくれる専門チーム。</dd>
-    <dt>営業時間</dt><dd>平日の日中のこと。「12営業時間」は土日や夜をのぞいて12時間。</dd>
-    <dt>AWS Health Dashboard</dt><dd>AWS 側で起きている<b>障害やメンテナンスの情報</b>を見られる画面。全員無料。</dd>
+    <dt>TAM</dt><dd>Technical Account Manager。顧客企業ごとに割り当てられる AWS の技術担当者。設計上の助言や予防的な提案を行う。<b>エンタープライズ系プランのみ</b>。</dd>
+    <dt>コンシェルジュ</dt><dd><b>請求やアカウント管理</b>に関する問い合わせを専門に扱う窓口チーム。</dd>
+    <dt>営業時間</dt><dd>平日の日中を指す。「12営業時間」は土日や夜間を除いた12時間。</dd>
+    <dt>AWS Health Dashboard</dt><dd>AWS 側で発生している<b>障害やメンテナンスの情報</b>を確認できる画面。全利用者が無料で使える。</dd>
   </dl>
 </div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：応答時間は「12 → 1 → 30 → 15」</div>
-  <p><b>デ</b>ベロッパー 12時間 → <b>ビ</b>ジネス 1時間 → <b>オン</b>ランプ 30分 → <b>エン</b>タープライズ 15分。<br>
-  「<b>デ・ビ・オン・エン</b>、<b>じゅうに・いち・さんじゅう・じゅうご</b>」とリズムで唱えます。<br>
-  そして「<b>専任 TAM はエンタープライズだけ</b>」「<b>24時間の電話はビジネスから</b>」の2つを合わせて覚えます。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：応答時間は「12時間 → 1時間 → 30分 → 15分」</div>
+  <p><b>デ</b>ベロッパー 12時間 → <b>ビ</b>ジネス 1時間 → <b>オン</b>ランプ 30分 → <b>エン</b>タープライズ 15分。上位プランほど短くなる順に並べて覚えます。<br>
+  あわせて「<b>専任 TAM はエンタープライズのみ</b>」「<b>24時間の電話サポートはビジネス以上</b>」の2点を押さえます。</p>
 </div>
 
-<h3>新しいプラン（2025年12月発表）</h3>
+<h3>新しいプラン体系（2025年12月発表）</h3>
 <div class="table-wrap"><table>
-  <tr><th>プラン</th><th>重大な障害への応答目標</th><th>とくちょう</th></tr>
-  <tr><td><b>Basic</b></td><td>—</td><td>無料。今までと同じ</td></tr>
-  <tr><td><b>Business Support+</b></td><td>30分以内</td><td>AI ＋ AWS の技術者による 24時間サポート。月29ドルから</td></tr>
-  <tr><td><b>Enterprise Support</b></td><td>15分以内</td><td><b>専任の TAM</b> がつく</td></tr>
-  <tr><td><b>Unified Operations</b></td><td>5分</td><td>最重要システム向け。専門チームが24時間見守る</td></tr>
+  <tr><th>プラン</th><th>重大な障害への応答目標</th><th>特徴</th></tr>
+  <tr><td><b>Basic</b></td><td>—</td><td>無料。従来と同じ</td></tr>
+  <tr><td><b>Business Support+</b></td><td>30分以内</td><td>AI と AWS の技術者による24時間サポート。月29ドルから</td></tr>
+  <tr><td><b>Enterprise Support</b></td><td>15分以内</td><td><b>専任の TAM</b> が付く</td></tr>
+  <tr><td><b>Unified Operations</b></td><td>5分</td><td>最重要システム向け。専門チームが24時間体制で監視・支援</td></tr>
 </table></div>
 <p class="muted">※料金・内容は AWS 公式の「AWS Support プラン」ページで最新情報を確認してください。</p>
 
-<h3>AWS Trusted Advisor —— 無料のアドバイザー</h3>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor<span class="yomi">トラステッド アドバイザー</span></div><div class="one">あなたの AWS の使い方を<b>自動でチェックして、改善点を教えてくれる</b>「健康診断」。<br>チェックする分野：<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）・運用上の優秀性</b></div></div></div>
+<h3>AWS Trusted Advisor</h3>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor<span class="yomi">トラステッド アドバイザー</span></div><div class="one">AWS 環境を<b>自動的に点検し、ベストプラクティスに基づく改善点を提示する</b>サービス。<br>点検の分野：<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）・運用上の優秀性</b></div></div></div>
 <div class="table-wrap"><table>
-  <tr><th>プラン</th><th>使えるチェック</th></tr>
-  <tr><td>ベーシック・デベロッパー</td><td><b>基本チェックだけ</b>（サービスクォータと、一部のセキュリティチェック：S3 バケットの公開設定、MFA の設定など）</td></tr>
-  <tr><td>ビジネス以上</td><td><b>全部のチェック</b>が使える</td></tr>
+  <tr><th>プラン</th><th>利用できるチェック</th></tr>
+  <tr><td>ベーシック・デベロッパー</td><td><b>基本チェックのみ</b>（サービスクォータと一部のセキュリティチェック：S3 バケットの公開設定、ルートユーザーの MFA 設定など）</td></tr>
+  <tr><td>ビジネス以上</td><td><b>すべてのチェック</b></td></tr>
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の分野「こ・パ・セ・た・サ・う」</div>
-  <p><b>コ</b>スト／<b>パ</b>フォーマンス／<b>セ</b>キュリティ／<b>た</b>いしょうがい性（耐障害性）／<b>サ</b>ービスクォータ／<b>う</b>んよう（運用上の優秀性）<br>
-  →「<b>こっぱせた さう</b>」（小っ恥ずかしいサウナ）と覚える。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の6分野「コ・パ・セ・耐・サ・運」</div>
+  <p><b>コ</b>スト最適化／<b>パ</b>フォーマンス／<b>セ</b>キュリティ／<b>耐</b>障害性／<b>サ</b>ービスクォータ／<b>運</b>用上の優秀性</p>
 </div>
 
 <div class="box exam">
-  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
   <ul style="margin:0">
-    <li>「<b>最も安く</b>、本番環境で<b>24時間電話サポート</b>」→ <b>ビジネス</b></li>
+    <li>「<b>最も低コスト</b>で、本番環境向けに<b>24時間の電話サポート</b>を受けたい」→ <b>ビジネス</b></li>
     <li>「<b>専任の TAM</b> が必要」→ <b>エンタープライズ</b>（On-Ramp は TAM の<b>チーム</b>）</li>
-    <li>「<b>15分以内</b>の応答」→ <b>エンタープライズ</b></li>
-    <li>「使っていないリソースを見つけてコスト削減のアドバイスを」→ <b>Trusted Advisor</b></li>
-    <li>「AWS 側の障害情報を見たい」→ <b>AWS Health Dashboard</b></li>
+    <li>「<b>15分以内</b>の応答が必要」→ <b>エンタープライズ</b></li>
+    <li>「使用されていないリソースを見つけ、コスト削減の推奨を受けたい」→ <b>Trusted Advisor</b></li>
+    <li>「AWS 側の障害情報を確認したい」→ <b>AWS Health Dashboard</b></li>
   </ul>
 </div>
 
-<h2>6. そのほかの助け</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSMarketplace.svg" alt=""><div><div class="name">AWS Marketplace<span class="yomi">マーケットプレイス</span></div><div class="one">ほかの会社が作ったソフトウェアやサービスを<b>探して買える</b>オンラインストア。料金は AWS の請求にまとめられる。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSPartnerCentral.svg" alt=""><div><div class="name">AWS Partner Network（APN）<span class="yomi">パートナー ネットワーク</span></div><div class="one">AWS を使ったシステム作りを手伝ってくれる<b>パートナー企業</b>の集まり。<b>コンサルティング</b>する会社や、<b>ソフトを作る会社</b>がいる。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSrePost.svg" alt=""><div><div class="name">AWS re:Post<span class="yomi">リポスト</span></div><div class="one">AWS の<b>質問掲示板（Q&amp;A コミュニティ）</b>。だれでも無料で質問・回答できる。AWS の専門家が答えることも。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSProfessionalServices.svg" alt=""><div><div class="name">AWS Professional Services<span class="yomi">プロフェッショナル サービス</span></div><div class="one"><b>AWS 社員の専門家チーム</b>が、移行などの大きなプロジェクトを手伝ってくれる（有料）。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSIQ.svg" alt=""><div><div class="name">AWS IQ<span class="yomi">アイキュー</span></div><div class="one">AWS 認定を持つ<b>フリーランスの専門家</b>に仕事を頼めるサービス<b>でした</b>。<b>2026年5月28日でサービス終了</b>し、今は AWS Marketplace の「プロフェッショナルサービス」が後を継いでいます。古い問題集には出てくるので、名前だけ知っておきましょう。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrainingCertification.svg" alt=""><div><div class="name">AWS Skill Builder / ドキュメント / ナレッジセンター</div><div class="one">無料の学習コンテンツ（Skill Builder）、公式ドキュメント、よくある質問集（Knowledge Center）。困ったらまずここ。</div></div></div>
+<h2>6. その他の支援</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSMarketplace.svg" alt=""><div><div class="name">AWS Marketplace<span class="yomi">マーケットプレイス</span></div><div class="one">サードパーティ製のソフトウェアやサービスを<b>検索・購入できる</b>デジタルカタログ。料金は AWS の請求に統合される。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSPartnerCentral.svg" alt=""><div><div class="name">AWS Partner Network（APN）<span class="yomi">パートナー ネットワーク</span></div><div class="one">AWS を活用したシステム構築を支援する<b>パートナー企業</b>のネットワーク。<b>コンサルティング</b>企業や<b>ソフトウェア</b>企業が参加している。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSrePost.svg" alt=""><div><div class="name">AWS re:Post<span class="yomi">リポスト</span></div><div class="one">AWS の<b>Q&amp;A コミュニティ</b>。誰でも無料で質問・回答でき、AWS の専門家が回答することもある。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSProfessionalServices.svg" alt=""><div><div class="name">AWS Professional Services<span class="yomi">プロフェッショナル サービス</span></div><div class="one"><b>AWS 社員の専門家チーム</b>が、移行などの大規模プロジェクトを支援する（有料）。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSIQ.svg" alt=""><div><div class="name">AWS IQ<span class="yomi">アイキュー</span></div><div class="one">AWS 認定を持つ<b>外部の専門家</b>に業務を依頼できるサービス<b>でした</b>。<b>2026年5月28日に提供を終了</b>し、現在は AWS Marketplace の「プロフェッショナルサービス」が後継です。古い問題集には登場するため、名称は把握しておきましょう。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrainingCertification.svg" alt=""><div><div class="name">AWS Skill Builder / ドキュメント / ナレッジセンター</div><div class="one">無料の学習コンテンツ（Skill Builder）、公式ドキュメント、よくある質問集（Knowledge Center）。自己解決の第一の情報源。</div></div></div>
 
 <div class="table-wrap"><table>
-  <tr><th>こんなとき</th><th>だれに頼む？</th></tr>
-  <tr><td>無料でみんなに質問したい</td><td><b>re:Post</b></td></tr>
-  <tr><td>ソフトを買って AWS ですぐ使いたい</td><td><b>Marketplace</b></td></tr>
-  <tr><td>外部の会社に構築を手伝ってほしい</td><td><b>AWS Partner Network（パートナー）</b></td></tr>
-  <tr><td>AWS 社員の専門家に大型案件を手伝ってほしい</td><td><b>Professional Services</b></td></tr>
-  <tr><td>AWS の技術者に障害の相談をしたい</td><td><b>サポートプラン</b>（ビジネス以上なら24時間）</td></tr>
+  <tr><th>目的</th><th>適した窓口</th></tr>
+  <tr><td>無料でコミュニティに質問したい</td><td><b>re:Post</b></td></tr>
+  <tr><td>サードパーティ製ソフトウェアを購入し、AWS 上ですぐ使いたい</td><td><b>Marketplace</b></td></tr>
+  <tr><td>外部企業に構築を支援してほしい</td><td><b>AWS Partner Network（パートナー）</b></td></tr>
+  <tr><td>AWS 社員の専門家に大規模案件を支援してほしい</td><td><b>Professional Services</b></td></tr>
+  <tr><td>AWS の技術者に障害について相談したい</td><td><b>サポートプラン</b>（ビジネス以上なら24時間対応）</td></tr>
 </table></div>
 
 <div class="recall">
-  <h2>🙌 手ぶら復習</h2>
-  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。</p>
-  <details class="q"><summary>AWS の料金の3つの基本は？ データ転送はどちら向きが有料？</summary><div class="a">コンピューティング（時間）、ストレージ（量）、データ転送。AWS から外へ出す（アウトバウンド）が有料、入れる（インバウンド）は基本無料。</div></details>
-  <details class="q"><summary>2025年7月以降の新しいアカウントの無料利用枠のしくみは？</summary><div class="a">クレジット制（登録時100ドル＋試すと最大100ドル追加）。無料プラン（最大6か月 or クレジットを使い切るまで）と有料プランを選ぶ。常に無料のサービスは両方で使える。</div></details>
-  <details class="q"><summary>割引が大きい順に、購入オプションを並べると？</summary><div class="a">スポット（最大約90%、中断あり）→ Savings Plans / リザーブドインスタンス（1年か3年の約束で最大約72%）→ オンデマンド（定価）。</div></details>
-  <details class="q"><summary>Organizations の一括請求のメリットは？</summary><div class="a">請求書が1つにまとまる、使用量の合計でボリューム割引、RI / Savings Plans の割引をアカウント間で共有、追加料金なし。</div></details>
-  <details class="q"><summary>「見積もる・見る・守る」それぞれのツールは？</summary><div class="a">見積もる＝Pricing Calculator、見る＝Cost Explorer（グラフ・予測）／CUR（いちばん細かいデータ）／Billing コンソール、守る＝Budgets（予算アラート）／Cost Anomaly Detection（異常検知）。</div></details>
-  <details class="q"><summary>部署ごとに料金を分けて集計したいときは？</summary><div class="a">コスト配分タグを使う。</div></details>
-  <details class="q"><summary>昔からの5つのサポートプランと、いちばん速い応答時間は？</summary><div class="a">ベーシック（技術サポートなし）、デベロッパー（12営業時間）、ビジネス（1時間）、エンタープライズ On-Ramp（30分）、エンタープライズ（15分）。</div></details>
-  <details class="q"><summary>専任の TAM がつくのはどのプラン？ 24時間電話サポートは何から？</summary><div class="a">専任 TAM はエンタープライズ（On-Ramp は TAM のチーム）。24時間の電話・チャットはビジネスから。</div></details>
-  <details class="q"><summary>Trusted Advisor がチェックする分野は？ 全チェックが使えるのは？</summary><div class="a">コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ・運用上の優秀性（こ・パ・セ・た・サ・う）。全チェックはビジネス以上。</div></details>
-  <details class="q"><summary>re:Post・Marketplace・Professional Services のちがいは？</summary><div class="a">re:Post＝無料の Q&amp;A コミュニティ、Marketplace＝他社のソフトを買えるストア、Professional Services＝AWS 社員の専門家チームによる有料支援。</div></details>
+  <h2>🧠 想起練習</h2>
+  <p class="muted">本文を見ずに答えを思い出してから、各項目を開いて確認してください。</p>
+  <details class="q"><summary>AWS の料金を決める3つの要素は？ データ転送はどちらの方向が有料？</summary><div class="a">コンピューティング（稼働時間）、ストレージ（容量）、データ転送。AWS から外部への送信（アウトバウンド）が有料で、受信（インバウンド）は原則無料。</div></details>
+  <details class="q"><summary>2025年7月15日以降に作成したアカウントの無料利用枠の仕組みは？</summary><div class="a">クレジット制（登録時100ドル＋試用で最大100ドル追加）。無料プラン（最大6か月またはクレジットを使い切るまで）と有料プランを選択する。常時無料のサービスはどちらでも利用できる。</div></details>
+  <details class="q"><summary>購入オプションを割引率の大きい順に並べると？</summary><div class="a">スポット（最大約90%、中断あり）→ Savings Plans / リザーブドインスタンス（1年または3年のコミットで最大約72%）→ オンデマンド（定価）。</div></details>
+  <details class="q"><summary>Organizations の一括請求のメリットは？</summary><div class="a">請求が1つにまとまる、使用量の合算でボリューム割引を受けやすい、RI / Savings Plans の割引をアカウント間で共有できる、追加料金がかからない。</div></details>
+  <details class="q"><summary>「見積もる・把握する・管理する」それぞれに対応するツールは？</summary><div class="a">見積もる＝Pricing Calculator、把握する＝Cost Explorer（グラフ・予測）／CUR（最も詳細なデータ）／Billing コンソール、管理する＝Budgets（予算アラート）／Cost Anomaly Detection（異常検知）。</div></details>
+  <details class="q"><summary>部署ごとにコストを分けて集計したい場合の方法は？</summary><div class="a">コスト配分タグを有効化して集計する。</div></details>
+  <details class="q"><summary>従来の5つのサポートプランと、それぞれの最短応答時間は？</summary><div class="a">ベーシック（技術サポートなし）、デベロッパー（12営業時間）、ビジネス（1時間）、エンタープライズ On-Ramp（30分）、エンタープライズ（15分）。</div></details>
+  <details class="q"><summary>専任の TAM が付くプランは？ 24時間の電話サポートはどのプランから？</summary><div class="a">専任 TAM はエンタープライズ（On-Ramp は TAM のチーム）。24時間の電話・チャットはビジネス以上。</div></details>
+  <details class="q"><summary>Trusted Advisor が点検する6分野は？ すべてのチェックを使えるのはどのプランから？</summary><div class="a">コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ・運用上の優秀性。すべてのチェックはビジネス以上。</div></details>
+  <details class="q"><summary>re:Post・Marketplace・Professional Services の違いは？</summary><div class="a">re:Post＝無料の Q&amp;A コミュニティ、Marketplace＝サードパーティ製ソフトウェアを購入できるカタログ、Professional Services＝AWS 社員の専門家チームによる有料支援。</div></details>
 </div>
 
 <div id="study-log"></div>

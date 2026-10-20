@@ -3,162 +3,163 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>科学的な勉強法 | AWS 合格ノート</title>
+<title>学習方法 | AWS 合格ノート</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body data-root="../" data-page="method">
 <main class="wrap">
-<div class="breadcrumb"><a href="../index.html">ホーム</a> › 勉強法</div>
-<h1>覚えて、忘れない勉強法<br><small style="font-size:.6em;color:var(--ink-3)">このサイトの使い方</small></h1>
-<p class="lead">AWS の試験は「覚えること」がとても多い試験です。だからこそ、<strong>やみくもに読む</strong>のではなく、<strong>脳の仕組みに合った覚え方</strong>をします。このページでは、その方法と、このサイトのどこで何をすればいいかを説明します。</p>
+<div class="breadcrumb"><a href="../index.html">ホーム</a> › 学習方法</div>
+<h1>学習方法<br><small style="font-size:.6em;color:var(--ink-3)">記憶を定着させるための進め方と、本サイトの使い方</small></h1>
+<p class="lead">AWS 認定試験は、多数のサービスの役割と使い分けを正確に記憶しているかが問われる試験です。本サイトでは、認知心理学の研究で効果が確認されている学習法に沿って各章を構成しています。このページでは、その考え方と具体的な進め方を説明します。</p>
 
 <div class="box map">
-  <div class="box-title"><span class="em">🗺️</span>このページの地図（先に全体を見る）</div>
+  <div class="box-title"><span class="em">🗺️</span>このページの全体像</div>
   <ol style="margin:0">
-    <li>記憶は「入れる → 保つ → 出す」の3ステップ</li>
-    <li>人は必ず忘れる → だから<strong>間隔をあけて</strong>復習する</li>
-    <li>読み返すより<strong>「手ぶらで思い出す」</strong>ほうが強い</li>
-    <li>覚えるための4つの道具（全体像・グループ分け・イメージ連結・頭字法）</li>
-    <li>1日の進め方と、このサイトのパーツの意味</li>
+    <li>記憶の3段階：記銘・保持・想起</li>
+    <li>忘却を前提にした復習：間隔反復</li>
+    <li>読み返しより効果の高い復習：想起練習</li>
+    <li>記憶を助ける4つの方法</li>
+    <li>1日の学習の進め方と、各ページの構成</li>
   </ol>
 </div>
 
-<h2>1. 記憶は「入れる・保つ・出す」の3ステップ</h2>
-<p>「覚える」と一言でいっても、脳の中では次の3つのことが起きています。</p>
+<h2>1. 記憶の3段階：記銘・保持・想起</h2>
+<p>「覚える」という行為は、脳の中では次の3つの段階に分けて考えられます。</p>
 
 <div class="diagram">
   <div class="flow wrap-ok mobile-col">
-    <div class="card" style="max-width:220px;text-align:center"><div style="font-size:2rem">📥</div><b>① 入れる</b><p><span class="term" data-tip="記銘（きめい）：情報を頭に入れること。">記銘</span>。読む・聞く・図を見る。</p></div>
+    <div class="card" style="max-width:220px;text-align:center"><b>① 記銘</b><p>情報を取り込む段階。読む、聞く、図を見る。</p></div>
     <div class="arr">→</div>
-    <div class="card" style="max-width:220px;text-align:center"><div style="font-size:2rem">🗄️</div><b>② 保つ</b><p><span class="term" data-tip="保持（ほじ）：入れた情報を忘れずに持ち続けること。">保持</span>。時間がたっても消えないようにする。</p></div>
+    <div class="card" style="max-width:220px;text-align:center"><b>② 保持</b><p>取り込んだ情報を、時間がたっても失わずに保つ段階。</p></div>
     <div class="arr">→</div>
-    <div class="card" style="max-width:220px;text-align:center"><div style="font-size:2rem">📤</div><b>③ 出す</b><p><span class="term" data-tip="想起（そうき）：頭の中から情報を取り出す、つまり「思い出す」こと。">想起</span>。試験本番で思い出す。</p></div>
+    <div class="card" style="max-width:220px;text-align:center"><b>③ 想起</b><p>必要な場面で、記憶から情報を取り出す段階。</p></div>
   </div>
-  <div class="cap">多くの人は①ばかりやって③の練習をしません。でも試験で必要なのは③です。</div>
+  <div class="cap">学習時間の大半を①に費やし、③をほとんど練習しないのはよくある失敗です。試験で求められるのは③です。</div>
 </div>
 
-<p>また、記憶にはいくつか種類があります。とくに大事なのが次の2つです。</p>
+<p>記憶はいくつかの種類に分類されます。学習で特に意識したいのは次の2つです。</p>
 <div class="box kotoba">
-  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <div class="box-title"><span class="em">📝</span>用語の補足</div>
   <dl class="words">
-    <dt>長期記憶</dt><dd>何日・何年も残る記憶。試験のために作りたいのはこれ。</dd>
-    <dt>意味記憶</dt><dd>「S3 はファイルの置き場所」のような<b>知識そのもの</b>の記憶。単体だと忘れやすい。</dd>
-    <dt>エピソード記憶</dt><dd>「あのとき、こんな場面で…」という<b>体験・お話</b>の記憶。とても残りやすい。</dd>
+    <dt>長期記憶</dt><dd>数日から数年にわたって保持される記憶。試験対策で作るべきなのはこれです。</dd>
+    <dt>意味記憶</dt><dd>「S3 はオブジェクトストレージである」のような、事実や知識の記憶。単独では定着しにくい性質があります。</dd>
+    <dt>エピソード記憶</dt><dd>特定の場面や経験と結びついた記憶。具体的な状況を伴うため、意味記憶より想起しやすいとされます。</dd>
   </dl>
 </div>
-<p>このサイトでは、意味記憶（知識）を<strong>エピソード記憶（たとえ話・絵）にのせて</strong>覚えられるように、ほぼすべてのサービスに「たとえ話」と「AWS のアイコン図」をつけています。</p>
+<p>本サイトでは、サービスの説明に具体的な利用場面や構成図を添えています。知識を具体的な状況と結びつけることで、想起の手がかりを増やすためです。</p>
 
-<h2>2. 人は必ず忘れる → 間隔をあけて復習する</h2>
-<p>心理学者エビングハウスの実験では、覚えたことは<strong>1日たつと大きく抜け落ちる</strong>ことがわかっています（<span class="term" data-tip="忘却曲線（ぼうきゃくきょくせん）：時間がたつにつれて、どれくらい忘れていくかを表したグラフ。">忘却曲線</span>）。でも、<strong>忘れかけたタイミングで思い出す</strong>と、次に忘れるまでの時間がどんどん長くなります。</p>
+<h2>2. 忘却を前提にした復習：間隔反復</h2>
+<p>エビングハウスの実験以来、学習した内容は<strong>学習直後から急速に失われ、その後ゆるやかに減っていく</strong>ことが知られています（<span class="term" data-tip="忘却曲線：時間の経過とともに、記憶がどの程度失われていくかを示した曲線。">忘却曲線</span>）。一方で、<strong>忘れかけた時点で思い出し直す</strong>と、次に忘れるまでの期間が長くなります。</p>
 
 <div class="diagram">
-  <div class="dtitle">忘れかけたときに復習すると、記憶が長持ちする</div>
-  <svg viewBox="0 0 640 260" role="img" aria-label="忘却曲線と復習の効果のグラフ" style="width:100%;max-width:640px;display:block;margin:auto">
+  <div class="dtitle">間隔をあけて復習した場合の記憶の推移（概念図）</div>
+  <svg viewBox="0 0 640 260" role="img" aria-label="忘却曲線と、間隔をあけて復習した場合の記憶の推移" style="width:100%;max-width:640px;display:block;margin:auto">
     <line x1="50" y1="220" x2="620" y2="220" stroke="var(--ink-3)" />
     <line x1="50" y1="20" x2="50" y2="220" stroke="var(--ink-3)" />
-    <text x="12" y="30" font-size="12" fill="var(--ink-3)">覚えている</text>
-    <text x="560" y="245" font-size="12" fill="var(--ink-3)">時間 →</text>
-    <!-- 復習なし -->
+    <text x="12" y="30" font-size="12" fill="var(--ink-3)">保持率</text>
+    <text x="570" y="245" font-size="12" fill="var(--ink-3)">時間</text>
     <path d="M50 30 C 90 150, 140 185, 620 200" fill="none" stroke="var(--red)" stroke-width="3" stroke-dasharray="6 5"/>
-    <text x="470" y="192" font-size="13" fill="var(--red)">復習しない</text>
-    <!-- 復習あり -->
+    <text x="470" y="192" font-size="13" fill="var(--red)">復習なし</text>
     <path d="M50 30 C 70 80, 85 95, 100 100 L100 30 C 130 70, 160 85, 190 88 L190 30 C 240 55, 290 68, 330 72 L330 30 C 400 45, 470 52, 520 55 L520 30 C 560 36, 600 40, 620 42" fill="none" stroke="var(--green)" stroke-width="3"/>
     <g font-size="12" fill="var(--accent-ink)" font-weight="700">
       <text x="86" y="120">1日後</text><text x="176" y="108">3日後</text><text x="314" y="92">7日後</text><text x="500" y="75">14日後</text>
     </g>
-    <text x="470" y="24" font-size="13" fill="var(--green)">復習する</text>
+    <text x="440" y="24" font-size="13" fill="var(--green)">間隔をあけて復習</text>
   </svg>
-  <div class="cap">赤：一度読んだだけ。緑：1日後・3日後・7日後…と間をあけて思い出したとき。<br>（形はイメージです）</div>
+  <div class="cap">赤：一度学習しただけの場合。緑：1日後、3日後、7日後…と間隔を広げながら想起した場合。曲線の形は説明用の概念図です。</div>
 </div>
 
 <div class="box science">
-  <div class="box-title"><span class="em">🔬</span>科学的な裏づけ：間隔反復（かんかくはんぷく）</div>
-  <p>同じ時間勉強するなら、<b>一気に詰めこむより、日をあけて何回かに分けたほうが</b>長く覚えていられる、という結果が多くの研究で出ています。これを<b>分散学習</b>や<b>間隔反復</b>といいます。</p>
-  <p>このサイトでは各章の最後に<b>「復習の記録」ボタン</b>があり、押すと<b>1日後 → 3日後 → 7日後 → 14日後 → 30日後</b>と次の復習日を自動で出します。トップページに「今日復習する章」が出るので、それに従えばOKです。</p>
+  <div class="box-title"><span class="em">🔬</span>根拠：分散学習・間隔反復</div>
+  <p>同じ総学習時間であれば、一度に集中して行うより、日を分けて複数回に分散したほうが長期的な保持が良いことが、多数の研究で示されています（<b>分散学習効果</b>）。復習の間隔を段階的に広げていく方法を<b>間隔反復</b>と呼びます。</p>
+  <p>本サイトでは各章の末尾に「学習記録」があり、記録すると<b>1日後 → 3日後 → 7日後 → 14日後 → 30日後</b>の順に次回の復習日を計算します。トップページに当日復習すべき章が表示されるので、それに従って進めてください。</p>
 </div>
 
-<h2>3. 読み返すより「手ぶらで思い出す」</h2>
-<p>復習というと「ノートを読み返す」をしがちですが、それだと<strong>わかった気になるだけ</strong>で、あまり残りません。いちばん効くのは、<strong>何も見ないで（手ぶらで）思い出す</strong>ことです。</p>
+<h2>3. 読み返しより効果の高い復習：想起練習</h2>
+<p>復習というとテキストを読み返す方法が一般的ですが、読み返しは内容に見覚えがあるだけで「理解した」と錯覚しやすく、定着の効果は限定的です。より効果が高いのは、<strong>何も見ずに内容を思い出す</strong>ことです。</p>
 
-<div class="grid">
-  <div class="card"><h3>😐 効きにくい</h3><p>・ページを何度も読み返す<br>・蛍光ペンで線を引く<br>・きれいにまとめノートを作る</p></div>
-  <div class="card" style="border-color:var(--green)"><h3>😄 効く</h3><p>・ページを閉じて、何があったか言ってみる<br>・問題を見て、答えを思い出してから確かめる<br>・人に説明するつもりで声に出す</p></div>
-</div>
+<div class="table-wrap"><table>
+  <tr><th>効果が低い方法</th><th>効果が高い方法</th></tr>
+  <tr><td>テキストを繰り返し読み返す</td><td>テキストを閉じ、要点を自分で書き出す・口に出す</td></tr>
+  <tr><td>重要箇所に線を引く</td><td>問題を見て、答えを思い出してから確認する</td></tr>
+  <tr><td>まとめノートを丁寧に清書する</td><td>他人に説明するつもりで、理由まで含めて説明する</td></tr>
+</table></div>
 
 <div class="box science">
-  <div class="box-title"><span class="em">🔬</span>科学的な裏づけ：テスト効果・アクティブリコール</div>
-  <p>「思い出す」という作業そのものが記憶を強くします。これを<b>テスト効果</b>や<b>アクティブリコール</b>（自分から能動的に思い出すこと）といいます。思い出すのに<b>少し苦労するくらい</b>がちょうどいい、とされています。</p>
+  <div class="box-title"><span class="em">🔬</span>根拠：テスト効果（想起練習）</div>
+  <p>記憶から情報を取り出す行為そのものが、その記憶を強化します。これを<b>テスト効果</b>、または<b>想起練習</b>（retrieval practice）と呼びます。思い出すのにある程度の努力を要する状態で行うほど効果が高いとされており、これは<b>望ましい困難</b>（desirable difficulties）という考え方で説明されています。</p>
 </div>
 
-<p>このサイトでは各章に<b>「手ぶら復習」</b>のコーナーがあります。質問をクリックすると答えが出ますが、<strong>必ず先に頭の中で答えてから</strong>開いてください。</p>
+<p>各章の末尾には「想起練習」の設問があります。項目を開くと解答が表示されますが、<strong>必ず先に自分で答えを出してから</strong>開いてください。</p>
 
 <div class="recall">
-  <div class="recall-head">🙌 手ぶら復習の練習 <small>（まず自分で答えてから開く）</small></div>
-  <details class="q"><summary>記憶の3ステップを言えますか？</summary><div class="a">入れる（記銘）→ 保つ（保持）→ 出す（想起）</div></details>
-  <details class="q"><summary>読み返しより効果が高い復習のやり方は？</summary><div class="a">何も見ずに思い出す「手ぶら復習」（アクティブリコール）。</div></details>
+  <div class="recall-head">🧠 想起練習の例 <small>（本文を見ずに答えてから開く）</small></div>
+  <details class="q"><summary>記憶の3段階を順に挙げてください。</summary><div class="a">記銘（取り込む）→ 保持（保つ）→ 想起（取り出す）。</div></details>
+  <details class="q"><summary>読み返しよりも定着効果が高い復習方法は何ですか。</summary><div class="a">何も見ずに内容を思い出す想起練習（テスト効果を利用する方法）。</div></details>
 </div>
 
-<h2>4. 覚えるための4つの道具</h2>
+<h2>4. 記憶を助ける4つの方法</h2>
 
-<h3>道具① 全体像（地図）から入る</h3>
-<p>いきなり細かいことを覚えようとすると、どこに置けばいいかわからず、すぐ散らばります。各章の最初には<b>「この章の地図」</b>があります。まず地図を見て、「今どこを勉強しているか」をはっきりさせてから細部に入ります。本棚の<b>棚の名前を先に決めてから、本をしまう</b>イメージです。</p>
+<h3>① 全体像から細部へ</h3>
+<p>個々の知識は、それを位置づける枠組みがないと断片のまま散逸しがちです。各章の冒頭には「この章の全体像」を置いています。先に章の構成を把握し、いま学んでいる内容がどこに位置するかを意識しながら読み進めてください。既存の枠組みに新しい情報を関連づけることで、記憶は整理され、想起もしやすくなります。</p>
 
-<h3>道具② グループに分けて覚える（グループ分類法）</h3>
-<p>バラバラの10個より、<b>3つのグループに分けた10個</b>のほうがずっと覚えやすいです（心理学では<span class="term" data-tip="チャンク：まとまり・かたまりのこと。いくつかの情報を1つのかたまりにすると、頭に入る量が増える。">チャンク化</span>と呼びます）。AWS のサービスは200以上ありますが、試験に出るのは「サーバー」「ストレージ」「データベース」「ネットワーク」…とグループにまとまります。このサイトの章立ても、そのグループのとおりです。</p>
+<h3>② 分類してまとめる（チャンク化）</h3>
+<p>人が一度に扱える情報の量には限りがありますが、複数の情報を意味のあるまとまりにすると、扱える量が実質的に増えます。これを<span class="term" data-tip="チャンク化：複数の情報を意味のあるひとまとまり（チャンク）として扱うこと。">チャンク化</span>と呼びます。AWS のサービスは200を超えますが、試験範囲のサービスはコンピューティング、ストレージ、データベース、ネットワークといった分野に整理できます。本サイトの章立てもこの分類に従っています。</p>
 
 <div class="diagram">
-  <div class="dtitle">例：「データを置く場所」グループ</div>
+  <div class="dtitle">例：ストレージ分野の3サービスを比較して覚える</div>
   <div class="flow wrap-ok">
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">S3<small>なんでも置ける倉庫</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElasticBlockStore.svg" alt="">EBS<small>サーバー専用のディスク</small></div>
-    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEFS.svg" alt="">EFS<small>みんなで使う共有フォルダ</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">S3<small>オブジェクトストレージ</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElasticBlockStore.svg" alt="">EBS<small>EC2 用のブロックストレージ</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEFS.svg" alt="">EFS<small>複数の EC2 で共有するファイルストレージ</small></div>
   </div>
-  <div class="cap">3つまとめて「置き場所 3兄弟」として覚えると、試験で比べる問題に強くなります。</div>
+  <div class="cap">個別に覚えるより、「保存方式の違い」という軸で3つを並べて覚えるほうが、使い分けを問う問題に対応しやすくなります。</div>
 </div>
 
-<h3>道具③ イメージ（絵・お話）でつなげる（イメージ連結法）</h3>
-<p>文字だけの知識は忘れやすいですが、<b>絵や場面と結びつける</b>と残りやすくなります。たとえば：</p>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonCloudFront.svg" alt=""><div><div class="name">CloudFront<span class="yomi">クラウドフロント</span></div><div class="one">→「全国にある<b>コンビニ</b>」。本社の倉庫（サーバー）まで行かなくても、近くのコンビニに商品（データ）が置いてあるから、すぐ手に入る。</div></div></div>
-<p>このサイトでは AWS の実際のアイコンを使っているので、<b>アイコンの形・色もイメージの手がかり</b>になります（オレンジ＝サーバー系、緑＝ストレージ系、紫＝ネットワーク系、赤＝セキュリティ系など）。</p>
+<h3>③ 言葉と図を結びつける（二重符号化）</h3>
+<p>情報を言葉だけでなく図やイメージとあわせて記憶すると、想起の手がかりが2系統になり、思い出しやすくなるとされています（<span class="term" data-tip="二重符号化理論：言語情報と視覚情報の両方で記憶すると、どちらか一方より想起しやすくなるという理論。">二重符号化</span>）。本サイトでは AWS 公式のアイコンを用いた構成図を多く載せています。アイコンの色はサービスの分野を表しているため（オレンジ＝コンピューティング、緑＝ストレージ、紫＝ネットワーク、赤＝セキュリティなど）、色そのものも手がかりになります。</p>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonCloudFront.svg" alt=""><div><div class="name">CloudFront<span class="yomi">クラウドフロント</span></div><div class="one">世界各地のエッジロケーションにコンテンツのキャッシュを置き、利用者に最も近い拠点から配信するサービス。物流で、各地の配送拠点に在庫を置いて配送時間を短くする仕組みと同じ構造です。</div></div></div>
 
-<h3>道具④ 頭文字で覚える（頭字法）</h3>
-<p>並びを覚えるときは、<b>頭文字をつないで1つの言葉</b>にします。たとえば、AWS が「よい設計」の基準として決めている6つの項目：</p>
+<h3>④ 頭文字で並びを覚える（頭字法）</h3>
+<p>決まった項目の並びを覚える必要がある場合は、各項目の頭文字をつなげて覚える方法が有効です。例えば、AWS が優れた設計の基準として定める Well-Architected フレームワークの6つの柱は次のように覚えられます。</p>
 <div class="box hook">
   <div class="box-title"><span class="em">🔑</span>覚え方の例</div>
-  <p>AWS の「6つの柱」（Well-Architected）＝ <b>「運・セ・信・パ・コ・サ」</b>（うん、せしんぱこさ）<br>
-  運用上の優秀性／セキュリティ／信頼性／パフォーマンス効率／コスト最適化／サステナビリティ</p>
+  <p>Well-Architected フレームワークの6つの柱：<b>「運・セ・信・パ・コ・サ」</b><br>
+  運用上の優秀性／セキュリティ／信頼性／パフォーマンス効率／コスト最適化／持続可能性（サステナビリティ）</p>
 </div>
-<p>各章の<b>「🔑覚え方」</b>ボックスにこうした覚え方を入れています。自分で作り直したほうが覚えやすければ、どんどん作り変えてください。<b>自分で作った覚え方がいちばん強い</b>です。</p>
+<p>各章の「🔑 覚え方」に例を載せていますが、自分で作り直した覚え方のほうが定着しやすいため、必要に応じて置き換えてください。</p>
 
-<h3>おまけ：自分の言葉で説明する</h3>
-<p>読み終わったら、「中学生に説明するなら？」と考えて<b>声に出して</b>説明してみてください。説明できないところ＝まだわかっていないところです。このサイトのたとえ話は、そのお手本にもなるように書いています。</p>
+<h3>補足：自分の言葉で説明する（精緻化）</h3>
+<p>章を読み終えたら、要点を自分の言葉で説明してみてください。「なぜそのサービスを使うのか」「他のサービスとどう違うのか」まで説明できれば、理解は十分です。説明に詰まる箇所が、理解が不十分な箇所です。理由や関連づけを加えて理解を深めることを<b>精緻化</b>と呼び、これも定着を助けます。</p>
 
-<h2>5. 1日の進め方</h2>
+<h2>5. 1日の学習の進め方</h2>
 <div class="table-wrap"><table>
-  <tr><th>順番</th><th>やること</th><th>目安</th></tr>
-  <tr><td>①</td><td>トップページで「今日復習する章」を確認。あれば、その章の<b>手ぶら復習</b>だけやる（本文は読まない）</td><td>5〜10分</td></tr>
-  <tr><td>②</td><td><b>復習カード</b>で、期限が来たカードを思い出す</td><td>10分</td></tr>
-  <tr><td>③</td><td>新しい章を1つ読む。地図 → 本文 → 図 → 覚え方</td><td>30〜45分</td></tr>
-  <tr><td>④</td><td>ページを閉じて<b>手ぶら復習</b> → 「復習の記録」ボタンを押す</td><td>10分</td></tr>
+  <tr><th>順序</th><th>内容</th><th>目安</th></tr>
+  <tr><td>①</td><td>トップページで当日復習すべき章を確認し、該当する章の<b>想起練習</b>だけを行う（本文は読み返さない）</td><td>5〜10分</td></tr>
+  <tr><td>②</td><td><b>復習カード</b>で、復習期限が来たカードに取り組む</td><td>10分</td></tr>
+  <tr><td>③</td><td>新しい章を1つ読む（全体像 → 本文 → 構成図 → 覚え方）</td><td>30〜45分</td></tr>
+  <tr><td>④</td><td>本文を閉じて<b>想起練習</b>を行い、「学習記録」に記録する</td><td>10分</td></tr>
 </table></div>
-<p>※わからない言葉にぶつかったら、<span class="term" data-tip="こんなふうに、点線のついた言葉はタップ（パソコンならマウスをのせる）すると意味が出ます。">点線のついた言葉</span>をタップすると意味が出ます。<b>用語集</b>ページでまとめて探すこともできます。</p>
+<p>本文中の<span class="term" data-tip="このように点線の付いた用語は、タップ（PC ではマウスオーバー）すると意味が表示されます。">点線の付いた用語</span>は、タップすると意味が表示されます。<b>用語集</b>ページでは、全章の用語をまとめて検索できます。</p>
 
-<h2>6. このサイトのパーツの意味</h2>
-<div class="box map"><div class="box-title"><span class="em">🗺️</span>この章の地図</div>章の全体像。最初に見る。</div>
-<div class="box kotoba"><div class="box-title"><span class="em">📝</span>ことばメモ</div>むずかしい言葉の、かんたんな意味。</div>
-<div class="box story"><div class="box-title"><span class="em">🏠</span>たとえ話</div>エピソード記憶にのせるためのお話。</div>
-<div class="box hook"><div class="box-title"><span class="em">🔑</span>覚え方</div>頭字法・グループ分け・ごろ合わせなど。</div>
-<div class="box exam"><div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>問題文にこう書いてあったら、この答え、というパターン。</div>
-<div class="box warn"><div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>まちがえやすいところ。</div>
+<h2>6. 各ページの構成</h2>
+<div class="box map"><div class="box-title"><span class="em">🗺️</span>この章の全体像</div>章の構成と学習範囲。最初に確認します。</div>
+<div class="box kotoba"><div class="box-title"><span class="em">📝</span>用語の補足</div>本文中の専門用語の定義。</div>
+<div class="box story"><div class="box-title"><span class="em">💡</span>イメージで理解する</div>仕組みを身近な構造に置き換えた説明。</div>
+<div class="box hook"><div class="box-title"><span class="em">🔑</span>覚え方</div>頭字法や分類など、記憶の手がかり。</div>
+<div class="box exam"><div class="box-title"><span class="em">🎯</span>試験での問われ方</div>問題文の条件と、それに対応する解答の典型パターン。</div>
+<div class="box warn"><div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>混同しやすい概念や、誤答を誘う選択肢の傾向。</div>
 
-<h2>参考にしたもの</h2>
+<h2>参考文献</h2>
 <ul>
-  <li>吉永賢一さんの YouTube チャンネル「<a href="https://www.youtube.com/@ken_yoshinaga">記憶博士の非常識な記憶学</a>」で扱われているテーマ（記憶の仕組み、長期記憶の種類、手ぶら復習、グループ分類、イメージ連結、頭字法 など）</li>
-  <li>認知心理学の研究で効果が確かめられている学習法（間隔反復／分散学習、テスト効果／アクティブリコール、精緻化）</li>
+  <li>Ebbinghaus, H. (1885). <i>Über das Gedächtnis</i>.（忘却曲線）</li>
+  <li>Cepeda, N. J. et al. (2006). Distributed practice in verbal recall tasks. <i>Psychological Bulletin</i>.（分散学習）</li>
+  <li>Roediger, H. L., &amp; Karpicke, J. D. (2006). Test-enhanced learning. <i>Psychological Science</i>.（テスト効果）</li>
+  <li>Dunlosky, J. et al. (2013). Improving students' learning with effective learning techniques. <i>Psychological Science in the Public Interest</i>.（学習法の効果の比較）</li>
+  <li>Paivio, A. (1971). <i>Imagery and Verbal Processes</i>.（二重符号化理論）</li>
 </ul>
-<p class="muted">※各手法の名前と考え方は公開されている情報をもとにこのサイト向けにまとめたもので、動画の内容をそのまま書き写したものではありません。くわしくは元の動画をご覧ください。</p>
 
 <div id="study-log"></div>
 <nav id="pager"></nav>
