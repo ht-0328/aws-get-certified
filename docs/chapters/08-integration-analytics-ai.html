@@ -39,7 +39,7 @@
   <div class="dtitle">密結合 vs 疎結合（SQS をあいだにはさむ）</div>
   <div class="grp plain">
     <div class="glabel">✕ 密結合：注文係が止まると、全部止まる</div>
-    <div class="flow">
+    <div class="flow mobile-col">
       <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">注文を受ける<small>Webサーバー</small></div>
       <div class="arr ng">→<small>直接わたす</small></div>
       <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">処理する<small>処理サーバー<br>（故障中…）</small></div>
@@ -47,7 +47,7 @@
   </div>
   <div class="grp plain" style="margin-top:12px">
     <div class="glabel">◯ 疎結合：キューが注文をためておく</div>
-    <div class="flow">
+    <div class="flow mobile-col">
       <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">注文を受ける<small>Webサーバー</small></div>
       <div class="arr ok">→<small>入れる</small></div>
       <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleQueueService.svg" alt="">Amazon SQS<small>伝票ホルダー<br>（キュー）</small></div>

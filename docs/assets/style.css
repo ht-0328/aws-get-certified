@@ -273,7 +273,8 @@ td img.ico-s, th img.ico-s { width: 28px; height: 28px; vertical-align: middle; 
   .site-nav { margin-left: 0; width: 100%; }
   .grp-row { flex-direction: column; }
   .flow.mobile-col { flex-direction: column; }
-  .flow.mobile-col .arr { transform: rotate(90deg); }
+  .flow.mobile-col > .arr { transform: rotate(90deg); margin: 6px 0; }
+  .flow.mobile-col > .arr small { display: block; transform: rotate(-90deg); }
 }
 @media print {
   .site-header, .study-log, .pager, .theme-btn { display: none; }
