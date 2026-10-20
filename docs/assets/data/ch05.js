@@ -1,0 +1,55 @@
+/* 第5章 データベース — 復習カードと用語 */
+window.AWSNOTE = window.AWSNOTE || { cards: [], terms: [] };
+
+AWSNOTE.cards.push(
+  { ch: "ch05", q: "リレーショナルと NoSQL のちがいは？", a: "リレーショナル＝決まった形の表をつなげて SQL で検索（RDS・Aurora）。NoSQL＝キーと値など自由な形で大量・高速（DynamoDB など）。" },
+  { ch: "ch05", q: "RDS（マネージド）で AWS が担当すること・自分が担当することは？", a: "AWS：ハードウェア、OS・DB ソフトのパッチ、バックアップ、フェイルオーバー。自分：表の設計、データ、使い方、アクセス権。" },
+  { ch: "ch05", q: "RDS で選べるエンジンは？", a: "MySQL・PostgreSQL・MariaDB・Oracle・SQL Server・Db2・Aurora。" },
+  { ch: "ch05", q: "RDS マルチAZ の目的とコピー方式は？", a: "高可用性。別 AZ のスタンバイへ同期コピーし、障害時は自動フェイルオーバー。" },
+  { ch: "ch05", q: "リードレプリカの目的とコピー方式は？", a: "読み取り性能のアップ（負荷分散）。非同期コピーで、別リージョンにも作れる。" },
+  { ch: "ch05", q: "標準の RDS マルチAZ で、スタンバイを読み取りに使える？", a: "使えない（待機専用）。読み取りを増やしたいならリードレプリカ。" },
+  { ch: "ch05", q: "Aurora の特徴は？", a: "MySQL / PostgreSQL 互換の高性能 DB。3つの AZ に6個のコピー。Aurora Serverless もある。" },
+  { ch: "ch05", q: "サーバーレスで1桁ミリ秒の応答をする NoSQL は？", a: "Amazon DynamoDB。" },
+  { ch: "ch05", q: "DynamoDB をマイクロ秒にする専用キャッシュは？", a: "DAX（DynamoDB Accelerator）。" },
+  { ch: "ch05", q: "DynamoDB を複数リージョンで読み書きできるようにする機能は？", a: "グローバルテーブル。" },
+  { ch: "ch05", q: "データベースの前に置くインメモリのキャッシュサービスは？", a: "Amazon ElastiCache（Valkey / Redis OSS / Memcached）。" },
+  { ch: "ch05", q: "メモリで速く、メインのデータベースとしても使える耐久性のあるサービスは？", a: "Amazon MemoryDB。" },
+  { ch: "ch05", q: "大量データを分析するデータウェアハウスは？", a: "Amazon Redshift（OLAP、列指向）。" },
+  { ch: "ch05", q: "グラフ（つながり）データベースは？", a: "Amazon Neptune（SNS の関係、おすすめ、不正検知）。" },
+  { ch: "ch05", q: "MongoDB 互換のデータベースは？", a: "Amazon DocumentDB。" },
+  { ch: "ch05", q: "Apache Cassandra 互換のデータベースは？", a: "Amazon Keyspaces。" },
+  { ch: "ch05", q: "センサーの値など時系列データ向けのデータベースは？", a: "Amazon Timestream。" },
+  { ch: "ch05", q: "データベースを止めずに AWS へ移行するサービスは？ 種類がちがうときに追加で使うものは？", a: "AWS DMS。種類がちがうときは SCT（または DMS Schema Conversion）でスキーマを変換。" }
+);
+
+AWSNOTE.terms.push(
+  { ch: "ch05", w: "データベース", r: "Database", m: "データを探しやすく・書きかえやすく整理してためておくしくみ。" },
+  { ch: "ch05", w: "リレーショナルデータベース", r: "Relational Database (RDB)", m: "データを表で管理し、表どうしを関係でつなぐデータベース。" },
+  { ch: "ch05", w: "SQL", r: "Structured Query Language", m: "リレーショナルデータベースに問い合わせるための言葉。" },
+  { ch: "ch05", w: "NoSQL", r: "Not only SQL", m: "表だけでなく、キーと値などで管理するデータベースの総称。" },
+  { ch: "ch05", w: "スキーマ", r: "Schema", m: "表の設計図。どんな列があり、何が入るかの決まり。" },
+  { ch: "ch05", w: "トランザクション", r: "Transaction", m: "全部成功するか全部取り消すかのどちらかにしたい一連の処理。" },
+  { ch: "ch05", w: "マネージドサービス", r: "Managed service", m: "サーバーの管理やお世話を AWS がやってくれるサービス。" },
+  { ch: "ch05", w: "エンジン", r: "Engine", m: "データベースのソフトの種類（MySQL など）。" },
+  { ch: "ch05", w: "パッチ", r: "Patch", m: "ソフトの不具合や弱点を直す修正プログラム。" },
+  { ch: "ch05", w: "マルチAZ", r: "Multi-AZ", m: "別の AZ にスタンバイを置き、障害時に自動で切りかえるしくみ。" },
+  { ch: "ch05", w: "リードレプリカ", r: "Read replica", m: "読み取り専用のコピー。読み取りの負荷を分散する。" },
+  { ch: "ch05", w: "プライマリー", r: "Primary", m: "メインで動いているデータベース。書き込みはここ。" },
+  { ch: "ch05", w: "スタンバイ", r: "Standby", m: "いざというときのために待機しているコピー。" },
+  { ch: "ch05", w: "フェイルオーバー", r: "Failover", m: "メインが故障したとき、控えに自動で切りかえること。" },
+  { ch: "ch05", w: "同期・非同期", r: "Synchronous / Asynchronous", m: "同期＝コピー完了を待つ（ズレなし）。非同期＝待たない（速いが少し遅れる）。" },
+  { ch: "ch05", w: "キーバリュー", r: "Key-value", m: "キー（名前・番号）と値（中身）の組でデータを管理する形。" },
+  { ch: "ch05", w: "DAX", r: "DynamoDB Accelerator", m: "DynamoDB 専用のインメモリキャッシュ。応答をマイクロ秒に。" },
+  { ch: "ch05", w: "グローバルテーブル", r: "Global tables", m: "DynamoDB のテーブルを複数リージョンに自動コピーする機能。" },
+  { ch: "ch05", w: "インメモリ", r: "In-memory", m: "データをディスクより速いメモリの上に置くこと。" },
+  { ch: "ch05", w: "データウェアハウス", r: "Data warehouse (DWH)", m: "分析のためにデータを集めた巨大なデータベース。例：Redshift。" },
+  { ch: "ch05", w: "OLTP", r: "Online Transaction Processing", m: "注文・支払いなど、ふだんの1件ずつの処理。" },
+  { ch: "ch05", w: "OLAP", r: "Online Analytical Processing", m: "大量データの集計・分析の処理。" },
+  { ch: "ch05", w: "列指向", r: "Columnar", m: "データを列ごとにまとめて保存する方式。集計が速い。" },
+  { ch: "ch05", w: "互換", r: "Compatible", m: "同じように使えること。〇〇互換＝〇〇用のアプリがほぼそのまま動く。" },
+  { ch: "ch05", w: "グラフデータベース", r: "Graph database", m: "点（人・モノ）と線（関係）のつながりを扱うデータベース。例：Neptune。" },
+  { ch: "ch05", w: "時系列データ", r: "Time series", m: "時刻とともに記録されていくデータ。例：Timestream。" },
+  { ch: "ch05", w: "目的別データベース", r: "Purpose-built database", m: "用途ごとに専用のデータベースを使い分ける AWS の考え方。" },
+  { ch: "ch05", w: "DMS", r: "Database Migration Service", m: "データベースを止めずに AWS へ移行するサービス。" },
+  { ch: "ch05", w: "SCT", r: "Schema Conversion Tool", m: "ちがう種類のデータベースへ移すとき、スキーマを変換するツール。" }
+);

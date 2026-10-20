@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>連携・分析・AIのサービス | AWS 合格ノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-root="../" data-page="ch08">
+<main class="wrap">
+<div class="breadcrumb"><a href="../index.html">ホーム</a> › 第8章</div>
+<p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
+<h1>第8章 連携・分析・AIのサービス</h1>
+<p class="lead">この章は「名前と役割をセットで覚える」章です。サービスの数は多いですが、<b>5つのグループ</b>に分けてしまえば、ぐっと覚えやすくなります。</p>
+
+<div class="box map">
+  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <ol style="margin:0">
+    <li><b>つなぐ</b>：疎結合と、SQS・SNS・EventBridge・Step Functions・API Gateway</li>
+    <li><b>集めて分析する</b>：Kinesis・Glue・Athena・EMR・Redshift・Quick Sight・OpenSearch・Lake Formation</li>
+    <li><b>AI・機械学習</b>：SageMaker・Bedrock・Amazon Q と「〇〇するAI」たち</li>
+    <li><b>引っ越す（移行）</b>：Migration Hub・Application Migration Service・DMS と 7つのR</li>
+    <li><b>その他よく出る</b>：Amplify・IoT Core・WorkSpaces・Connect</li>
+  </ol>
+</div>
+
+<h2>1. つなぐ —— 疎結合とメッセージのサービス</h2>
+<p>システムはいくつもの部品（サーバーやプログラム）でできています。部品どうしが<b>直接、がっちりつながっている</b>状態を<span class="term" data-tip="密結合（みつけつごう）：部品どうしが直接つながっていて、片方が止まるともう片方も困る状態。">密結合</span>、<b>あいだにクッションをはさんでゆるくつながっている</b>状態を<span class="term" data-tip="疎結合（そけつごう）：部品どうしがゆるくつながっていて、片方が止まったり遅れたりしても、もう片方は影響を受けにくい状態。英語で Loose coupling。">疎結合</span>といいます。AWS は<b>疎結合にしましょう</b>とすすめています。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🍜</span>たとえ話：ラーメン屋の注文</div>
+  <p><b>密結合</b>＝店員が注文を聞いて、<b>料理人に手渡しするまでその場で待つ</b>。料理人が忙しいと、店員もお客さんも止まってしまう。</p>
+  <p><b>疎結合</b>＝店員は注文を<b>伝票ホルダー（キュー）にさして</b>、すぐ次のお客さんのところへ。料理人は自分のペースで伝票を取って作る。料理人が1人休んでも、伝票は消えずに待っている。</p>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">密結合 vs 疎結合（SQS をあいだにはさむ）</div>
+  <div class="grp plain">
+    <div class="glabel">✕ 密結合：注文係が止まると、全部止まる</div>
+    <div class="flow">
+      <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">注文を受ける<small>Webサーバー</small></div>
+      <div class="arr ng">→<small>直接わたす</small></div>
+      <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">処理する<small>処理サーバー<br>（故障中…）</small></div>
+    </div>
+  </div>
+  <div class="grp plain" style="margin-top:12px">
+    <div class="glabel">◯ 疎結合：キューが注文をためておく</div>
+    <div class="flow">
+      <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">注文を受ける<small>Webサーバー</small></div>
+      <div class="arr ok">→<small>入れる</small></div>
+      <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleQueueService.svg" alt="">Amazon SQS<small>伝票ホルダー<br>（キュー）</small></div>
+      <div class="arr ok">→<small>取りに行く</small></div>
+      <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">処理する<small>自分のペースで</small></div>
+    </div>
+  </div>
+  <div class="cap">処理サーバーが止まっても、注文（メッセージ）は SQS の中で待っていてくれる。<br>アクセスが急に増えても、キューにたまるだけで受付は止まらない。</div>
+</div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>メッセージ</dt><dd>部品どうしでやりとりする「伝言」。注文内容や「処理してね」というお願いなど。</dd>
+    <dt>キュー</dt><dd>メッセージを<b>順番待ちの列</b>にためておく場所。英語で「行列」の意味。</dd>
+    <dt>プッシュ</dt><dd>相手に向かって<b>送りつける</b>やり方。SNS はこれ。</dd>
+    <dt>ポーリング</dt><dd>受け取る側が「何か来てる？」と<b>取りに行く</b>やり方。SQS はこれ。</dd>
+    <dt>サーバーレス</dt><dd>サーバーの管理を自分でしなくていいしくみ。AWS が裏で全部やってくれる。</dd>
+  </dl>
+</div>
+
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSimpleQueueService.svg" alt=""><div><div class="name">Amazon SQS<span class="yomi">シンプル キュー サービス</span></div><div class="one">メッセージを<b>ためておく</b>キュー。受け取る側が取りに行く（ポーリング）。<b>疎結合といえば SQS</b>。1つのメッセージは基本1人が処理する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSimpleNotificationService.svg" alt=""><div><div class="name">Amazon SNS<span class="yomi">シンプル ノーティフィケーション サービス</span></div><div class="one">1つのお知らせを<b>たくさんの相手に一斉に送る</b>（プッシュ）。メール・SMS・SQS・Lambda などに配れる。<span class="term" data-tip="Pub/Sub（パブサブ）：Publish（発行）と Subscribe（購読）。発行者が1回送ると、購読している全員に届くしくみ。">Pub/Sub</span> 型。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEventBridge.svg" alt=""><div><div class="name">Amazon EventBridge<span class="yomi">イベントブリッジ</span></div><div class="one">「〇〇が起きたら△△する」という<b>イベントの交通整理係</b>。AWS のサービスや外部の SaaS で起きた出来事をルールで振り分ける。<b>「毎日9時に実行」</b>のような<span class="term" data-tip="スケジュール実行：決まった時間に自動で処理を動かすこと。昔は CloudWatch Events と呼ばれていた機能。">スケジュール実行</span>もできる。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSStepFunctions.svg" alt=""><div><div class="name">AWS Step Functions<span class="yomi">ステップ ファンクションズ</span></div><div class="one">いくつもの処理を<b>「1→2→3、失敗したらやり直し」と順番どおりに進める</b>司令塔。処理の流れ（<span class="term" data-tip="ワークフロー：仕事の流れ・手順のこと。">ワークフロー</span>）を図で作れる。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonAPIGateway.svg" alt=""><div><div class="name">Amazon API Gateway<span class="yomi">API ゲートウェイ</span></div><div class="one">外からのリクエストを受け付ける<b>玄関（受付窓口）</b>。API を作って公開・管理できる。<b>API Gateway ＋ Lambda</b> はサーバーレスの定番の組み合わせ。</div></div></div>
+
+<div class="table-wrap"><table>
+  <tr><th>サービス</th><th>ひとことで</th><th>送り方</th><th>たとえ</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonSimpleQueueService.svg" alt="">SQS</td><td>ためておく</td><td>取りに行く（ポーリング）</td><td>伝票ホルダー</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonSimpleNotificationService.svg" alt="">SNS</td><td>一斉に配る</td><td>送りつける（プッシュ）</td><td>校内放送</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEventBridge.svg" alt="">EventBridge</td><td>出来事で振り分ける</td><td>ルールで配る</td><td>駅の交通整理係</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSStepFunctions.svg" alt="">Step Functions</td><td>手順どおりに進める</td><td>流れを管理</td><td>料理のレシピ</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonAPIGateway.svg" alt="">API Gateway</td><td>外からの受付</td><td>リクエストを受ける</td><td>お店の玄関・受付</td></tr>
+</table></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：SQS は「Q（キュー）＝列に並ぶ」、SNS は「N（ノーティフィケーション）＝お知らせ」</div>
+  <p>名前の<b>まん中の1文字</b>を見るだけで区別できます。<b>Q</b>ueue（行列）→ ためる。<b>N</b>otification（通知）→ 一斉に知らせる。</p>
+</div>
+
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <ul style="margin:0">
+    <li>「コンポーネントを<b>疎結合</b>にしたい」「処理が追いつかないときにリクエストを<b>ためておきたい</b>」→ <b>SQS</b></li>
+    <li>「1つの通知を<b>複数の宛先</b>（メール・SMS など）に送りたい」→ <b>SNS</b></li>
+    <li>「AWS で何かが起きたら自動で処理したい」「<b>定期実行</b>したい」→ <b>EventBridge</b></li>
+    <li>「複数の Lambda を<b>順番に</b>実行し、エラー時はやり直したい」→ <b>Step Functions</b></li>
+  </ul>
+</div>
+
+<h2>2. 集めて分析する —— データ分析のサービス</h2>
+<p>データ分析は、<b>「集める → きれいにする → ためる → 調べる → 見える化する」</b>という流れで考えると、サービスの役割が整理できます。</p>
+
+<div class="diagram">
+  <div class="dtitle">データ分析の流れ（パイプライン）</div>
+  <div class="flow wrap-ok">
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonKinesis.svg" alt="">① 集める<small>Kinesis<br>（リアルタイム）</small></div>
+    <div class="arr">→</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSGlue.svg" alt="">② きれいにする<small>Glue（ETL）</small></div>
+    <div class="arr">→</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">③ ためる<small>S3（データレイク）<br>Redshift（DWH）</small></div>
+    <div class="arr">→</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonAthena.svg" alt="">④ 調べる<small>Athena / EMR</small></div>
+    <div class="arr">→</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonQuickSuite.svg" alt="">⑤ 見える化<small>Quick Sight<br>（旧 QuickSight）</small></div>
+  </div>
+  <div class="cap">「集・清・貯・調・見」の5ステップ。サービスがどこに入るかで覚えます。</div>
+</div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>ストリーミングデータ</dt><dd>川の流れのように<b>絶えず流れてくる</b>データ。クリック履歴、センサーの値、ログなど。</dd>
+    <dt>ETL</dt><dd>Extract（取り出す）・Transform（形を整える）・Load（入れる）。データを分析しやすい形に<b>加工して運ぶ</b>作業。</dd>
+    <dt>データレイク</dt><dd>いろいろな形のデータを<b>そのまま大量に</b>ためておく「湖」。AWS では S3 が中心。</dd>
+    <dt>DWH（データウェアハウス）</dt><dd>分析用に<b>整理してためた</b>データの「倉庫」。Redshift がこれ。</dd>
+    <dt>SQL</dt><dd>データベースに「こういう条件のデータを出して」とお願いするための言葉。</dd>
+    <dt>BI</dt><dd>Business Intelligence。データをグラフや<b>ダッシュボード</b>（計器盤のような一覧画面）にして、判断に使うこと。</dd>
+    <dt>ビッグデータ</dt><dd>ふつうのコンピューター1台では扱いきれない、とても大量のデータ。</dd>
+  </dl>
+</div>
+
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonKinesis.svg" alt=""><div><div class="name">Amazon Kinesis<span class="yomi">キネシス</span></div><div class="one"><b>リアルタイム</b>に流れてくるデータを集めて処理する。<b>Kinesis Data Streams</b>（流れを受け止める）、<b>Amazon Data Firehose</b>（旧 Kinesis Data Firehose。S3 や Redshift へ自動で運ぶ）、<b>Kinesis Video Streams</b>（動画）がある。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSGlue.svg" alt=""><div><div class="name">AWS Glue<span class="yomi">グルー</span></div><div class="one">サーバーレスの <b>ETL</b> サービス。どこにどんなデータがあるかを記録する<b>データカタログ</b>（データの目録）も持つ。Glue＝「のり」でデータをくっつけるイメージ。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonAthena.svg" alt=""><div><div class="name">Amazon Athena<span class="yomi">アテナ</span></div><div class="one"><b>S3 に置いたデータに、そのまま SQL で質問できる</b>。サーバー不要（サーバーレス）で、<b>調べたデータ量に応じて</b>お金を払う。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEMR.svg" alt=""><div><div class="name">Amazon EMR<span class="yomi">イーエムアール</span></div><div class="one"><b>ビッグデータ</b>を、たくさんのサーバーで手分けして処理する。<span class="term" data-tip="Hadoop（ハドゥープ）・Spark（スパーク）：大量のデータを、たくさんのコンピューターで分担して処理するための有名なソフト。">Hadoop や Spark</span> を簡単に使える。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonRedshift.svg" alt=""><div><div class="name">Amazon Redshift<span class="yomi">レッドシフト</span></div><div class="one">分析専用の<b>データウェアハウス</b>。大量のデータを集計するのが得意。くわしくは<a href="05-database.html">第5章 データベース</a>へ。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonQuickSuite.svg" alt=""><div><div class="name">Amazon Quick Sight<span class="yomi">クイックサイト（旧 Amazon QuickSight）</span></div><div class="one">データを<b>グラフやダッシュボードで見える化</b>する BI サービス。2025年10月に AI 機能などとまとめて <b>Amazon Quick Suite</b>（その後さらに「Amazon Quick」）という名前の製品群になり、BI の部分は「Quick Sight」と呼ばれています。<b>試験問題では「Amazon QuickSight」と書かれることが多い</b>ので、どちらの名前でもわかるようにしておきましょう。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonOpenSearchService.svg" alt=""><div><div class="name">Amazon OpenSearch Service<span class="yomi">オープンサーチ</span></div><div class="one">大量のログや文章から<b>すばやく検索・分析</b>する。サイト内検索やログ分析に使う（旧 Elasticsearch Service）。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSLakeFormation.svg" alt=""><div><div class="name">AWS Lake Formation<span class="yomi">レイク フォーメーション</span></div><div class="one"><b>データレイクを簡単に作り、だれがどのデータを見てよいか（権限）をまとめて管理</b>する。</div></div></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：ギリシャ神話の女神 Athena は「知恵の神」</div>
+  <p>知恵の神<b>アテナ</b>に、湖（S3 データレイク）のほとりで<b>質問（SQL）</b>をすると、すぐ答えてくれる —— という場面を思いうかべます。<br>Kinesis は「<b>キネ</b>マ（映画）」＝ 止まらず<b>流れ続ける</b>映像 → ストリーミング。</p>
+</div>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <ul style="margin:0">
+    <li><b>Athena</b>（S3 に直接 SQL・サーバーレス）と <b>Redshift</b>（データを入れて大規模に集計する DWH）を混同しない。「<b>S3 のデータをそのまま</b>」「<b>アドホック</b>（その場かぎり）な分析」なら Athena。</li>
+    <li>「<b>リアルタイム</b>」「<b>ストリーミング</b>」と出たら Kinesis。<b>Glue はバッチ</b>（まとめて処理）向け。</li>
+    <li>見える化（グラフ）は <b>QuickSight / Quick Sight</b>。CloudWatch のダッシュボード（監視用）とは目的がちがう。</li>
+  </ul>
+</div>
+
+<h2>3. AI・機械学習のサービス</h2>
+<p>AI のサービスは<b>3段の棚</b>に分けて覚えます。上の段ほど「すぐ使える」、下の段ほど「自分で作れる」です。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🍳</span>たとえ話：料理で考える AI</div>
+  <ul style="margin:0">
+    <li><b>上の段（できあいの AI）</b>＝ <b>お惣菜</b>。買ってきてすぐ食べられる。「画像を見る」「声を文字にする」など、1つの仕事に特化。</li>
+    <li><b>中の段（生成 AI）</b>＝ <b>腕のいいシェフを呼ぶ</b>。Bedrock で有名なシェフ（基盤モデル）を選んで、自分の注文で料理を作ってもらう。</li>
+    <li><b>下の段（機械学習を自分で作る）</b>＝ <b>キッチン一式</b>。SageMaker で材料（データ）から自分だけのレシピ（モデル）を作る。</li>
+  </ul>
+</div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>機械学習（ML）</dt><dd>コンピューターに大量のデータを見せて、<b>パターン（規則）を自分で見つけさせる</b>技術。</dd>
+    <dt>モデル</dt><dd>機械学習で作られた「判断のしくみ」。データを入れると答え（予測）を出す。</dd>
+    <dt>生成 AI</dt><dd>文章・画像・プログラムなどを<b>新しく作り出す</b> AI。ChatGPT や Claude など。</dd>
+    <dt>基盤モデル（FM）</dt><dd>大量のデータで前もって学習させた、<b>いろいろな用途に使える大きな AI モデル</b>。生成 AI の土台。</dd>
+    <dt>自然言語処理（NLP）</dt><dd>人間がふだん使う言葉（自然言語）をコンピューターが理解・処理すること。</dd>
+    <dt>OCR</dt><dd>画像の中の文字を読み取って、テキストデータにする技術。</dd>
+  </dl>
+</div>
+
+<h3>下の段・中の段：自分で作る／生成 AI</h3>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSageMakerAI.svg" alt=""><div><div class="name">Amazon SageMaker AI<span class="yomi">セージメーカー</span></div><div class="one">機械学習モデルを<b>作る・学習させる・動かす</b>まで全部できる、開発者・データサイエンティスト向けの台所。（2024年末から「SageMaker AI」という名前になり、「SageMaker」はデータ分析も含む大きなブランド名になりました）</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonBedrock.svg" alt=""><div><div class="name">Amazon Bedrock<span class="yomi">ベッドロック</span></div><div class="one">いろいろな会社の<b>基盤モデル</b>（Anthropic の Claude、Amazon Nova など）を、<b>API で呼ぶだけ</b>で使える生成 AI サービス。サーバー管理不要。Bedrock＝「岩盤」＝<b>土台</b>。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonQ.svg" alt=""><div><div class="name">Amazon Q<span class="yomi">アマゾン キュー</span></div><div class="one">仕事を手伝ってくれる<b>生成 AI アシスタント</b>。開発者向けの <b>Amazon Q Developer</b>（コードを書く・AWS の使い方を答える）と、社内データをもとに答える <b>Amazon Q Business</b> がある。</div></div></div>
+
+<h3>上の段：できあいの AI（「〇〇する AI」）</h3>
+<div class="table-wrap"><table>
+  <tr><th>サービス</th><th>何をする？</th><th>覚え方</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonRekognition.svg" alt="">Rekognition</td><td><b>画像・動画</b>を見て、顔や物を見分ける</td><td>Recognition（認識）＝<b>目</b></td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonTextract.svg" alt="">Textract</td><td>書類の画像から<b>文字や表を読み取る</b>（OCR）</td><td>Text＋Extract（取り出す）</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonComprehend.svg" alt="">Comprehend</td><td>文章の<b>意味・感情</b>（ほめている？怒っている？）を読み取る</td><td>Comprehend（理解する）＝<b>読解力</b></td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonPolly.svg" alt="">Polly</td><td><b>文字 → 声</b>（読み上げ）</td><td>おしゃべりオウムの「ポリー」＝<b>口</b></td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonTranscribe.svg" alt="">Transcribe</td><td><b>声 → 文字</b>（文字起こし）</td><td>Transcribe（書き写す）＝<b>耳</b></td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonTranslate.svg" alt="">Translate</td><td>文章を<b>翻訳</b>する</td><td>そのまま「翻訳」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonLex.svg" alt="">Lex</td><td><b>チャットボット</b>（会話する AI）を作る</td><td>Lex＝<b>Alexa</b> と同じ技術</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonKendra.svg" alt="">Kendra</td><td>社内の文書から、<b>質問に合う答えを探す</b>賢い検索</td><td>「<b>検</b>ドラ」＝<b>検</b>索</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonPersonalize.svg" alt="">Personalize</td><td>「<b>あなたへのおすすめ</b>」を出す</td><td>Personal（個人）向け</td></tr>
+</table></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：AI を「顔のパーツ」に置きかえる</div>
+  <p>👁️ 目 ＝ <b>Rekognition</b>（見る）／ 📄 目で字を読む ＝ <b>Textract</b><br>
+  👂 耳 ＝ <b>Transcribe</b>（聞いて書く）／ 👄 口 ＝ <b>Polly</b>（しゃべる）<br>
+  🧠 頭 ＝ <b>Comprehend</b>（意味がわかる）／ 🌐 通訳 ＝ <b>Translate</b>／ 💬 会話 ＝ <b>Lex</b></p>
+  <p>自分の顔の、目・耳・口・頭を順番にさわりながら名前を言うと、体の動き（エピソード）と一緒に覚えられます。</p>
+</div>
+
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <ul style="margin:0">
+    <li>「<b>機械学習の知識がなくても</b>」画像認識・翻訳などを使いたい → 上の段（Rekognition・Translate など）</li>
+    <li>「<b>独自の ML モデル</b>を構築・トレーニング・デプロイしたい」→ <b>SageMaker（AI）</b></li>
+    <li>「<b>基盤モデル</b>を使って生成 AI アプリを作りたい」「インフラ管理なしで」→ <b>Bedrock</b></li>
+    <li>「コールセンターの<b>通話を文字にして</b>、<b>お客さんの感情</b>を分析」→ <b>Transcribe ＋ Comprehend</b></li>
+  </ul>
+</div>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <p><b>Polly と Transcribe は向きが逆</b>。Polly は「文字→声」、Transcribe は「声→文字」。<br><b>Textract と Comprehend</b> もまちがえやすい：Textract は<b>画像から文字を取り出す</b>だけ、Comprehend は<b>文章の意味を理解</b>する。</p>
+</div>
+
+<h2>4. 引っ越す —— 移行（マイグレーション）のサービス</h2>
+<p>オンプレミスのシステムを AWS に<b>引っ越す</b>ことを<span class="term" data-tip="マイグレーション（Migration）：移行。システムやデータを、今の場所から新しい場所へ移すこと。">マイグレーション</span>といいます。</p>
+
+<div class="diagram">
+  <div class="dtitle">オンプレミスから AWS への引っ越し</div>
+  <div class="grp-row">
+    <div class="grp onprem" style="flex:0 1 auto">
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/Corporatedatacenter.svg" alt=""><span class="gtxt">自社データセンター</span></div>
+      <div class="flow col">
+        <div class="node sm"><img src="../assets/aws-icons/resource/Servers.svg" alt="">サーバー</div>
+        <div class="node sm"><img src="../assets/aws-icons/resource/GenericApplication.svg" alt="">データベース</div>
+      </div>
+    </div>
+    <div class="flow col" style="flex:0 1 auto">
+      <div class="flow"><div class="arr">→</div><div class="node sm"><img src="../assets/aws-icons/architecture-service/AWSApplicationMigrationService.svg" alt="">MGN<small>サーバーを丸ごと</small></div><div class="arr">→</div></div>
+      <div class="flow"><div class="arr">→</div><div class="node sm"><img src="../assets/aws-icons/architecture-service/AWSDatabaseMigrationService.svg" alt="">DMS<small>データベース</small></div><div class="arr">→</div></div>
+    </div>
+    <div class="grp cloud" style="flex:0 1 auto">
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">AWS</span></div>
+      <div class="flow col">
+        <div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2</div>
+        <div class="node sm"><img src="../assets/aws-icons/architecture-service/AmazonRDS.svg" alt="">RDS など</div>
+      </div>
+    </div>
+  </div>
+  <div class="flow" style="margin-top:10px"><div class="node"><img src="../assets/aws-icons/architecture-service/AWSMigrationHub.svg" alt="">Migration Hub<small>全体の進み具合を1か所で見る</small></div></div>
+  <div class="cap">サーバーは MGN、データベースは DMS で運び、全体の状況は Migration Hub で見守る。</div>
+</div>
+
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSMigrationHub.svg" alt=""><div><div class="name">AWS Migration Hub<span class="yomi">マイグレーション ハブ</span></div><div class="one">引っ越しの<b>進み具合をまとめて見る</b>管理画面。Hub＝中心・集まる場所。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSApplicationMigrationService.svg" alt=""><div><div class="name">AWS Application Migration Service（MGN）<span class="yomi">アプリケーション マイグレーション サービス</span></div><div class="one">今のサーバーを<b>ほぼそのまま</b> AWS（EC2）へコピーして引っ越す。<b>リホスト（リフト＆シフト）</b>の定番。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSDatabaseMigrationService.svg" alt=""><div><div class="name">AWS Database Migration Service（DMS）<span class="yomi">データベース マイグレーション サービス</span></div><div class="one"><b>データベース</b>を、動かしたまま（止める時間を短く）AWS へ移す。種類のちがう DB への移行もできる。くわしくは<a href="05-database.html">第5章</a>へ。</div></div></div>
+
+<h3>移行のやり方「7つの R」</h3>
+<div class="table-wrap"><table>
+  <tr><th>R</th><th>意味</th><th>引っ越しでたとえると</th></tr>
+  <tr><td><b>Rehost</b>（リホスト）</td><td>そのまま移す。<b>リフト＆シフト</b>とも</td><td>家具をそのままトラックで運ぶ</td></tr>
+  <tr><td><b>Replatform</b>（リプラットフォーム）</td><td>少しだけ手を加えて移す（例：DB を RDS にする）</td><td>運ぶついでに家電だけ新しくする</td></tr>
+  <tr><td><b>Refactor</b>（リファクタリング）</td><td>クラウド向けに<b>作り直す</b></td><td>新しい家に合わせて家具を作り直す</td></tr>
+  <tr><td><b>Repurchase</b>（リパーチェス）</td><td>別の製品（SaaS など）に<b>買い替える</b></td><td>古い家具は捨てて新品を買う</td></tr>
+  <tr><td><b>Retire</b>（リタイア）</td><td>使っていないので<b>やめる</b></td><td>いらない物は捨てる</td></tr>
+  <tr><td><b>Retain</b>（リテイン）</td><td>今はまだ<b>移さず残す</b></td><td>実家に置いておく</td></tr>
+  <tr><td><b>Relocate</b>（リロケート）</td><td>VMware の環境などを<b>丸ごと</b>クラウドへ移す</td><td>家ごとクレーンで運ぶ</td></tr>
+</table></div>
+<p class="muted">※昔は Relocate を除いた「6つの R」でした。今は「7つの R」が基本です。</p>
+
+<h2>5. その他よく出るサービス</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSAmplify.svg" alt=""><div><div class="name">AWS Amplify<span class="yomi">アンプリファイ</span></div><div class="one"><b>Web アプリやスマホアプリ</b>を、すばやく作って公開するための道具セット。フロントエンド（画面側）の開発者向け。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSIoTCore.svg" alt=""><div><div class="name">AWS IoT Core<span class="yomi">アイオーティー コア</span></div><div class="one">センサーや家電など、<b>たくさんの機器（IoT デバイス）を AWS につなぐ</b>。<span class="term" data-tip="IoT（Internet of Things / モノのインターネット）：家電・車・センサーなど、いろいろな「モノ」がインターネットにつながること。">IoT</span>＝モノのインターネット。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonWorkSpaces.svg" alt=""><div><div class="name">Amazon WorkSpaces<span class="yomi">ワークスペース</span></div><div class="one">クラウド上の<b>パソコンのデスクトップ</b>を借りる（<span class="term" data-tip="VDI（仮想デスクトップ）：パソコンの画面（デスクトップ）だけを手元に映し、本体はサーバー上で動かすしくみ。">仮想デスクトップ</span>）。家からでも会社と同じ画面で働ける。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonConnect.svg" alt=""><div><div class="name">Amazon Connect<span class="yomi">コネクト</span></div><div class="one">クラウドで動く<b>コールセンター（問い合わせ窓口）</b>。電話を受ける設備をすぐ作れる。</div></div></div>
+
+<div class="recall">
+  <h2>🙌 手ぶら復習</h2>
+  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。</p>
+  <details class="q"><summary>疎結合とは？ ラーメン屋でたとえると？</summary><div class="a">部品どうしをゆるくつなぎ、片方が止まっても影響が出にくくすること。店員が料理人に手渡しせず、伝票ホルダー（キュー＝SQS）にさしておくイメージ。</div></details>
+  <details class="q"><summary>SQS と SNS のちがいは？</summary><div class="a">SQS はメッセージを「ためておく」キュー（受け取る側が取りに行く）。SNS は1つの通知を複数の相手に「一斉に送りつける」（プッシュ、Pub/Sub）。</div></details>
+  <details class="q"><summary>「複数の処理を順番に実行し、失敗したらやり直す」流れを作るサービスは？</summary><div class="a">AWS Step Functions。</div></details>
+  <details class="q"><summary>データ分析の5ステップと、それぞれの代表サービスは？</summary><div class="a">集める（Kinesis）→ きれいにする（Glue）→ ためる（S3 / Redshift）→ 調べる（Athena / EMR）→ 見える化（QuickSight ＝ 今の Quick Sight）。</div></details>
+  <details class="q"><summary>S3 のデータに、サーバーなしで直接 SQL を投げられるサービスは？</summary><div class="a">Amazon Athena（調べたデータ量に応じて課金）。</div></details>
+  <details class="q"><summary>SageMaker と Bedrock のちがいは？</summary><div class="a">SageMaker（AI）は自分で ML モデルを作る・学習させる・動かす台所。Bedrock は既製の基盤モデルを API で呼ぶだけで使える生成 AI サービス。</div></details>
+  <details class="q"><summary>AI を「顔のパーツ」で：目・耳・口・頭はそれぞれどのサービス？</summary><div class="a">目＝Rekognition（画像・動画）、耳＝Transcribe（声→文字）、口＝Polly（文字→声）、頭＝Comprehend（文章の意味・感情）。</div></details>
+  <details class="q"><summary>書類の画像から文字や表を取り出すサービスは？</summary><div class="a">Amazon Textract。</div></details>
+  <details class="q"><summary>サーバーをそのまま AWS に移す（リホスト）ときのサービスは？ DB を移すときは？</summary><div class="a">サーバーは AWS Application Migration Service（MGN）、データベースは AWS DMS。全体の進み具合は Migration Hub で見る。</div></details>
+  <details class="q"><summary>7つの R をできるだけ言ってみよう</summary><div class="a">Rehost（そのまま）、Replatform（少し変える）、Refactor（作り直す）、Repurchase（買い替える）、Retire（やめる）、Retain（残す）、Relocate（丸ごと移す）。</div></details>
+</div>
+
+<div id="study-log"></div>
+<nav id="pager"></nav>
+</main>
+<script src="../assets/site.js"></script>
+</body>
+</html>
