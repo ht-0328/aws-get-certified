@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コンピューティング | AWS 合格ノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-root="../" data-page="ch03">
+<main class="wrap">
+<div class="breadcrumb"><a href="../index.html">ホーム</a> › 第3章</div>
+<p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
+<h1>第3章 コンピューティング（サーバー）</h1>
+<p class="lead">「コンピューティング」とは、<b>計算する力＝プログラムを動かす力</b>のこと。AWS でサーバーを借りる方法は1つではありません。「どこまで自分で面倒をみるか」で、使うサービスが変わります。</p>
+
+<div class="box map">
+  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <ol style="margin:0">
+    <li>EC2 —— 仮想サーバーを借りる（AMI・インスタンスタイプ）</li>
+    <li>EC2 の買い方（オンデマンド・RI・Savings Plans・スポット・専有）</li>
+    <li>Auto Scaling と ELB —— 増やす・減らす・ふり分ける</li>
+    <li>Lambda —— サーバーを意識しない（サーバーレス）</li>
+    <li>コンテナ（ECS・EKS・Fargate・ECR）</li>
+    <li>その他（Lightsail・Elastic Beanstalk・Batch・Outposts）</li>
+  </ol>
+</div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>先に全体像：面倒をみる量で並べる</div>
+  <p><b>EC2</b>（全部自分）→ <b>コンテナ</b>（箱づめして運ぶ）→ <b>Lambda</b>（コードだけ）</p>
+  <p>右に行くほど「AWS におまかせ」が増え、自分の手間は減ります。第2章の責任共有モデルとつながっています。</p>
+</div>
+
+<h2>1. EC2 —— 仮想サーバーを借りる</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt=""><div><div class="name">Amazon EC2<span class="yomi">イーシーツー／Elastic Compute Cloud</span></div><div class="one">数分で使える<b><span class="term" data-tip="仮想サーバー：1台の大きな物理サーバーを、ソフトの力で何台分にも区切ったもの。1台1台が独立したサーバーのように使える。">仮想サーバー</span></b>を借りるサービス。OS から上は自分で自由に設定できる（＝IaaS）。借りた1台1台を<b>インスタンス</b>と呼ぶ。</div></div></div>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🚗</span>たとえ話：レンタカー</div>
+  <p>EC2 は<b>レンタカー</b>です。車種（<b>インスタンスタイプ</b>）を選び、カーナビやシートの設定（<b>AMI</b>）を選んで借ります。運転（OS の更新やソフトの管理）は自分でします。</p>
+</div>
+
+<h3>AMI —— サーバーの「ひな形」</h3>
+<p><span class="term" data-tip="AMI（エーエムアイ／Amazon Machine Image）：OS や必要なソフトがセットされた、サーバーのひな形。">AMI</span> は、OS や入れておきたいソフトをセットにした<b>サーバーのひな形</b>です。自分で作った AMI から同じサーバーを何台でもコピーできます。</p>
+<div class="flow wrap-ok" style="margin:1em 0">
+  <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2AMI.svg" alt="">AMI<small>ひな形</small></div>
+  <div class="arr">→<small>起動</small></div>
+  <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">インスタンス</div>
+  <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">インスタンス</div>
+  <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">インスタンス</div>
+</div>
+
+<h3>インスタンスタイプ —— 車種を選ぶ</h3>
+<p>「CPU が強い」「メモリが多い」など、用途に合わせて選びます。名前は <code>m7g.large</code> のように<b>「ファミリー・世代・追加の特徴・サイズ」</b>でできています。</p>
+<div class="table-wrap"><table>
+  <tr><th>ファミリー</th><th>得意なこと</th><th>代表的な文字</th><th>たとえ</th></tr>
+  <tr><td><b>汎用</b></td><td>バランス型。Web サーバーなど</td><td>M・T</td><td>ふつうの乗用車</td></tr>
+  <tr><td><b>コンピューティング最適化</b></td><td><span class="term" data-tip="CPU（シーピーユー）：コンピューターの頭脳。計算をする部品。">CPU</span> をたくさん使う計算</td><td>C（Compute）</td><td>スポーツカー</td></tr>
+  <tr><td><b>メモリ最適化</b></td><td>大量のデータを<span class="term" data-tip="メモリ：コンピューターが作業中のデータを一時的に置く机のようなもの。大きいほど一度にたくさん広げられる。">メモリ</span>に置いて処理</td><td>R（RAM）・X</td><td>大きな作業机つきのワゴン車</td></tr>
+  <tr><td><b>高速コンピューティング</b></td><td>AI の学習・画像処理（<span class="term" data-tip="GPU（ジーピーユー）：画像処理や AI の計算が得意な部品。">GPU</span> などを使う）</td><td>P・G・Inf・Trn</td><td>特殊車両</td></tr>
+  <tr><td><b>ストレージ最適化</b></td><td>ディスクの読み書きが大量</td><td>I・D</td><td>トラック</td></tr>
+</table></div>
+
+<h3>ストレージ（ディスク）は2種類</h3>
+<p>EC2 につなぐディスクは、ふつう <b>EBS</b>（第4章でくわしく）を使います。インスタンスを止めてもデータが<b>残る</b>ネットワーク上のディスクです。一方、<b>インスタンスストア</b>はサーバーに直接ついた高速ディスクですが、インスタンスを停止すると<b>データが消えます</b>（一時的な置き場所向け）。</p>
+
+<h2>2. EC2 の買い方（購入オプション）</h2>
+<p>同じ EC2 でも、<b>買い方で料金が大きく変わります</b>。試験ではほぼ確実に出ます。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🏨</span>たとえ話：ホテルの泊まり方</div>
+  <ul style="margin:0">
+    <li><b>オンデマンド</b>＝ <b>当日予約の素泊まり</b>。いつでも泊まれて、いつでも帰れる。でも定価。</li>
+    <li><b>リザーブドインスタンス（RI）</b>＝ <b>1年・3年の長期契約の部屋</b>。部屋（インスタンスタイプ）は固定だけど、大きく割引。</li>
+    <li><b>Savings Plans</b>＝ <b>「1時間あたりこれだけ使います」という金額の約束</b>。部屋は変えてもいいので、RI より自由。</li>
+    <li><b>スポットインスタンス</b>＝ <b>空き部屋の激安セール</b>。ただし、ほかのお客さんが来たら<b>2分前の予告で追い出される</b>。</li>
+    <li><b>Dedicated Hosts</b>＝ <b>建物（物理サーバー）を丸ごと貸し切り</b>。</li>
+  </ul>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th>買い方</th><th>割引</th><th>向いている使い方</th></tr>
+  <tr><td><b>オンデマンド</b></td><td>なし（定価）<br><small class="muted">秒・時間単位で払う</small></td><td>短期間・予測できない・<b>中断されたら困る</b>仕事。お試し。</td></tr>
+  <tr><td><b>リザーブドインスタンス</b></td><td>最大 約72%</td><td><b>1年か3年、ずっと動かす</b>ことがわかっている仕事（例：いつも動いているデータベース）。</td></tr>
+  <tr><td><b>Savings Plans</b></td><td>最大 約72%</td><td>1年か3年の<b>利用金額</b>を約束。Compute Savings Plans なら EC2 のタイプやリージョン、Fargate・Lambda にも使える<b>柔軟さ</b>が魅力。</td></tr>
+  <tr><td><b>スポットインスタンス</b></td><td>最大 <b>約90%</b></td><td><b>途中で止まってもやり直せる</b>仕事（データの一括処理・テストなど）。</td></tr>
+  <tr><td><b>Dedicated Hosts</b></td><td>なし（高め）</td><td>物理サーバーを専有。<b>今持っているソフトのライセンス</b>（サーバー単位の契約）を持ちこみたいとき。法律上、他社と共有できないとき。</td></tr>
+  <tr><td><b>Dedicated Instances</b></td><td>なし（高め）</td><td>自分専用のハードウェアで動かす（ただし物理サーバーの細かい管理はできない）。</td></tr>
+  <tr><td><b>キャパシティ予約</b></td><td>なし</td><td>特定の AZ で、必要なときに<b>確実に起動できる枠</b>をおさえておく。</td></tr>
+</table></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：「<b>いつ止まってもいい→スポット、ずっと動く→RI/SP、よくわからない→オンデマンド</b>」</div>
+  <p>スポット＝「<b>ス</b>ぐ<b>ポ</b>イっと追い出される、でも<b>ト</b>ても安い」</p>
+  <p>Dedicated＝「<b>デ</b>ーンと<b>建物ごと</b>」→ ライセンス持ちこみ・規制対応。</p>
+</div>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <ul style="margin:0">
+    <li>「<b>中断できない</b>重要な処理を<b>いちばん安く</b>」→ スポットは<b>×</b>（中断されるかも）。期間が長ければ RI か Savings Plans、短ければオンデマンド。</li>
+    <li>「<b>ライセンスを持ちこみたい</b>（BYOL）」→ <b>Dedicated Hosts</b>。Dedicated Instances とまちがえないこと。<br><small class="muted">BYOL＝Bring Your Own License。自分が持っているソフトの使用権をクラウドで使うこと。</small></li>
+  </ul>
+</div>
+
+<h2>3. Auto Scaling と ELB —— 増やす・減らす・ふり分ける</h2>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🍜</span>たとえ話：人気ラーメン店</div>
+  <p><b>ELB</b> は<b>入口の案内係</b>。並んでいるお客さんを、空いている店員（サーバー）へ順番にふり分けます。調子の悪い店員（こわれたサーバー）には案内しません。</p>
+  <p><b>Auto Scaling</b> は<b>店長</b>。行列が長くなったらアルバイトを<b>自動で増やし</b>、ひまになったら<b>帰す</b>。いつでも最低何人いるか・最大何人までか、も決めておけます。</p>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">よくある構成：ELB ＋ Auto Scaling ＋ 2つの AZ</div>
+  <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">利用者</div></div>
+  <div class="flow"><div class="arr">↓</div></div>
+  <div class="grp region">
+    <div class="glabel"><img src="../assets/aws-icons/architecture-group/Region.svg" alt=""><span class="gtxt">リージョン</span></div>
+    <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/ElasticLoadBalancingApplicationLoadBalancer.svg" alt="">ELB（ALB）<small>ふり分け＋ヘルスチェック</small></div></div>
+    <div class="flow"><div class="arr">↙　↘</div></div>
+    <div class="grp asg">
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/AutoScalinggroup.svg" alt=""><span class="gtxt">Auto Scaling グループ（最小2・最大6）</span></div>
+      <div class="grp-row">
+        <div class="grp az"><div class="glabel">AZ-a</div><div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div><div class="node sm"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div></div></div>
+        <div class="grp az"><div class="glabel">AZ-c</div><div class="flow"><div class="node sm"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div><div class="node sm" style="opacity:.45"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">増えた EC2<small>混んだら自動追加</small></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="cap">1つの AZ が止まっても、ELB はもう一方の AZ の EC2 へ案内し、Auto Scaling が足りない台数を自動で補います。これで<b>高可用性</b>と<b>伸縮性</b>の両方が手に入ります。</div>
+</div>
+
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEC2AutoScaling.svg" alt=""><div><div class="name">Amazon EC2 Auto Scaling<span class="yomi">オートスケーリング</span></div><div class="one">EC2 の台数を<b>自動で増減</b>。こわれた EC2 を自動で入れかえる役目もある。<br>増やし方：<b>ターゲット追跡</b>（例：CPU 使用率を50%に保つ）／<b>スケジュール</b>（例：毎朝9時に増やす）／<b>予測</b>（過去のパターンから前もって増やす）など。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/ElasticLoadBalancing.svg" alt=""><div><div class="name">Elastic Load Balancing（ELB）<span class="yomi">ロードバランサー</span></div><div class="one">届いた通信を複数のサーバーに<b>ふり分ける</b>（<span class="term" data-tip="負荷分散（ふかぶんさん）：仕事（負荷）を複数のサーバーに分けて、1台に集中しないようにすること。">負荷分散</span>）。<span class="term" data-tip="ヘルスチェック：サーバーが元気に動いているかを定期的に確認すること。">ヘルスチェック</span>で、こわれたサーバーには送らない。</div></div></div>
+
+<h3>ELB の3種類</h3>
+<div class="table-wrap"><table>
+  <tr><th>種類</th><th>得意なこと</th><th>キーワード</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingApplicationLoadBalancer.svg" alt=""><b>ALB</b><br><small class="muted">Application</small></td><td>Web（HTTP/HTTPS）の中身を見てふり分け。<code>/images</code> はこっち、<code>/api</code> はあっち、ができる</td><td>「<b>パス（URL）でふり分け</b>」「HTTP」「<span class="term" data-tip="レイヤー7：通信を7つの階層に分けた考え方（OSI参照モデル）の一番上。アプリの中身（URLなど）のレベル。">レイヤー7</span>」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingNetworkLoadBalancer.svg" alt=""><b>NLB</b><br><small class="muted">Network</small></td><td>TCP/UDP の通信を<b>超高速・大量</b>にふり分け。固定の IP アドレスを持てる</td><td>「<b>毎秒数百万リクエスト</b>」「低レイテンシー」「固定IP」「レイヤー4」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingGatewayLoadBalancer.svg" alt=""><b>GWLB</b><br><small class="muted">Gateway</small></td><td>他社製のファイアウォールなどの<b>セキュリティ機器</b>に通信を通す</td><td>「<b>サードパーティーの仮想アプライアンス</b>」<br><small class="muted">仮想アプライアンス＝ソフトとして動く専用機器。</small></td></tr>
+</table></div>
+
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <ul style="margin:0">
+    <li>「アクセスの増減に合わせて自動で台数を変えたい」→ <b>Auto Scaling</b></li>
+    <li>「複数の EC2 に通信を分散し、1台がこわれても止まらないように」→ <b>ELB</b>（＋複数 AZ）</li>
+    <li>「URL のパスで送り先を変えたい」→ <b>ALB</b>／「超高性能・固定 IP」→ <b>NLB</b></li>
+  </ul>
+</div>
+
+<h2>4. Lambda —— サーバーを意識しない</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSLambda.svg" alt=""><div><div class="name">AWS Lambda<span class="yomi">ラムダ</span></div><div class="one"><b>コードを置いておくだけ</b>で、何か起きたとき（イベント）に自動で動く。サーバーの準備・管理はいらない（＝<span class="term" data-tip="サーバーレス：サーバーがないのではなく、サーバーの管理を利用者が一切しなくてよい、という意味。">サーバーレス</span>）。<b>動いた回数と時間（ミリ秒単位）だけ</b>お金がかかる。</div></div></div>
+
+<div class="box story">
+  <div class="box-title"><span class="em">💡</span>たとえ話：人感センサーのライト</div>
+  <p>EC2 は「<b>つけっぱなしの電気</b>」。だれもいなくても電気代がかかります。Lambda は「<b>人が来たときだけ光る人感センサーライト</b>」。来なければ0円です。</p>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">イベント駆動の例：画像をアップしたら自動で縮小</div>
+  <div class="flow wrap-ok">
+    <div class="node"><img src="../assets/aws-icons/resource/User.svg" alt="">利用者</div>
+    <div class="arr">→<small>写真をアップ</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">S3</div>
+    <div class="arr">→<small>イベント</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSLambda.svg" alt="">Lambda<small>縮小プログラム</small></div>
+    <div class="arr">→</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">S3<small>小さい画像</small></div>
+  </div>
+  <div class="cap"><span class="term" data-tip="イベント駆動（くどう）：「ファイルが置かれた」「時間になった」などの出来事（イベント）をきっかけに処理が動くしくみ。">イベント駆動</span>：何かが起きたときだけ動くので、ムダがありません。</div>
+</div>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <p>Lambda は 1回の実行が<b>最大15分</b>まで。「何時間もかかる処理」には向きません（EC2・Batch・Fargate などを使う）。</p>
+</div>
+
+<h2>5. コンテナ —— 荷物を箱づめして運ぶ</h2>
+<p><span class="term" data-tip="コンテナ：アプリと、それを動かすのに必要なものをまとめて1つの箱にしたもの。どのサーバーに持っていっても同じように動く。代表的な技術が Docker。">コンテナ</span>は、アプリと必要な部品を<b>1つの箱にまとめたもの</b>です。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🚢</span>たとえ話：貨物コンテナ</div>
+  <p>港の貨物コンテナは、中身が何でも<b>同じ形の箱</b>なので、どの船・トラックにも積めます。IT のコンテナも同じで、「自分のパソコンでは動いたのに、サーバーでは動かない」が起きにくくなります。</p>
+  <ul style="margin:0">
+    <li><b>ECR</b>＝ コンテナの<b>倉庫</b>（箱の設計図＝イメージを保管）</li>
+    <li><b>ECS / EKS</b>＝ どの船に何個積むかを決める<b>港の管理人</b>（<span class="term" data-tip="オーケストレーション：たくさんのコンテナの起動・停止・配置を自動で指揮すること。">オーケストレーション</span>）</li>
+    <li><b>Fargate</b>＝ <b>船ごと AWS が用意</b>してくれるサービス。自分は箱を渡すだけ</li>
+  </ul>
+</div>
+
+<div class="diagram">
+  <div class="flow wrap-ok">
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElasticContainerRegistry.svg" alt="">ECR<small>イメージの倉庫</small></div>
+    <div class="arr">→</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElasticContainerService.svg" alt="">ECS</div>
+    <div class="arr" style="font-size:.9rem">or</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElasticKubernetesService.svg" alt="">EKS</div>
+    <div class="arr">→<small>どこで動かす？</small></div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2<small>自分で管理</small></div>
+    <div class="arr" style="font-size:.9rem">or</div>
+    <div class="node"><img src="../assets/aws-icons/architecture-service/AWSFargate.svg" alt="">Fargate<small>サーバーレス</small></div>
+  </div>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th>サービス</th><th>ひと言で</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonElasticContainerService.svg" alt=""><b>ECS</b></td><td>AWS 独自のコンテナ管理サービス。かんたん。</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonElasticKubernetesService.svg" alt=""><b>EKS</b></td><td>世界標準の <span class="term" data-tip="Kubernetes（クバネティス）：Google 生まれの、コンテナ管理の世界標準ソフト。オープンソース。">Kubernetes</span> を AWS で使う。「Kubernetes」と出たら EKS。</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSFargate.svg" alt=""><b>Fargate</b></td><td>コンテナ用の<b>サーバーレス</b>実行環境。ECS・EKS と組み合わせ、EC2 の管理が不要に。</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonElasticContainerRegistry.svg" alt=""><b>ECR</b></td><td>コンテナ<b>イメージ</b>を保管する場所（レジストリ）。</td></tr>
+</table></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方</div>
+  <p>E<b>C</b>S ＝ <b>C</b>ontainer（AWS のふつうの管理人）／ E<b>K</b>S ＝ <b>K</b>ubernetes ／ EC<b>R</b> ＝ <b>R</b>egistry（倉庫）／ <b>Far</b>gate ＝ サーバーは<b>遠く（far）</b>の AWS まかせ</p>
+</div>
+
+<h2>6. その他のコンピューティングサービス</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonLightsail.svg" alt=""><div><div class="name">Amazon Lightsail<span class="yomi">ライトセイル</span></div><div class="one"><b>月額固定のかんたんサーバー</b>。サーバー・ディスク・ネットワークがセット。「AWS にくわしくない人が、小さなサイトや WordPress をかんたんに」→ Lightsail。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt=""><div><div class="name">AWS Elastic Beanstalk<span class="yomi">ビーンストーク</span></div><div class="one"><b>コードをアップロードするだけ</b>で、EC2・ELB・Auto Scaling などを自動で組み立ててくれる（PaaS）。「インフラを気にせず、Web アプリをすばやく公開」→ Beanstalk。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSBatch.svg" alt=""><div><div class="name">AWS Batch<span class="yomi">バッチ</span></div><div class="one">大量の<span class="term" data-tip="バッチ処理：データをためておき、まとめて一気に処理すること。例：夜中に1日分の売上を集計する。">バッチ処理</span>を自動で計画・実行。必要な台数のサーバーを用意し、終わったら片付ける（スポットとも相性がよい）。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSOutpostsfamily.svg" alt=""><div><div class="name">AWS Outposts<span class="yomi">アウトポスト</span></div><div class="one">AWS のサーバー機械を<b>自社のデータセンターに置いて</b>、AWS と同じように使う。「データを社内に置いたまま AWS のサービスを使いたい」→ Outposts（ハイブリッド構成）。</div></div></div>
+
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験に出るポイント（まとめ）</div>
+  <ul style="margin:0">
+    <li>「サーバーの管理をしたくない」「イベントで動かす」→ <b>Lambda</b></li>
+    <li>「コンテナを動かしたいがサーバー管理はしたくない」→ <b>Fargate</b></li>
+    <li>「Kubernetes」→ <b>EKS</b></li>
+    <li>「コードを上げるだけで Web アプリ環境を自動構築」→ <b>Elastic Beanstalk</b></li>
+    <li>「月額固定・かんたん」→ <b>Lightsail</b></li>
+    <li>「自社のデータセンターで AWS を使う」→ <b>Outposts</b></li>
+  </ul>
+</div>
+
+<div class="recall">
+  <h2>🙌 手ぶら復習</h2>
+  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。</p>
+  <details class="q"><summary>EC2・コンテナ・Lambda を「自分の手間」の多い順に並べると？</summary><div class="a">EC2（全部自分）＞ コンテナ ＞ Lambda（コードだけ）。</div></details>
+  <details class="q"><summary>AMI とは？</summary><div class="a">OS やソフトをセットにした、サーバーのひな形。同じサーバーを何台でも起動できる。</div></details>
+  <details class="q"><summary>インスタンスタイプの5つのファミリーは？</summary><div class="a">汎用（M・T）、コンピューティング最適化（C）、メモリ最適化（R・X）、高速コンピューティング（P・G など）、ストレージ最適化（I・D）。</div></details>
+  <details class="q"><summary>EC2 の購入オプションと、それぞれ向いている使い方は？</summary><div class="a">オンデマンド＝短期・予測不能・中断不可。RI／Savings Plans＝1〜3年ずっと使う（最大約72%割引、SP は柔軟）。スポット＝中断してもよい処理（最大約90%割引）。Dedicated Hosts＝ライセンス持ちこみ・規制対応。</div></details>
+  <details class="q"><summary>スポットインスタンスの注意点は？</summary><div class="a">AWS の都合で2分前の通知で中断されることがある。中断できない処理には使わない。</div></details>
+  <details class="q"><summary>Auto Scaling と ELB の役割を、ラーメン店でたとえると？</summary><div class="a">ELB＝入口の案内係（空いている店員にふり分け、調子の悪い店員には案内しない）。Auto Scaling＝店長（混んだら人を増やし、ひまなら帰す）。</div></details>
+  <details class="q"><summary>ALB・NLB・GWLB の使い分けは？</summary><div class="a">ALB＝HTTP の中身（URL のパスなど）でふり分け（レイヤー7）。NLB＝TCP/UDP を超高速・固定 IP（レイヤー4）。GWLB＝他社製セキュリティ機器へ通す。</div></details>
+  <details class="q"><summary>Lambda の特徴と、向かない処理は？</summary><div class="a">サーバー管理不要、イベントで動き、回数と時間だけ課金。1回最大15分なので長時間の処理には向かない。</div></details>
+  <details class="q"><summary>ECS・EKS・Fargate・ECR のちがいは？</summary><div class="a">ECS＝AWS 独自のコンテナ管理、EKS＝Kubernetes、Fargate＝コンテナ用サーバーレス実行環境、ECR＝コンテナイメージの保管場所。</div></details>
+  <details class="q"><summary>Lightsail・Elastic Beanstalk・Outposts はそれぞれどんなとき？</summary><div class="a">Lightsail＝月額固定のかんたんサーバー。Beanstalk＝コードを上げるだけで環境を自動構築。Outposts＝自社のデータセンターで AWS を使う。</div></details>
+</div>
+
+<div id="study-log"></div>
+<nav id="pager"></nav>
+</main>
+<script src="../assets/site.js"></script>
+</body>
+</html>

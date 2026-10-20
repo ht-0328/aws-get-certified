@@ -1,0 +1,57 @@
+/* 第2章 セキュリティとIAM — 復習カードと用語 */
+window.AWSNOTE = window.AWSNOTE || { cards: [], terms: [] };
+
+AWSNOTE.cards.push(
+  { ch: "ch02", q: "責任共有モデルで、AWS とお客さんの担当は？", a: "AWS＝クラウドの（OF）セキュリティ（建物・機械・仮想化の土台）。お客さん＝クラウドの中の（IN）セキュリティ（データ・設定・権限）。" },
+  { ch: "ch02", q: "EC2 の OS にパッチを当てるのはだれ？ RDS のデータベースソフトは？", a: "EC2 はお客さん。RDS は AWS。" },
+  { ch: "ch02", q: "AWS とお客さんの「共有コントロール」の例は？", a: "パッチ管理、設定管理、社員教育（それぞれ自分の担当範囲で行う）。" },
+  { ch: "ch02", q: "IAM のユーザー・グループ・ポリシー・ロールとは？", a: "ユーザー＝1人分のログイン情報、グループ＝ユーザーのまとまり、ポリシー＝許可・拒否のルール（JSON）、ロール＝一時的に引き受ける権限。" },
+  { ch: "ch02", q: "EC2 上のプログラムに S3 へのアクセスを許可する正しい方法は？", a: "EC2 に IAM ロールを付ける。アクセスキーをサーバーに保存しない。" },
+  { ch: "ch02", q: "IAM ポリシーで、許可と拒否がぶつかったらどうなる？", a: "明示的な拒否（Deny）が優先される。何も書いていなければ拒否。" },
+  { ch: "ch02", q: "ルートユーザーでしかできない操作の例は？", a: "アカウントの解約、サポートプランの変更、ルートユーザーのメールアドレスなどアカウント設定の変更。" },
+  { ch: "ch02", q: "最小権限の原則とは？", a: "仕事に必要な分だけの権限をあたえること。" },
+  { ch: "ch02", q: "MFA とは？", a: "多要素認証。パスワード（知っているもの）＋ MFA デバイス（持っているもの）など、ちがう種類の証拠で本人確認すること。" },
+  { ch: "ch02", q: "Organizations の SCP の役割は？", a: "メンバーアカウントで使える権限の上限を決める（校則）。権限をあたえるものではない。" },
+  { ch: "ch02", q: "1回のログインで複数の AWS アカウントやアプリを使えるようにするサービスは？", a: "IAM Identity Center（旧 AWS SSO）。" },
+  { ch: "ch02", q: "KMS と CloudHSM のちがいは？", a: "KMS＝AWS が管理する暗号化キー管理サービス（多くのサービスと連携）。CloudHSM＝専用のハードウェア（HSM）を自分だけで使い、カギを完全に自分で管理。" },
+  { ch: "ch02", q: "データベースのパスワードを安全に保管し、自動でローテーションしたい。", a: "AWS Secrets Manager。" },
+  { ch: "ch02", q: "SSL/TLS 証明書を発行・自動更新するサービスは？", a: "AWS Certificate Manager（ACM）。" },
+  { ch: "ch02", q: "Shield Standard と Shield Advanced のちがいは？", a: "Standard＝無料・自動の基本的な DDoS 対策。Advanced＝有料で、高度な DDoS 対策、24時間の専門チーム（SRT）、攻撃で増えた料金の補償など。" },
+  { ch: "ch02", q: "SQL インジェクションや XSS を防ぐサービスは？", a: "AWS WAF（CloudFront・ALB・API Gateway などに付ける）。" },
+  { ch: "ch02", q: "GuardDuty は何をする？", a: "CloudTrail・VPC フローログ・DNS ログなどを機械学習で分析し、脅威（あやしい動き）を検出する。" },
+  { ch: "ch02", q: "Inspector は何をする？", a: "EC2・コンテナイメージ・Lambda の脆弱性（弱点）を自動でスキャンする。" },
+  { ch: "ch02", q: "Macie は何をする？", a: "S3 の中から個人情報（PII）などの機密データを機械学習で見つける。" },
+  { ch: "ch02", q: "Security Hub と Detective の役割は？", a: "Security Hub＝セキュリティの検出結果を一元化して状態をチェック。Detective＝問題の根本原因を調査。" },
+  { ch: "ch02", q: "AWS のコンプライアンスレポート（SOC・ISO など）を入手するには？", a: "AWS Artifact。" },
+  { ch: "ch02", q: "自分のアプリに会員登録・ログイン機能を付けたい。", a: "Amazon Cognito。" }
+);
+
+AWSNOTE.terms.push(
+  { ch: "ch02", w: "責任共有モデル", r: "Shared Responsibility Model", m: "セキュリティの責任を AWS と利用者で分け合う考え方。AWS＝クラウドの、利用者＝クラウドの中の。" },
+  { ch: "ch02", w: "マネージドサービス", r: "Managed service", m: "更新や故障対応などの管理を AWS が代わりにやってくれるサービス。" },
+  { ch: "ch02", w: "OS", r: "Operating System", m: "Windows や Linux など、コンピューターを動かす土台のソフト。" },
+  { ch: "ch02", w: "パッチ", r: "Patch", m: "ソフトの弱点や不具合をふさぐ修正プログラム。" },
+  { ch: "ch02", w: "ファイアウォール", r: "Firewall", m: "許可した通信だけを通し、それ以外をブロックするしくみ。" },
+  { ch: "ch02", w: "暗号化", r: "Encryption", m: "データを、カギを持つ人しか読めない形に変えること。" },
+  { ch: "ch02", w: "IAM", r: "Identity and Access Management", m: "AWS をだれが使え、何をしてよいかを管理するサービス。無料・グローバル。" },
+  { ch: "ch02", w: "ルートユーザー", r: "Root user", m: "アカウント作成時の最強ユーザー。ふだんは使わず MFA で守る。" },
+  { ch: "ch02", w: "IAM ポリシー", r: "IAM policy", m: "許可・拒否のルールを JSON で書いたもの。明示的な拒否が最優先。" },
+  { ch: "ch02", w: "IAM ロール", r: "IAM role", m: "一時的に引き受ける権限。EC2 などのサービスや別アカウントに貸す。" },
+  { ch: "ch02", w: "最小権限の原則", r: "Principle of least privilege", m: "必要な分だけの権限をあたえること。" },
+  { ch: "ch02", w: "MFA", r: "Multi-Factor Authentication", m: "多要素認証。パスワード＋スマホなど、ちがう種類の証拠で本人確認する。" },
+  { ch: "ch02", w: "認証情報", r: "Credentials", m: "本人であることを証明する情報。パスワードやアクセスキーなど。" },
+  { ch: "ch02", w: "JSON", r: "JavaScript Object Notation", m: "データを {\"名前\": \"値\"} の形で書く書き方。IAM ポリシーで使う。" },
+  { ch: "ch02", w: "グローバルサービス", r: "Global service", m: "特定のリージョンに属さず世界共通で使えるサービス。IAM など。" },
+  { ch: "ch02", w: "シングルサインオン（SSO）", r: "Single Sign-On", m: "1回のログインで複数のシステムを使えるしくみ。" },
+  { ch: "ch02", w: "一括請求", r: "Consolidated billing", m: "複数アカウントの料金を1つの請求にまとめる Organizations の機能。" },
+  { ch: "ch02", w: "SCP", r: "Service Control Policy", m: "Organizations でアカウントの権限の上限を決めるポリシー。" },
+  { ch: "ch02", w: "HSM", r: "Hardware Security Module", m: "暗号のカギを安全に保管・処理する専用の機械。" },
+  { ch: "ch02", w: "ローテーション", r: "Rotation", m: "パスワードやカギを定期的に新しいものへ取りかえること。" },
+  { ch: "ch02", w: "SSL/TLS 証明書", r: "SSL/TLS certificate", m: "サイトが本物だと証明し、通信を暗号化するための電子証明書（https）。" },
+  { ch: "ch02", w: "DDoS 攻撃", r: "Distributed Denial of Service", m: "大量のコンピューターから一斉にアクセスしてサイトをパンクさせる攻撃。" },
+  { ch: "ch02", w: "SQL インジェクション", r: "SQL injection", m: "入力欄にデータベースへの命令をまぎれこませる攻撃。" },
+  { ch: "ch02", w: "XSS", r: "Cross-Site Scripting", m: "Web ページに悪いプログラムを埋めこみ、見た人のブラウザで動かす攻撃。" },
+  { ch: "ch02", w: "脆弱性", r: "Vulnerability", m: "セキュリティ上の弱点・穴。ぜいじゃくせい。" },
+  { ch: "ch02", w: "PII", r: "Personally Identifiable Information", m: "名前・住所・カード番号など、個人を特定できる情報。" },
+  { ch: "ch02", w: "監査", r: "Audit", m: "外部の専門家が、決まりを守っているかチェックすること。" }
+);
