@@ -1,0 +1,55 @@
+/* 第4章 ストレージ — 復習カードと用語 */
+window.AWSNOTE = window.AWSNOTE || { cards: [], terms: [] };
+
+AWSNOTE.cards.push(
+  { ch: "ch04", q: "ストレージの3種類と、AWS の代表サービスは？", a: "ブロック＝EBS、ファイル＝EFS / FSx、オブジェクト＝S3。" },
+  { ch: "ch04", q: "S3 の耐久性は？", a: "99.999999999%（イレブンナイン）。" },
+  { ch: "ch04", q: "S3 のオブジェクト1個の最大サイズは？ バケット名のルールは？", a: "5TB。バケット名は全世界でユニーク。" },
+  { ch: "ch04", q: "アクセス頻度が予測できないデータに向く S3 のクラスは？", a: "S3 Intelligent-Tiering。" },
+  { ch: "ch04", q: "S3 1ゾーン-IA の注意点は？", a: "1つの AZ にしか保存しないので、AZ ごと失われる可能性がある。作り直せるデータ向け。" },
+  { ch: "ch04", q: "最も安く、取り出しに12〜48時間かかる S3 のクラスは？", a: "S3 Glacier Deep Archive（最低180日分の料金）。" },
+  { ch: "ch04", q: "年に数回しか見ないが、見るときはミリ秒で取り出したいデータのクラスは？", a: "S3 Glacier Instant Retrieval。" },
+  { ch: "ch04", q: "時間がたったデータを自動で安いクラスへ移したり削除したりする S3 の機能は？", a: "ライフサイクル設定。" },
+  { ch: "ch04", q: "誤って削除・上書きしたオブジェクトを戻せるようにする S3 の機能は？", a: "バージョニング。" },
+  { ch: "ch04", q: "S3 バケットがうっかり公開されるのを防ぐ機能は？", a: "S3 ブロックパブリックアクセス（新しいバケットでは最初からオン）。" },
+  { ch: "ch04", q: "EBS ボリュームはどの範囲に属する？ 別 AZ で使うには？", a: "1つの AZ に属する。スナップショットを取り、そこから別 AZ に新しいボリュームを作る。" },
+  { ch: "ch04", q: "EC2 を停止すると消えてしまうストレージは？", a: "インスタンスストア（一時データ・キャッシュ向け）。" },
+  { ch: "ch04", q: "複数の Linux EC2 から同時に使える共有ファイルストレージは？", a: "Amazon EFS（NFS、マルチAZ、自動で容量が伸縮）。" },
+  { ch: "ch04", q: "Windows のファイル共有（SMB / Active Directory）に使うサービスは？", a: "Amazon FSx for Windows File Server。" },
+  { ch: "ch04", q: "HPC・機械学習向けの超高速ファイルシステムは？", a: "Amazon FSx for Lustre。" },
+  { ch: "ch04", q: "社内のサーバーから S3 などをふつうのファイル置き場・ディスクのように使える橋渡しサービスは？", a: "AWS Storage Gateway（ファイル／ボリューム／テープゲートウェイ）。" },
+  { ch: "ch04", q: "大量データを装置に入れて物理的に AWS へ運ぶサービスは？", a: "AWS Snowball Edge（Snow ファミリー）。" },
+  { ch: "ch04", q: "社内のファイルサーバーから S3 / EFS / FSx へネット経由で移行・同期するサービスは？", a: "AWS DataSync。" },
+  { ch: "ch04", q: "SFTP / FTPS / FTP で S3 にファイルを出し入れしたいときのサービスは？", a: "AWS Transfer Family。" },
+  { ch: "ch04", q: "複数サービスのバックアップを一元管理するサービスは？", a: "AWS Backup。" }
+);
+
+AWSNOTE.terms.push(
+  { ch: "ch04", w: "ストレージ", r: "Storage", m: "データを保存しておく場所・装置。" },
+  { ch: "ch04", w: "ブロックストレージ", r: "Block storage", m: "データを小さなブロックに分けて置く。サーバーのディスクと同じ。速いが基本1台専用。例：EBS。" },
+  { ch: "ch04", w: "ファイルストレージ", r: "File storage", m: "フォルダとファイルで整理し、複数のサーバーで共有できる。例：EFS、FSx。" },
+  { ch: "ch04", w: "オブジェクトストレージ", r: "Object storage", m: "ファイルをデータ＋メタデータ＋キーのセットとして丸ごと置く。例：S3。" },
+  { ch: "ch04", w: "バケット", r: "Bucket", m: "S3 でオブジェクトを入れる入れ物。名前は全世界でユニーク。" },
+  { ch: "ch04", w: "オブジェクト", r: "Object", m: "S3 に置くファイル1つ1つ。最大5TB。" },
+  { ch: "ch04", w: "メタデータ", r: "Metadata", m: "データについての情報（作成日時・種類・大きさなど）。" },
+  { ch: "ch04", w: "耐久性", r: "Durability", m: "保存したデータがこわれたり消えたりしない度合い。S3 は 99.999999999%。" },
+  { ch: "ch04", w: "可用性", r: "Availability", m: "サービスが止まらずに使える度合い。" },
+  { ch: "ch04", w: "ストレージクラス", r: "Storage class", m: "S3 の保管プラン。料金と取り出しやすさがちがう。" },
+  { ch: "ch04", w: "IA", r: "Infrequent Access", m: "「ひんぱんにはアクセスしない」データ向けという意味。" },
+  { ch: "ch04", w: "アーカイブ", r: "Archive", m: "めったに使わないデータを長期保管すること。Glacier がこれ用。" },
+  { ch: "ch04", w: "ライフサイクル設定", r: "Lifecycle configuration", m: "時間がたったら自動でクラス移動・削除する S3 のルール。" },
+  { ch: "ch04", w: "バージョニング", r: "Versioning", m: "上書き・削除しても前の版を残す S3 の機能。" },
+  { ch: "ch04", w: "静的Webサイト", r: "Static website", m: "だれが見ても同じ内容のページ。S3 だけで公開できる。" },
+  { ch: "ch04", w: "暗号化", r: "Encryption", m: "鍵を持つ人にしか読めない形にデータを変えること。" },
+  { ch: "ch04", w: "SSE", r: "Server-Side Encryption", m: "AWS 側（サーバー側）でデータを暗号化すること。S3 は SSE-S3 が標準。" },
+  { ch: "ch04", w: "レプリケーション", r: "Replication", m: "データを別の場所へ自動でコピーすること。" },
+  { ch: "ch04", w: "ボリューム", r: "Volume", m: "EBS で作るディスク1つ1つ。" },
+  { ch: "ch04", w: "スナップショット", r: "Snapshot", m: "ディスクのその瞬間の中身を丸ごと保存したバックアップ。" },
+  { ch: "ch04", w: "インスタンスストア", r: "Instance store", m: "EC2 本体についた一時ディスク。速いが停止すると消える。" },
+  { ch: "ch04", w: "NFS", r: "Network File System", m: "Linux などでネットワーク越しにファイルを共有する決まりごと。EFS が使う。" },
+  { ch: "ch04", w: "SMB", r: "Server Message Block", m: "Windows でネットワーク越しにファイルを共有する決まりごと。FSx for Windows が使う。" },
+  { ch: "ch04", w: "HPC", r: "High Performance Computing", m: "多くのコンピューターで巨大な計算を一気にすること。" },
+  { ch: "ch04", w: "Storage Gateway", r: "AWS Storage Gateway", m: "社内とAWSのストレージをつなぐ橋渡し役。ハイブリッドの代表。" },
+  { ch: "ch04", w: "Snowball Edge", r: "AWS Snowball Edge", m: "大量データを入れて物理的に運ぶ箱型の装置。" },
+  { ch: "ch04", w: "DataSync", r: "AWS DataSync", m: "ネット経由でデータを AWS へ移行・同期するサービス。" }
+);

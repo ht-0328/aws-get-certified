@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>試験ガイド | AWS 合格ノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-root="./" data-page="exam">
+<main class="wrap">
+<h1>🎯 試験ガイド</h1>
+<p class="lead">どの試験から受けるか、どんな形式か、どこが多く出るか。<b>敵を知ってから</b>勉強すると、ムダがへります。</p>
+
+<div class="box map">
+  <div class="box-title"><span class="em">🗺️</span>このページの地図</div>
+  <ol style="margin:0">
+    <li>どの資格から受ける？</li>
+    <li>試験の形式</li>
+    <li>出る範囲と、このサイトの章の対応</li>
+    <li>4週間の学習プラン（間隔反復つき）</li>
+    <li>問題の解き方のコツ</li>
+  </ol>
+</div>
+
+<h2>1. どの資格から受ける？</h2>
+<p>AWS の資格は、むずかしさで4段階に分かれています。はじめての人は<b>一番下の「クラウドプラクティショナー」</b>から受けるのがおすすめです。</p>
+<div class="diagram">
+  <div class="flow col">
+    <div class="card" style="width:100%;max-width:520px;border-left:6px solid var(--red)"><b>専門知識（Specialty）</b><p>セキュリティ・機械学習など、特定の分野を深く</p></div>
+    <div class="card" style="width:100%;max-width:520px;border-left:6px solid var(--purple)"><b>プロフェッショナル（Professional）</b><p>大きく複雑なシステムの設計</p></div>
+    <div class="card" style="width:100%;max-width:520px;border-left:6px solid var(--blue)"><b>アソシエイト（Associate）</b> ← 2つ目のおすすめ<p><b>ソリューションアーキテクト アソシエイト（SAA）</b>：AWS でシステムを設計する力</p></div>
+    <div class="card" style="width:100%;max-width:520px;border-left:6px solid var(--green)"><b>基礎（Foundational）</b> ← まずはここ<p><b>クラウドプラクティショナー（CLF）</b>：AWS とクラウドの基本</p></div>
+  </div>
+  <div class="cap">下から上へ。このサイトは CLF の範囲を中心に、SAA で必要になる内容もふくめています。<br>各章の <span class="badge clf">CLF</span><span class="badge saa">SAA</span> は、どちらの試験向けの内容かの目印です。</div>
+</div>
+
+<h2>2. 試験の形式</h2>
+<div class="table-wrap"><table>
+  <tr><th></th><th>クラウドプラクティショナー</th><th>ソリューションアーキテクト アソシエイト</th></tr>
+  <tr><td>試験コード</td><td>CLF-C02</td><td>SAA-C03</td></tr>
+  <tr><td>問題数</td><td>65問（うち15問は採点されない調査用）</td><td>65問（うち15問は採点されない調査用）</td></tr>
+  <tr><td>時間</td><td>90分</td><td>130分</td></tr>
+  <tr><td>合格ライン</td><td>1000点中 <b>700点</b></td><td>1000点中 <b>720点</b></td></tr>
+  <tr><td>問題の形</td><td colspan="2">選択問題（1つ選ぶ／2つ以上選ぶ）。日本語で受けられます。</td></tr>
+  <tr><td>受け方</td><td colspan="2">テストセンター、または自宅のパソコンからオンライン</td></tr>
+</table></div>
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>受験前に必ず確認</div>
+  試験のバージョン・料金・時間はときどき変わります。申しこむ前に <a href="https://aws.amazon.com/jp/certification/">AWS 認定の公式ページ</a> で最新の「試験ガイド」を確認してください。
+</div>
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>採点されない問題</dt><dd>今後の試験づくりのためのテスト用の問題。どれがそうかはわからないので、全部ふつうに解けば OK。</dd>
+    <dt>補償型（ほしょうがた）</dt><dd>分野ごとの合格ラインはなく、<b>全体の合計点</b>で合否が決まる方式。苦手分野があっても、ほかでカバーできる。</dd>
+  </dl>
+</div>
+
+<h2>3. 出る範囲と、このサイトの章</h2>
+<h3>クラウドプラクティショナー（CLF-C02）</h3>
+<div class="table-wrap"><table>
+  <tr><th>分野</th><th>割合</th><th>このサイトの章</th></tr>
+  <tr><td>1. クラウドのコンセプト</td><td><b>24%</b></td><td><a href="chapters/01-cloud-basics.html">第1章</a>・<a href="chapters/07-operations.html">第7章</a>（Well-Architected）</td></tr>
+  <tr><td>2. セキュリティとコンプライアンス</td><td><b>30%</b></td><td><a href="chapters/02-security-iam.html">第2章</a></td></tr>
+  <tr><td>3. クラウドのテクノロジーとサービス</td><td><b>34%</b></td><td>第1章・第3〜8章</td></tr>
+  <tr><td>4. 請求・料金・サポート</td><td><b>12%</b></td><td><a href="chapters/09-billing-support.html">第9章</a></td></tr>
+</table></div>
+<h3>ソリューションアーキテクト アソシエイト（SAA-C03）</h3>
+<div class="table-wrap"><table>
+  <tr><th>分野</th><th>割合</th><th>とくに大事な章</th></tr>
+  <tr><td>1. セキュアなアーキテクチャの設計<br><small class="muted">セキュア＝安全な</small></td><td><b>30%</b></td><td>第2章・第6章</td></tr>
+  <tr><td>2. 弾力性に優れたアーキテクチャの設計<br><small class="muted">弾力性＝こわれても立ち直る力</small></td><td><b>26%</b></td><td>第1章・第3章・第5章・第8章</td></tr>
+  <tr><td>3. 高性能なアーキテクチャの設計</td><td><b>24%</b></td><td>第3章・第4章・第5章・第6章</td></tr>
+  <tr><td>4. コストを最適化したアーキテクチャの設計</td><td><b>20%</b></td><td>第3章・第4章・第9章</td></tr>
+</table></div>
+
+<h2>4. 4週間の学習プラン（CLF の例）</h2>
+<p>1日1時間を目安にしたプランです。<b>新しいことを読む日</b>と<b>復習する日</b>を混ぜているのがポイントです（間隔反復）。</p>
+<div class="table-wrap"><table>
+  <tr><th>週</th><th>新しく読む</th><th>復習</th></tr>
+  <tr><td>1週目</td><td>勉強法 → 第1章 → 第2章 → 第3章</td><td>各章を1日後・3日後に手ぶら復習。毎日カード10分。</td></tr>
+  <tr><td>2週目</td><td>第4章 → 第5章 → 第6章</td><td>1週目の章の7日後復習。毎日カード。</td></tr>
+  <tr><td>3週目</td><td>第7章 → 第8章 → 第9章</td><td>2週目の章の7日後復習、1週目の14日後復習。</td></tr>
+  <tr><td>4週目</td><td>公式の練習問題・模擬試験</td><td>まちがえた問題の章だけ読み直し → 手ぶら復習。</td></tr>
+</table></div>
+<div class="box science">
+  <div class="box-title"><span class="em">🔬</span>模擬試験も「思い出す練習」</div>
+  問題を解くこと自体が、いちばん強い復習です（テスト効果）。AWS Skill Builder の<b>公式練習問題</b>（無料のものあり）は、本番に近い形なので必ずやりましょう。まちがえた問題は「なぜその答えなのか」を自分の言葉で説明できるまで復習します。
+</div>
+
+<h2>5. 問題の解き方のコツ</h2>
+<h3>キーワード → サービスの対応を作る</h3>
+<p>AWS の問題は「問題文の<b>キーワード</b>」で答えが決まることが多いです。</p>
+<div class="table-wrap"><table>
+  <tr><th>問題文にこう書いてあったら</th><th>答えの候補</th></tr>
+  <tr><td>「誰が・いつ・何をしたか（操作の記録）」</td><td><img class="ico-s" src="assets/aws-icons/architecture-service/AWSCloudTrail.svg" alt="">CloudTrail</td></tr>
+  <tr><td>「サーバーを管理したくない」「イベントで動く」</td><td><img class="ico-s" src="assets/aws-icons/architecture-service/AWSLambda.svg" alt="">Lambda</td></tr>
+  <tr><td>「世界中のユーザーに速く配信」</td><td><img class="ico-s" src="assets/aws-icons/architecture-service/AmazonCloudFront.svg" alt="">CloudFront</td></tr>
+  <tr><td>「ほぼ使わない古いデータを、いちばん安く保管」</td><td><img class="ico-s" src="assets/aws-icons/architecture-service/AmazonSimpleStorageServiceGlacier.svg" alt="">S3 Glacier Deep Archive</td></tr>
+  <tr><td>「中断されてもよい処理を、いちばん安く」</td><td><img class="ico-s" src="assets/aws-icons/resource/AmazonEC2SpotInstance.svg" alt="">スポットインスタンス</td></tr>
+  <tr><td>「AWS のセキュリティ・コンプライアンスの報告書」</td><td><img class="ico-s" src="assets/aws-icons/architecture-service/AWSArtifact.svg" alt="">AWS Artifact</td></tr>
+</table></div>
+<p>各章の <b>🎯試験に出るポイント</b> がこの対応表になっています。</p>
+
+<h3>消去法を使う</h3>
+<ul>
+  <li>まず<b>明らかにちがう選択肢</b>を消す（存在しないサービス、役割がまったくちがうサービス）。</li>
+  <li>「<b>いちばん安い</b>」「<b>いちばん運用の手間が少ない</b>」など、問題文の<b>条件のことば</b>に線を引くつもりで読む。</li>
+  <li>「2つ選べ」の問題は、選ぶ数をまちがえないように注意。</li>
+</ul>
+
+</main>
+<script src="assets/site.js"></script>
+</body>
+</html>

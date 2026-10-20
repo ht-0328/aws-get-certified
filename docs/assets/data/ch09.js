@@ -1,0 +1,55 @@
+/* 第9章 料金とサポート — 復習カードと用語 */
+window.AWSNOTE = window.AWSNOTE || { cards: [], terms: [] };
+
+AWSNOTE.cards.push(
+  { ch: "ch09", q: "AWS の料金を決める3つの基本は？", a: "コンピューティング（動かした時間）、ストレージ（保存した量）、データ転送（外へ出す量）。" },
+  { ch: "ch09", q: "データ転送で、無料なのはどちら向き？", a: "AWS に入ってくる（インバウンド）は基本無料。AWS から出ていく（アウトバウンド）は有料。" },
+  { ch: "ch09", q: "2025年7月15日以降に作ったアカウントの無料利用枠は？", a: "クレジット制（登録時100ドル＋サービスを試すと最大100ドル追加）。無料プラン（最大6か月またはクレジットを使い切るまで）か有料プランを選ぶ。" },
+  { ch: "ch09", q: "割引率が最も大きい EC2 の購入オプションは？ 注意点は？", a: "スポットインスタンス（最大約90%割引）。AWS の都合で中断されることがある。" },
+  { ch: "ch09", q: "1年か3年の利用を約束して割引を受ける購入オプションは？", a: "Savings Plans とリザーブドインスタンス（最大約72%割引）。" },
+  { ch: "ch09", q: "AWS Organizations の一括請求のメリットは？", a: "請求書を1つにまとめられる、使用量合計によるボリューム割引、RI/Savings Plans の割引共有、追加料金なし。" },
+  { ch: "ch09", q: "使う前に月額料金を見積もるツールは？", a: "AWS Pricing Calculator。" },
+  { ch: "ch09", q: "過去のコストをグラフで分析し、将来を予測するツールは？", a: "AWS Cost Explorer。" },
+  { ch: "ch09", q: "予算を設定して、こえそうなときに通知するツールは？", a: "AWS Budgets。" },
+  { ch: "ch09", q: "最も詳細な使用量・料金データを S3 に出力するのは？", a: "AWS Cost and Usage Report（CUR）。" },
+  { ch: "ch09", q: "急な料金の増加（いつもとちがう動き）を機械学習で見つけるのは？", a: "AWS Cost Anomaly Detection。" },
+  { ch: "ch09", q: "部署やプロジェクトごとにコストを分けて集計するには？", a: "コスト配分タグを有効にしてリソースにタグをつける。" },
+  { ch: "ch09", q: "昔からのサポートプラン5つと、いちばん速い応答時間は？", a: "ベーシック（技術サポートなし）、デベロッパー（12営業時間）、ビジネス（1時間）、エンタープライズ On-Ramp（30分）、エンタープライズ（15分）。" },
+  { ch: "ch09", q: "24時間365日の電話サポートが使える、いちばん安いプランは？", a: "ビジネス（新プランでは Business Support+）。" },
+  { ch: "ch09", q: "専任の TAM（テクニカルアカウントマネージャー）がつくプランは？", a: "エンタープライズ（On-Ramp は TAM のチーム／プール）。" },
+  { ch: "ch09", q: "2025年12月に発表された新しいサポートプランは？", a: "Basic（無料）、Business Support+、Enterprise Support、Unified Operations。旧プランは2027年1月1日まで利用可。" },
+  { ch: "ch09", q: "Trusted Advisor がチェックする6つの分野は？", a: "コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ・運用上の優秀性。" },
+  { ch: "ch09", q: "Trusted Advisor の全チェックが使えるのはどのプランから？", a: "ビジネス以上（ベーシック・デベロッパーは基本チェックのみ）。" },
+  { ch: "ch09", q: "他社のソフトウェアを探して購入できる AWS のストアは？", a: "AWS Marketplace。" },
+  { ch: "ch09", q: "無料で質問・回答できる AWS の Q&A コミュニティは？", a: "AWS re:Post。" }
+);
+
+AWSNOTE.terms.push(
+  { ch: "ch09", w: "インバウンド", r: "Inbound", m: "外から入ってくる通信。AWS では基本無料。" },
+  { ch: "ch09", w: "アウトバウンド", r: "Outbound", m: "中から外へ出ていく通信。AWS では有料。" },
+  { ch: "ch09", w: "TCO", r: "Total Cost of Ownership", m: "機械代だけでなく電気・場所・人件費まで含めた総コスト。" },
+  { ch: "ch09", w: "無料利用枠", r: "Free Tier", m: "一定の量や期間まで AWS を無料で使える制度。2025年7月以降の新規アカウントはクレジット制。" },
+  { ch: "ch09", w: "クレジット", r: "Credits", m: "AWS の料金の支払いに使える「ポイント」のようなもの。" },
+  { ch: "ch09", w: "オンデマンド", r: "On-Demand", m: "約束なしで使った分だけ払う、定価の買い方。" },
+  { ch: "ch09", w: "Savings Plans", r: "Savings Plans", m: "1時間あたりの利用額を1年か3年約束して割引を受ける買い方。" },
+  { ch: "ch09", w: "リザーブドインスタンス（RI）", r: "Reserved Instances", m: "特定のインスタンスを1年か3年予約して割引を受ける買い方。" },
+  { ch: "ch09", w: "スポットインスタンス", r: "Spot Instances", m: "AWS の空き容量を大幅割引で使う買い方。中断されることがある。" },
+  { ch: "ch09", w: "一括請求", r: "Consolidated Billing", m: "複数アカウントの料金を管理アカウントにまとめて請求するしくみ（Organizations）。" },
+  { ch: "ch09", w: "ボリューム割引", r: "Volume discount", m: "たくさん使うほど単価が安くなる割引。" },
+  { ch: "ch09", w: "Pricing Calculator", r: "AWS Pricing Calculator", m: "使う前に AWS の月額料金を見積もるツール。" },
+  { ch: "ch09", w: "Cost Explorer", r: "AWS Cost Explorer", m: "コストをグラフで分析・予測するツール。" },
+  { ch: "ch09", w: "Budgets", r: "AWS Budgets", m: "予算を設定し、こえそうなときに通知するツール。" },
+  { ch: "ch09", w: "CUR", r: "Cost and Usage Report", m: "最も詳細な使用量と料金のデータを S3 に出力するレポート。" },
+  { ch: "ch09", w: "Cost Anomaly Detection", r: "AWS Cost Anomaly Detection", m: "機械学習で異常なコスト増加を見つけて通知する機能。" },
+  { ch: "ch09", w: "タグ", r: "Tag", m: "リソースにつける名札。キーと値のペア（例：部署=営業部）。" },
+  { ch: "ch09", w: "コスト配分タグ", r: "Cost allocation tags", m: "タグごとにコストを分けて集計できるようにする設定。" },
+  { ch: "ch09", w: "TAM", r: "Technical Account Manager", m: "その会社の担当になる AWS の技術者。エンタープライズ系プランのみ。" },
+  { ch: "ch09", w: "コンシェルジュ", r: "Concierge Support", m: "請求やアカウントの相談にのる専門チーム（エンタープライズ）。" },
+  { ch: "ch09", w: "AWS Health Dashboard", r: "AWS Health Dashboard", m: "AWS 側の障害やメンテナンス情報を見られる画面。無料。" },
+  { ch: "ch09", w: "Trusted Advisor", r: "AWS Trusted Advisor", m: "AWS の使い方を自動チェックし改善点を教えてくれるサービス。" },
+  { ch: "ch09", w: "サービスクォータ", r: "Service Quotas", m: "サービスごとに決められた利用量の上限。" },
+  { ch: "ch09", w: "AWS Marketplace", r: "AWS Marketplace", m: "他社のソフトウェアやサービスを探して買えるオンラインストア。" },
+  { ch: "ch09", w: "AWS Partner Network（APN）", r: "AWS Partner Network", m: "AWS の導入を支援するパートナー企業の集まり。" },
+  { ch: "ch09", w: "AWS re:Post", r: "AWS re:Post", m: "AWS の無料 Q&A コミュニティ。" },
+  { ch: "ch09", w: "AWS Professional Services", r: "AWS Professional Services", m: "AWS 社員の専門家チームによる有料のプロジェクト支援。" }
+);

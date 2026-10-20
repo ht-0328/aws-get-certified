@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ストレージ | AWS 合格ノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-root="../" data-page="ch04">
+<main class="wrap">
+<div class="breadcrumb"><a href="../index.html">ホーム</a> › 第4章</div>
+<p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
+<h1>第4章 ストレージ（データの置き場所）</h1>
+<p class="lead">写真、書類、バックアップ、サーバーのディスク……。データはどこかに「置く」必要があります。AWS には置き場所がいくつもあり、試験では<b>「この場面ならどれ？」</b>を選ぶ問題がたくさん出ます。</p>
+
+<div class="box map">
+  <div class="box-title"><span class="em">🗺️</span>この章の地図</div>
+  <ol style="margin:0">
+    <li>ストレージの3つの種類（ブロック・ファイル・オブジェクト）</li>
+    <li>S3 —— なんでも置ける巨大倉庫（ストレージクラス・便利な機能）</li>
+    <li>EBS とインスタンスストア —— サーバーのディスク</li>
+    <li>EFS と FSx —— みんなで使う共有フォルダ</li>
+    <li>社内とクラウドをつなぐ・データを運ぶ（Storage Gateway・Snow・DataSync・Transfer Family）</li>
+    <li>まとめてバックアップ（AWS Backup）</li>
+  </ol>
+</div>
+
+<h2>1. ストレージの3つの種類</h2>
+<p><span class="term" data-tip="ストレージ（storage）：データを保存しておく場所・装置のこと。「倉庫」という意味の英語。">ストレージ</span>は、<b>データをどんな形で置くか</b>で3種類に分かれます。AWS のサービスもこの3つにきれいに分かれるので、まずここを押さえましょう。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">📦</span>たとえ話：3種類の「しまい方」</div>
+  <ul style="margin:0">
+    <li><b>ブロック</b>＝ <b>自分専用の机の引き出し</b>。細かく区切られていて、出し入れがとても速い。でも<b>自分（1台のサーバー）しか使えない</b>。</li>
+    <li><b>ファイル</b>＝ <b>職場の共有キャビネット</b>。フォルダで整理され、<b>みんな（複数のサーバー）で同時に使える</b>。</li>
+    <li><b>オブジェクト</b>＝ <b>巨大な倉庫に預ける荷物</b>。荷物ごとに「荷札（名前と情報）」をつけて丸ごと預ける。量はほぼ無限。インターネットからも取り出せる。</li>
+  </ul>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">ストレージ3兄弟と、AWS の代表サービス</div>
+  <div class="grp-row">
+    <div class="grp plain"><div class="glabel">ブロックストレージ</div>
+      <div class="flow col">
+        <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonElasticBlockStore.svg" alt="">EBS<small>サーバー1台の<br>ディスク</small></div>
+        <span class="callout">机の引き出し</span>
+      </div>
+    </div>
+    <div class="grp plain"><div class="glabel">ファイルストレージ</div>
+      <div class="flow col">
+        <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonEFS.svg" alt="">EFS / FSx<small>複数サーバーで<br>共有するフォルダ</small></div>
+        <span class="callout">共有キャビネット</span>
+      </div>
+    </div>
+    <div class="grp plain"><div class="glabel">オブジェクトストレージ</div>
+      <div class="flow col">
+        <div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">S3<small>ネット経由で<br>なんでも置ける</small></div>
+        <span class="callout">巨大倉庫</span>
+      </div>
+    </div>
+  </div>
+  <div class="cap">試験で「1台のEC2のディスク」→ EBS、「複数のEC2で共有」→ EFS、「画像やバックアップを大量に・安く」→ S3。</div>
+</div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>ブロックストレージ</dt><dd>データを小さな「ブロック」に分けて置くしくみ。パソコンの中のハードディスク（SSD）と同じ。速いが1台専用。</dd>
+    <dt>ファイルストレージ</dt><dd>フォルダとファイルで整理するしくみ。会社の共有フォルダ（ネットワークドライブ）と同じ。</dd>
+    <dt>オブジェクトストレージ</dt><dd>ファイルを「オブジェクト（データ＋情報のセット）」として丸ごと置くしくみ。中身の一部だけ書きかえることはできず、置き直す。</dd>
+    <dt>EC2</dt><dd>AWS で借りるサーバー（くわしくは第3章）。</dd>
+  </dl>
+</div>
+
+<h2>2. Amazon S3 —— なんでも置ける巨大倉庫</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt=""><div><div class="name">Amazon S3<span class="yomi">エススリー / Simple Storage Service</span></div><div class="one">インターネット経由で使える<b>オブジェクトストレージ</b>。容量は実質無限で、置いた分だけ料金がかかる。AWS でいちばん有名なサービスの一つ。</div></div></div>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🏬</span>たとえ話：トランクルームの「部屋」と「荷物」</div>
+  <p>S3 は巨大なトランクルーム。まず自分の<b>部屋（バケット）</b>を借りて、そこに<b>荷物（オブジェクト）</b>を入れます。荷物には<b>荷札（キー＝名前）</b>がついていて、それで取り出します。部屋の名前は<b>世界中でひとつだけ</b>（ほかの人と同じ名前はつけられない）です。</p>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">S3 の基本：バケットの中にオブジェクトを入れる</div>
+  <div class="flow wrap-ok">
+    <div class="node"><img src="../assets/aws-icons/resource/Users.svg" alt="">利用者・アプリ</div>
+    <div class="arr">→<small>アップロード</small></div>
+    <div class="grp region">
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/Region.svg" alt=""><span class="gtxt">リージョン（例：東京）</span></div>
+      <div class="flow">
+        <div class="node lg"><img src="../assets/aws-icons/resource/AmazonSimpleStorageServiceBucketWithObjects.svg" alt="">バケット<small>my-photos-2026</small></div>
+        <div class="arr">⊃</div>
+        <div class="node"><img src="../assets/aws-icons/resource/AmazonSimpleStorageServiceObject.svg" alt="">オブジェクト<small>cat.jpg<br>（1個 最大5TB）</small></div>
+      </div>
+    </div>
+  </div>
+  <div class="cap">バケットは<b>リージョンを選んで</b>作ります。中のデータは自動で<b>複数の AZ にコピー</b>されるので、とてもなくなりにくい。</div>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th>おさえる数字・性質</th><th>中身</th></tr>
+  <tr><td><b>耐久性</b><br><small class="muted">データがなくならない度合い</small></td><td><b>99.999999999%</b>（9が11個＝「イレブンナイン」）。1,000万個のファイルを置いて、1個なくなるのが1万年に1回くらい、というレベル。</td></tr>
+  <tr><td><b>可用性</b><br><small class="muted">使いたいときに使える度合い</small></td><td>S3 標準で 99.99%。<small class="muted">（耐久性と可用性はちがう言葉なので注意）</small></td></tr>
+  <tr><td><b>容量</b></td><td>バケット全体は無制限。オブジェクト1個は最大 <b>5TB</b>。</td></tr>
+  <tr><td><b>バケット名</b></td><td>全世界で<b>ユニーク</b>（ほかと重ならない）でなければならない。</td></tr>
+</table></div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>耐久性</dt><dd>Durability。保存したデータが<b>こわれたり消えたりしない</b>度合い。</dd>
+    <dt>可用性</dt><dd>Availability。サービスが<b>止まらずに使える</b>度合い。「データは無事だけど、今ちょっと取り出せない」は可用性の問題。</dd>
+    <dt>バケット</dt><dd>Bucket（バケツ）。S3 でオブジェクトを入れる入れ物。</dd>
+    <dt>オブジェクト</dt><dd>S3 に置くファイル1つ1つ。データ本体＋<span class="term" data-tip="メタデータ：データについての情報。作った日時、種類、大きさなど。「データのためのデータ」。">メタデータ</span>＋キー（名前）のセット。</dd>
+  </dl>
+</div>
+
+<h3>S3 ストレージクラス —— 「よく使う？」で置き場所を変える</h3>
+<p>S3 には料金と取り出しやすさがちがう<b>ストレージクラス</b>（保管プラン）があります。<b>よく使うものは高いけどすぐ出せる棚、めったに使わないものは安いけど出すのに時間がかかる奥の倉庫</b>へ、というイメージです。</p>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🏠</span>たとえ話：家の中の「しまう場所」</div>
+  <p><b>標準</b>＝リビングの棚（毎日使う）／<b>標準-IA</b>＝押し入れ（たまに出す）／<b>Glacier</b>＝実家の物置（めったに出さない。取りに行くのに時間がかかる）／<b>Deep Archive</b>＝山奥の貸し倉庫（ほぼ出さない。いちばん安いが、取り出しに半日〜2日）。</p>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th>クラス</th><th>どんなとき？</th><th>取り出し</th><th>注意点</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonSimpleStorageServiceS3Standard.svg" alt=""><b>S3 標準</b><br><small class="muted">Standard</small></td><td>よく使うデータ。Webサイトの画像など</td><td>すぐ（ミリ秒）</td><td>保管料はいちばん高め。取り出し料金なし</td></tr>
+  <tr><td><b>S3 Intelligent-Tiering</b><br><small class="muted">インテリジェント・ティアリング</small></td><td><b>使う頻度がわからない・変わる</b>データ</td><td>すぐ</td><td>使われ方を見て<b>自動で</b>安い階層へ移す。少額の監視料金あり</td></tr>
+  <tr><td><b>S3 標準-IA</b><br><small class="muted">Standard-Infrequent Access</small></td><td>たまにしか使わないが、使うときはすぐほしい</td><td>すぐ</td><td>取り出すと料金がかかる。最低30日分の料金</td></tr>
+  <tr><td><b>S3 1ゾーン-IA</b><br><small class="muted">One Zone-IA</small></td><td>なくなっても作り直せるデータ（コピーなど）</td><td>すぐ</td><td><b>1つの AZ にしか置かない</b>ので安いが、AZ ごと失われる可能性</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonSimpleStorageServiceS3GlacierInstantRetrieval.svg" alt=""><b>Glacier Instant Retrieval</b></td><td>年に数回だけ見るが、見るときはすぐ（医療画像など）</td><td>すぐ（ミリ秒）</td><td>最低90日分の料金</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonSimpleStorageServiceS3GlacierFlexibleRetrieval.svg" alt=""><b>Glacier Flexible Retrieval</b></td><td>バックアップ・保管用</td><td><b>数分〜12時間</b></td><td>最低90日分の料金</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonSimpleStorageServiceS3GlacierDeepArchive.svg" alt=""><b>Glacier Deep Archive</b></td><td>法律で何年も残すだけの記録など</td><td><b>12時間〜48時間</b></td><td><b>いちばん安い</b>。最低180日分の料金</td></tr>
+</table></div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>IA</dt><dd>Infrequent Access ＝「ひんぱんにはアクセスしない」。</dd>
+    <dt>Glacier（グレイシャー）</dt><dd>「氷河」という意味。凍らせて長く保管するイメージ＝<b>アーカイブ</b>（長期保管）用。</dd>
+    <dt>ティアリング</dt><dd>Tiering。データを「階層（ティア）」に分けて置くこと。</dd>
+  </dl>
+</div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：「ひょう・いん・あい・いち・グレ3兄弟」</div>
+  <p>右に行くほど<b>安い・取り出しが遅い</b>：<br><b>標</b>準 → <b>イン</b>テリジェント → <b>IA</b> → <b>1</b>ゾーンIA → <b>グレ</b>イシャー（インスタント → フレキシブル → ディープ）</p>
+  <p>グレイシャー3兄弟は「<b>すぐ・数時間・半日以上</b>」の順。<b>ディープ（深い）ほど取りに行くのが遠い</b>、と山奥の倉庫を思いうかべる。</p>
+</div>
+
+<h3>S3 の便利な機能</h3>
+<div class="table-wrap"><table>
+  <tr><th>機能</th><th>なにができる？</th></tr>
+  <tr><td><b>ライフサイクル設定</b></td><td>「30日たったら標準-IAへ、1年たったら Glacier へ、5年で削除」のように、<b>時間がたったら自動で移動・削除</b>するルール。</td></tr>
+  <tr><td><b>バージョニング</b></td><td>上書き・削除しても<b>前の版を残しておく</b>。まちがえて消しても元に戻せる。</td></tr>
+  <tr><td><b>静的Webサイトホスティング</b></td><td>HTML や画像だけの<span class="term" data-tip="静的（せいてき）Webサイト：だれが見ても同じ内容を表示するページ。ログインや検索などで中身が変わる「動的」なサイトの反対。">静的</span>なホームページを、サーバーなしで S3 から公開できる。</td></tr>
+  <tr><td><b>暗号化</b></td><td>2023年からは、新しく置くデータは<b>自動で暗号化</b>（SSE-S3）される。KMS の鍵を使うこと（SSE-KMS）もできる。</td></tr>
+  <tr><td><b>ブロックパブリックアクセス</b></td><td>バケットが<b>うっかり全世界に公開されるのを防ぐ</b>スイッチ。新しいバケットでは最初から<b>オン</b>。</td></tr>
+  <tr><td><b>レプリケーション</b></td><td>別のバケット（別リージョンも可）へ<b>自動でコピー</b>。災害対策に。</td></tr>
+</table></div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>暗号化</dt><dd>データを、鍵を持つ人にしか読めない形に変えること。</dd>
+    <dt>SSE</dt><dd>Server-Side Encryption ＝ AWS 側（サーバー側）で暗号化すること。</dd>
+    <dt>KMS</dt><dd>Key Management Service。暗号化の「鍵」を管理するサービス（第2章）。</dd>
+    <dt>パブリック</dt><dd>Public ＝ だれでも（インターネットの全員が）見られる状態。</dd>
+  </dl>
+</div>
+
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <ul style="margin:0">
+    <li>「アクセス頻度が<b>予測できない</b>」→ <b>S3 Intelligent-Tiering</b></li>
+    <li>「何年も保管、取り出しは<b>まれ</b>、<b>いちばん安く</b>」→ <b>S3 Glacier Deep Archive</b></li>
+    <li>「古くなったら自動で安いクラスへ」→ <b>ライフサイクル設定</b></li>
+    <li>「まちがって消したファイルを復元したい」→ <b>バージョニング</b></li>
+    <li>「サーバーなしで簡単なWebサイトを公開」→ <b>S3 静的Webサイトホスティング</b></li>
+  </ul>
+</div>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <p><b>1ゾーン-IA</b> だけは、データを<b>1つの AZ にしか置きません</b>（ほかのクラスは3つ以上の AZ）。「なくなると困る大事なデータ」に 1ゾーン-IA を選ぶ選択肢は×です。</p>
+</div>
+
+<h2>3. EBS とインスタンスストア —— サーバーのディスク</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonElasticBlockStore.svg" alt=""><div><div class="name">Amazon EBS<span class="yomi">イービーエス / Elastic Block Store</span></div><div class="one">EC2 にくっつけて使う<b>ブロックストレージ</b>（＝サーバーの<b>ディスク</b>）。サーバーを止めてもデータは残る。</div></div></div>
+
+<div class="box story">
+  <div class="box-title"><span class="em">💾</span>たとえ話：外付け SSD</div>
+  <p>EBS はパソコンにつなぐ<b>外付け SSD</b>。パソコン（EC2）の電源を切っても中身は消えないし、別のパソコンにつなぎかえることもできる。ただし<b>同じ部屋（同じ AZ）の中</b>でしか、つなぎかえられません。</p>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">EBS は AZ の中にある。別の AZ へはスナップショット経由で</div>
+  <div class="grp region">
+    <div class="glabel"><img src="../assets/aws-icons/architecture-group/Region.svg" alt=""><span class="gtxt">リージョン</span></div>
+    <div class="grp-row">
+      <div class="grp az"><div class="glabel">AZ-a</div>
+        <div class="flow">
+          <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div>
+          <div class="arr">—</div>
+          <div class="node"><img src="../assets/aws-icons/resource/AmazonElasticBlockStoreVolume.svg" alt="">EBS ボリューム</div>
+        </div>
+      </div>
+      <div class="grp az"><div class="glabel">AZ-c</div>
+        <div class="flow">
+          <div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div>
+          <div class="arr">—</div>
+          <div class="node"><img src="../assets/aws-icons/resource/AmazonElasticBlockStoreVolume.svg" alt="">新しい EBS<small>スナップショットから作成</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <div class="node"><img src="../assets/aws-icons/resource/AmazonElasticBlockStoreSnapshot.svg" alt="">スナップショット<small>（裏で S3 に保存。<br>リージョン内のどの AZ でも使える）</small></div>
+    </div>
+  </div>
+  <div class="cap">EBS ボリュームは<b>1つの AZ に属する</b>。別の AZ や別リージョンに持っていくときは「スナップショット（写真のような複製）」を取って、そこから作り直す。</div>
+</div>
+
+<div class="box kotoba">
+  <div class="box-title"><span class="em">📝</span>ことばメモ</div>
+  <dl class="words">
+    <dt>ボリューム</dt><dd>Volume。EBS で作るディスク1つ1つのこと。</dd>
+    <dt>スナップショット</dt><dd>Snapshot ＝「その瞬間の写真」。ディスクの中身をまるごと保存した<b>バックアップ</b>。ほかのリージョンへコピーもできる。</dd>
+    <dt>アタッチ</dt><dd>Attach ＝ くっつけること。EBS を EC2 につなぐこと。</dd>
+    <dt>gp3 / io2</dt><dd>EBS の種類の名前。gp3 は「ふつう用」（汎用 SSD）、io2 は「超高速用」（プロビジョンド IOPS SSD）。</dd>
+  </dl>
+</div>
+
+<h3>インスタンスストア —— 消えてもいい高速ディスク</h3>
+<p>EC2 の種類によっては、サーバー本体に<b>直接ついているディスク</b>（インスタンスストア）が使えます。とても速いのですが、<b>EC2 を停止・終了すると中身が消えます</b>。一時的な作業用のデータ（<span class="term" data-tip="キャッシュ：一度使ったデータを近くにコピーして置いておき、次から速く出せるようにすること。">キャッシュ</span>や計算途中のデータ）向けです。</p>
+
+<div class="table-wrap"><table>
+  <tr><th></th><th>EBS</th><th>インスタンスストア</th></tr>
+  <tr><td>EC2 を止めたら</td><td><b>残る</b></td><td><b>消える</b></td></tr>
+  <tr><td>つなぎかえ</td><td>同じ AZ の別 EC2 へできる</td><td>できない（本体と一体）</td></tr>
+  <tr><td>向いている用途</td><td>OS・データベースなど大事なデータ</td><td>一時ファイル・キャッシュ</td></tr>
+</table></div>
+
+<h2>4. EFS と FSx —— みんなで使う共有フォルダ</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEFS.svg" alt=""><div><div class="name">Amazon EFS<span class="yomi">イーエフエス / Elastic File System</span></div><div class="one"><b>Linux</b> サーバー用の共有ファイルストレージ。<b>たくさんの EC2 から同時に</b>使え、<b>複数の AZ</b>にまたがる。容量は使った分だけ自動で増減。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonFSx.svg" alt=""><div><div class="name">Amazon FSx<span class="yomi">エフエスエックス</span></div><div class="one">有名なファイルシステムを、そのまま AWS で使えるようにしたシリーズ。とくに<b>Windows 用（FSx for Windows File Server）</b>と<b>超高速計算用（FSx for Lustre）</b>が試験に出る。</div></div></div>
+
+<div class="box story">
+  <div class="box-title"><span class="em">🗄️</span>たとえ話：共有キャビネット</div>
+  <p>EFS は<b>どの部屋（AZ）からも開けられる共有キャビネット</b>。中身が増えればキャビネットも勝手に大きくなります。FSx は「Windows 社員用キャビネット」「研究所の超高速キャビネット」のように、<b>使う人に合わせた専用キャビネット</b>です。</p>
+</div>
+
+<div class="diagram">
+  <div class="dtitle">EFS：複数の AZ の EC2 から同時に使える</div>
+  <div class="grp region">
+    <div class="glabel"><img src="../assets/aws-icons/architecture-group/Region.svg" alt=""><span class="gtxt">リージョン</span></div>
+    <div class="grp-row">
+      <div class="grp az"><div class="glabel">AZ-a</div><div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div><div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div></div></div>
+      <div class="grp az"><div class="glabel">AZ-c</div><div class="flow"><div class="node"><img src="../assets/aws-icons/resource/AmazonEC2Instance.svg" alt="">EC2</div></div></div>
+    </div>
+    <div class="flow" style="margin-top:4px"><div class="arr">↓ ↓ ↓<small>みんなで読み書き</small></div></div>
+    <div class="flow"><div class="node lg"><img src="../assets/aws-icons/architecture-service/AmazonEFS.svg" alt="">EFS ファイルシステム</div></div>
+  </div>
+  <div class="cap">EBS は基本「1台専用・1つの AZ」、EFS は「みんなで・複数 AZ」。</div>
+</div>
+
+<div class="table-wrap"><table>
+  <tr><th>サービス</th><th>ひとことで</th><th>キーワード</th></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEFS.svg" alt="">EFS</td><td>Linux 用の共有フォルダ</td><td><span class="term" data-tip="NFS：Linux などでネットワーク越しにファイルを共有するための決まりごと（プロトコル）。">NFS</span>・自動で容量が伸び縮み・マルチAZ</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonFSx.svg" alt="">FSx for Windows File Server</td><td>Windows 用の共有フォルダ</td><td><span class="term" data-tip="SMB：Windows でネットワーク越しにファイルを共有するための決まりごと（プロトコル）。">SMB</span>・<span class="term" data-tip="Active Directory：Windows の会社ネットワークで、社員のアカウントや権限をまとめて管理するしくみ。">Active Directory</span> と連携</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonFSx.svg" alt="">FSx for Lustre</td><td>超高速な計算用</td><td><span class="term" data-tip="HPC（ハイパフォーマンス・コンピューティング）：たくさんのコンピューターで巨大な計算を一気にすること。天気予報や科学シミュレーションなど。">HPC</span>・機械学習・S3 と連携</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonFSx.svg" alt="">FSx for NetApp ONTAP / OpenZFS</td><td>社内で使っていた同じ製品をそのまま移す</td><td>移行（引っ越し）しやすい</td></tr>
+</table></div>
+
+<div class="box hook">
+  <div class="box-title"><span class="em">🔑</span>覚え方：「エフ<b>イー</b>エスは<b>Linux</b>、エフ<b>エックス</b>は<b>ウィンドウズ</b>（窓＝×の形）」</div>
+  <p>窓わくは「×（エックス）」の形に見える → <b>FSx = Windows</b>。Lustre（ラスター）は「光沢・輝き」→ <b>ピカッと速い計算</b>。</p>
+</div>
+
+<h2>5. 社内とクラウドをつなぐ・データを運ぶ</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSStorageGateway.svg" alt=""><div><div class="name">AWS Storage Gateway<span class="yomi">ストレージゲートウェイ</span></div><div class="one">社内（オンプレミス）のサーバーから、<b>ふつうのファイル置き場やディスクのように</b>見せて、実際は裏で AWS（S3 など）に保存する<b>橋渡し役</b>。<b>ハイブリッド</b>の代表サービス。</div></div></div>
+<div class="table-wrap"><table>
+  <tr><th>種類</th><th>社内からはこう見える</th><th>保存先</th></tr>
+  <tr><td>S3 ファイルゲートウェイ</td><td>共有フォルダ（NFS/SMB）</td><td>S3</td></tr>
+  <tr><td>ボリュームゲートウェイ</td><td>ディスク（<span class="term" data-tip="iSCSI（アイスカジー）：ネットワーク越しのディスクを、つながっているディスクのように使うための決まりごと。">iSCSI</span>）</td><td>S3（EBS スナップショットとして）</td></tr>
+  <tr><td>テープゲートウェイ</td><td>バックアップ用の磁気テープ装置</td><td>S3 / Glacier</td></tr>
+</table></div>
+
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSSnowballEdge.svg" alt=""><div><div class="name">AWS Snow ファミリー（Snowball Edge）<span class="yomi">スノーボール</span></div><div class="one">ネットで送ると何週間もかかる<b>大量のデータ（数十TB〜PB）</b>を、AWS から届く<b>頑丈な箱型の装置</b>にコピーして、<b>トラックで運ぶ</b>サービス。電波の届かない現場でのデータ処理（<span class="term" data-tip="エッジコンピューティング：データが生まれる現場の近くで計算すること。">エッジコンピューティング</span>）にも使える。</div></div></div>
+<p class="muted">※ Snow ファミリーは整理が進んでおり、Snowmobile（トラックそのもの）や Snowcone（小型）はすでに終了、Snowball Edge も2025年以降は新規の受付が限られています。ただし試験では「<b>大量データをオフラインで物理的に運ぶ＝Snowball</b>」というパターンが今も出ることがあるので覚えておきましょう。</p>
+
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSDataSync.svg" alt=""><div><div class="name">AWS DataSync<span class="yomi">データシンク</span></div><div class="one">社内のファイルサーバーなどから、S3・EFS・FSx へ<b>ネット経由で速く自動でデータを移す・同期する</b>サービス。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTransferFamily.svg" alt=""><div><div class="name">AWS Transfer Family<span class="yomi">トランスファーファミリー</span></div><div class="one">昔からある<b>SFTP・FTPS・FTP</b>（ファイルを送る決まりごと）で、S3 や EFS にファイルを出し入れできる窓口。取引先が「FTPでしか送れない」ときに便利。</div></div></div>
+
+<div class="diagram">
+  <div class="dtitle">社内から AWS へ：3つのルート</div>
+  <div class="flow wrap-ok">
+    <div class="grp onprem">
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/Corporatedatacenter.svg" alt=""><span class="gtxt">社内</span></div>
+      <div class="flow"><div class="node"><img src="../assets/aws-icons/resource/Servers.svg" alt="">ファイルサーバー</div></div>
+    </div>
+    <div class="flow col">
+      <div class="flow"><div class="node sm"><img src="../assets/aws-icons/architecture-service/AWSStorageGateway.svg" alt="">Storage Gateway<small>ずっとつないで使う</small></div><div class="arr">→</div></div>
+      <div class="flow"><div class="node sm"><img src="../assets/aws-icons/architecture-service/AWSDataSync.svg" alt="">DataSync<small>ネットで引っ越し</small></div><div class="arr">→</div></div>
+      <div class="flow"><div class="node sm"><img src="../assets/aws-icons/architecture-service/AWSSnowballEdge.svg" alt="">Snowball<small>箱で運ぶ</small></div><div class="arr">→</div></div>
+    </div>
+    <div class="grp cloud">
+      <div class="glabel"><img src="../assets/aws-icons/architecture-group/AWSCloudlogo.svg" alt=""><span class="gtxt">AWS</span></div>
+      <div class="flow"><div class="node"><img src="../assets/aws-icons/architecture-service/AmazonSimpleStorageService.svg" alt="">S3 など</div></div>
+    </div>
+  </div>
+  <div class="cap">「使い続ける橋」＝Storage Gateway、「ネットで引っ越し」＝DataSync、「ネットが遅すぎる・大きすぎる」＝Snowball。</div>
+</div>
+
+<h2>6. AWS Backup —— バックアップをまとめて管理</h2>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSBackup.svg" alt=""><div><div class="name">AWS Backup<span class="yomi">エーダブリューエス バックアップ</span></div><div class="one">EBS・EFS・RDS・DynamoDB・FSx などの<b>バックアップを1か所でまとめて</b>計画・実行・管理するサービス。「毎晩2時に取って、35日間残す」のようなルール（バックアッププラン）を作れる。</div></div></div>
+
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験に出るポイント</div>
+  <ul style="margin:0">
+    <li>「複数の EC2（Linux）でファイルを共有」→ <b>EFS</b>／「Windows のファイル共有」→ <b>FSx for Windows File Server</b></li>
+    <li>「EC2 を止めても消えないディスク」→ <b>EBS</b>／「一時データで、最高速がほしい」→ <b>インスタンスストア</b></li>
+    <li>「社内のアプリから、S3 をふつうのファイル置き場のように使いたい」→ <b>Storage Gateway</b></li>
+    <li>「数百TBを、回線が細いので物理的に運びたい」→ <b>Snowball Edge</b></li>
+    <li>「いろんなサービスのバックアップを一元管理」→ <b>AWS Backup</b></li>
+  </ul>
+</div>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>ひっかけ注意</div>
+  <ul style="margin:0">
+    <li>EBS は<b>AZ をまたいでそのまま付けかえられない</b>。別 AZ にはスナップショットから作る。</li>
+    <li>「S3 をサーバーのディスクとして（OS を入れて）使う」はできない。S3 は<b>オブジェクト</b>ストレージ。</li>
+    <li>Glacier から取り出すのは<b>すぐではない</b>（Instant Retrieval 以外）。「すぐ必要」なら Glacier Flexible / Deep Archive は×。</li>
+  </ul>
+</div>
+
+<div class="recall">
+  <h2>🙌 手ぶら復習</h2>
+  <p class="muted">ページを上にスクロールせず、<b>まず頭の中で答えて</b>からクリックしてください。思い出すのに苦労するほど、記憶は強くなります。</p>
+  <details class="q"><summary>ストレージの3種類と、それぞれの AWS の代表サービスは？（たとえ話つきで）</summary><div class="a">ブロック＝EBS（机の引き出し）、ファイル＝EFS / FSx（共有キャビネット）、オブジェクト＝S3（巨大倉庫）。</div></details>
+  <details class="q"><summary>S3 の「バケット」と「オブジェクト」とは？ バケット名のルールは？</summary><div class="a">バケット＝入れ物（部屋）、オブジェクト＝中に置くファイル（荷物、1個最大5TB）。バケット名は全世界でユニーク。</div></details>
+  <details class="q"><summary>S3 の耐久性は何%？ 何と呼ぶ？</summary><div class="a">99.999999999%（イレブンナイン）。</div></details>
+  <details class="q"><summary>アクセス頻度がわからないデータに向く S3 のクラスは？</summary><div class="a">S3 Intelligent-Tiering（自動で安い階層へ移す）。</div></details>
+  <details class="q"><summary>いちばん安いが取り出しに12時間以上かかるクラスは？</summary><div class="a">S3 Glacier Deep Archive。</div></details>
+  <details class="q"><summary>「30日後に IA、1年後に Glacier へ自動移動」を実現する機能は？</summary><div class="a">ライフサイクル設定（ライフサイクルルール）。</div></details>
+  <details class="q"><summary>まちがって消したり上書きしたりしたファイルを戻せるようにする機能は？</summary><div class="a">バージョニング。</div></details>
+  <details class="q"><summary>EBS とインスタンスストアのいちばん大きなちがいは？</summary><div class="a">EC2 を停止・終了したとき、EBS はデータが残るが、インスタンスストアは消える。</div></details>
+  <details class="q"><summary>EBS を別の AZ で使いたいときはどうする？</summary><div class="a">スナップショットを取り、そのスナップショットから別の AZ に新しいボリュームを作る。</div></details>
+  <details class="q"><summary>EFS と FSx for Windows File Server の使い分けは？</summary><div class="a">EFS＝Linux（NFS）の共有、FSx for Windows＝Windows（SMB・Active Directory）の共有。</div></details>
+  <details class="q"><summary>Storage Gateway・DataSync・Snowball の使い分けは？</summary><div class="a">Storage Gateway＝社内から AWS を使い続ける橋（ハイブリッド）、DataSync＝ネット経由の移行・同期、Snowball＝大量データを装置で物理的に運ぶ。</div></details>
+</div>
+
+<div id="study-log"></div>
+<nav id="pager"></nav>
+</main>
+<script src="../assets/site.js"></script>
+</body>
+</html>
