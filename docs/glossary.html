@@ -23,8 +23,8 @@
 <body data-root="./" data-page="glossary">
 <main class="wrap">
 <h1>📖 用語集</h1>
-<p class="lead">わからない言葉を調べる辞書です。日本語でも英語でも探せます。</p>
-<input class="search" id="q" type="search" placeholder="例：リージョン、S3、レイテンシー…" aria-label="用語を検索">
+<p class="lead">全章に登場する専門用語の定義をまとめています。日本語・英語のどちらでも検索できます。</p>
+<input class="search" id="q" type="search" placeholder="例：リージョン、S3、レイテンシー" aria-label="用語を検索">
 <div class="filters" id="filters"></div>
 <p class="muted" id="count"></p>
 <div id="list"></div>
@@ -69,8 +69,8 @@
     document.getElementById("list").innerHTML = hits.map(function (t) {
       return '<div class="term-item"><span class="w">' + esc(t.w) + '</span><span class="r">' + esc(t.r) + "</span>" +
         '<div class="m">' + esc(t.m) + "</div>" +
-        (chFile[t.ch] ? '<a class="c" href="chapters/' + chFile[t.ch] + '">→ ' + esc(chTitle[t.ch]) + " の章で読む</a>" : "") + "</div>";
-    }).join("") || '<p class="muted">見つかりませんでした。</p>';
+        (chFile[t.ch] ? '<a class="c" href="chapters/' + chFile[t.ch] + '">→ ' + esc(chTitle[t.ch]) + " の章を開く</a>" : "") + "</div>";
+    }).join("") || '<p class="muted">該当する用語はありません。</p>';
   }
   input.addEventListener("input", render);
   render();

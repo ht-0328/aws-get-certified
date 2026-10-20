@@ -9,11 +9,11 @@
 
   // 章の一覧（ここを足すとトップページ・ページ送りに反映される）
   var CHAPTERS = [
-    { id: "method",  file: "study-method.html", title: "科学的な勉強法（このサイトの使い方）", short: "勉強法", icons: ["architecture-service/AWSTrainingCertification.svg"], desc: "記憶の仕組みと、このサイトの読み方。最初に必ず読んでください。" },
-    { id: "ch01", file: "01-cloud-basics.html", title: "第1章 クラウドとAWSの全体像", short: "クラウド基礎", icons: ["architecture-group/AWSCloudlogo.svg", "architecture-group/Region.svg"], desc: "クラウドとは何か／6つのメリット／リージョン・AZ・エッジ" },
-    { id: "ch02", file: "02-security-iam.html", title: "第2章 セキュリティとIAM", short: "セキュリティ", icons: ["architecture-service/AWSIdentityandAccessManagement.svg", "architecture-service/AWSShield.svg"], desc: "責任共有モデル／IAM／MFA／守るためのサービス群" },
-    { id: "ch03", file: "03-compute.html", title: "第3章 コンピューティング（サーバー）", short: "コンピューティング", icons: ["architecture-service/AmazonEC2.svg", "architecture-service/AWSLambda.svg"], desc: "EC2／Auto Scaling／ELB／Lambda／コンテナ" },
-    { id: "ch04", file: "04-storage.html", title: "第4章 ストレージ（データの置き場所）", short: "ストレージ", icons: ["architecture-service/AmazonSimpleStorageService.svg", "architecture-service/AmazonElasticBlockStore.svg"], desc: "S3／ストレージクラス／EBS／EFS／Snowball" },
+    { id: "method",  file: "study-method.html", title: "学習方法と本サイトの使い方", short: "学習方法", icons: ["architecture-service/AWSTrainingCertification.svg"], desc: "記憶の仕組みと、それに基づく学習の進め方。最初にお読みください。" },
+    { id: "ch01", file: "01-cloud-basics.html", title: "第1章 クラウドとAWSの全体像", short: "クラウド基礎", icons: ["architecture-group/AWSCloudlogo.svg", "architecture-group/Region.svg"], desc: "クラウドの定義／6つの利点／リージョン・AZ・エッジロケーション" },
+    { id: "ch02", file: "02-security-iam.html", title: "第2章 セキュリティとIAM", short: "セキュリティ", icons: ["architecture-service/AWSIdentityandAccessManagement.svg", "architecture-service/AWSShield.svg"], desc: "責任共有モデル／IAM／MFA／セキュリティ関連サービス" },
+    { id: "ch03", file: "03-compute.html", title: "第3章 コンピューティング", short: "コンピューティング", icons: ["architecture-service/AmazonEC2.svg", "architecture-service/AWSLambda.svg"], desc: "EC2／Auto Scaling／ELB／Lambda／コンテナ" },
+    { id: "ch04", file: "04-storage.html", title: "第4章 ストレージ", short: "ストレージ", icons: ["architecture-service/AmazonSimpleStorageService.svg", "architecture-service/AmazonElasticBlockStore.svg"], desc: "S3／ストレージクラス／EBS／EFS／Snowball" },
     { id: "ch05", file: "05-database.html", title: "第5章 データベース", short: "データベース", icons: ["architecture-service/AmazonRDS.svg", "architecture-service/AmazonDynamoDB.svg"], desc: "RDS／Aurora／DynamoDB／ElastiCache／Redshift" },
     { id: "ch06", file: "06-network.html", title: "第6章 ネットワーク", short: "ネットワーク", icons: ["architecture-service/AmazonVirtualPrivateCloud.svg", "architecture-service/AmazonCloudFront.svg"], desc: "VPC／サブネット／セキュリティグループ／Route 53／CloudFront" },
     { id: "ch07", file: "07-operations.html", title: "第7章 監視・運用・自動化", short: "運用管理", icons: ["architecture-service/AmazonCloudWatch.svg", "architecture-service/AWSCloudTrail.svg"], desc: "CloudWatch／CloudTrail／Config／CloudFormation／Well-Architected" },
@@ -47,7 +47,7 @@
   // ---------- ヘッダー ----------
   var nav = [
     { href: "index.html", label: "ホーム", id: "home" },
-    { href: "chapters/study-method.html", label: "勉強法", id: "method" },
+    { href: "chapters/study-method.html", label: "学習方法", id: "method" },
     { href: "glossary.html", label: "用語集", id: "glossary" },
     { href: "cards.html", label: "復習カード", id: "cards" },
     { href: "exam-guide.html", label: "試験ガイド", id: "exam" }
@@ -61,7 +61,7 @@
     nav.map(function (n) {
       return '<a href="' + root + n.href + '"' + (n.id === page ? ' aria-current="page"' : "") + ">" + n.label + "</a>";
     }).join("") +
-    '<button class="theme-btn" type="button" aria-label="明るさ切り替え">◐</button>' +
+    '<button class="theme-btn" type="button" aria-label="表示テーマの切り替え">◐</button>' +
     "</nav></div>";
   body.insertBefore(header, body.firstChild);
   header.querySelector(".theme-btn").addEventListener("click", function () {
@@ -76,7 +76,7 @@
   var footer = document.createElement("footer");
   footer.className = "site-footer";
   footer.innerHTML =
-    "AWS 合格ノート — 個人の学習用まとめです。最新の情報は AWS 公式ドキュメントで確認してください。<br>" +
+    "AWS 合格ノート — 個人の学習用資料です。最新の情報は AWS 公式ドキュメントでご確認ください。<br>" +
     'アイコン: <a href="https://aws.amazon.com/architecture/icons/">AWS Architecture Icons</a>（npm パッケージ aws-icons 経由）。Amazon Web Services、AWS およびそのロゴは Amazon.com, Inc. またはその関連会社の商標です。';
   body.appendChild(footer);
 
@@ -106,10 +106,10 @@
   function startOfDay(ts) { var d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); }
   function status(id) {
     var log = getLog(id);
-    if (!log.stage) return { cls: "", text: "まだ読んでいません" };
-    if (log.stage > INTERVALS.length) return { cls: "done", text: "定着済み（30日後の復習まで完了）" };
+    if (!log.stage) return { cls: "", text: "未学習" };
+    if (log.stage > INTERVALS.length) return { cls: "done", text: "完了（30日後の復習まで終了）" };
     var due = nextDue(log);
-    if (startOfDay(due) <= startOfDay(Date.now())) return { cls: "due", text: "今日が復習日です（" + STAGE_NAMES[log.stage] + "の復習）" };
+    if (startOfDay(due) <= startOfDay(Date.now())) return { cls: "due", text: "本日が復習日です（" + STAGE_NAMES[log.stage] + "の復習）" };
     return { cls: "", text: "次の復習：" + fmtDate(due) + "（" + STAGE_NAMES[log.stage] + "）" };
   }
   window.AWSNOTE_STATUS = status;
@@ -122,14 +122,14 @@
       return '<li class="' + cls + '">' + (i < log.stage ? "✓ " : "") + name + "</li>";
     }).join("");
     el.innerHTML =
-      "<h2>📅 復習の記録（間隔反復）</h2>" +
-      '<p class="muted">読み終わったら、まず上の「手ぶら復習」を<strong>何も見ずに</strong>やってから押してください。' +
-      "次の復習日を自動で計算して、トップページに表示します（記録はこのブラウザの中だけに保存されます）。</p>" +
+      "<h2>📅 学習記録（間隔反復）</h2>" +
+      '<p class="muted">本文を読み終えたら、上の「想起練習」を<strong>本文を見ずに</strong>行ってから記録してください。' +
+      "次回の復習日を計算し、トップページに表示します（記録はこのブラウザにのみ保存されます）。</p>" +
       '<ul class="steps">' + steps + "</ul>" +
       '<p class="status ' + st.cls + '" style="font-weight:700">' + st.text + "</p>" +
-      '<button class="btn" data-act="ok">✓ 手ぶら復習ができた</button> ' +
-      '<button class="btn ghost" data-act="ng">△ あまり思い出せなかった</button> ' +
-      '<button class="btn ghost small" data-act="reset">記録をリセット</button>';
+      '<button class="btn" data-act="ok">✓ 想起練習で答えられた</button> ' +
+      '<button class="btn ghost" data-act="ng">△ 答えられない設問が多かった</button> ' +
+      '<button class="btn ghost small" data-act="reset">記録を消去</button>';
     el.querySelectorAll("button").forEach(function (b) {
       b.addEventListener("click", function () {
         var act = b.getAttribute("data-act");
@@ -174,7 +174,7 @@
   if (dueEl) {
     var due = CHAPTERS.filter(function (c) { return status(c.id).cls === "due"; });
     dueEl.innerHTML = due.length
-      ? "<strong>今日復習する章：</strong>" + due.map(function (c) { return '<a href="chapters/' + c.file + '">' + c.short + "</a>"; }).join("、")
-      : "今日の復習はありません。新しい章を読むか、復習カードで思い出す練習をしましょう。";
+      ? "<strong>本日復習する章：</strong>" + due.map(function (c) { return '<a href="chapters/' + c.file + '">' + c.short + "</a>"; }).join("、")
+      : "本日復習予定の章はありません。新しい章に進むか、復習カードで想起練習を行ってください。";
   }
 })();

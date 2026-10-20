@@ -28,21 +28,21 @@
 <body data-root="./" data-page="cards">
 <main class="wrap">
 <h1>🃏 復習カード</h1>
-<p class="lead">問題を見たら、<b>答えを見る前に</b>頭の中（できれば声に出して）で答えてください。思い出す作業そのものが記憶を強くします（アクティブリコール）。</p>
+<p class="lead">設問を見たら、<b>解答を表示する前に</b>自分で答えを出してください（声に出すとより効果的です）。思い出す行為そのものが記憶を強化します（想起練習）。</p>
 <div class="box science">
-  <div class="box-title"><span class="em">🔬</span>しくみ</div>
-  「思い出せた」カードは次に出るまでの間隔がのびます（今日 → 1日 → 3日 → 7日 → 14日 → 30日）。「思い出せなかった」カードは最初に戻って、すぐまた出てきます。記録はこのブラウザに保存されます。
+  <div class="box-title"><span class="em">🔬</span>仕組み</div>
+  正答したカードは、次に出題されるまでの間隔が段階的に広がります（当日 → 1日 → 3日 → 7日 → 14日 → 30日）。答えられなかったカードは最初の段階に戻り、同じ回の最後に再出題されます。記録はこのブラウザに保存されます。
 </div>
 
 <div class="filters" id="filters"></div>
 <div class="filters">
-  <button class="chip" data-mode="due" aria-pressed="true">今日やるカード</button>
-  <button class="chip" data-mode="all" aria-pressed="false">全部（期限に関係なく）</button>
+  <button class="chip" data-mode="due" aria-pressed="true">本日の復習分</button>
+  <button class="chip" data-mode="all" aria-pressed="false">すべて（期限に関係なく）</button>
 </div>
 <div class="boxes" id="boxes"></div>
 <div class="progress"><div id="bar"></div></div>
 <div class="flash" id="flash" aria-live="polite"></div>
-<p style="margin-top:16px"><button class="btn ghost small" id="reset">カードの記録をすべてリセット</button></p>
+<p style="margin-top:16px"><button class="btn ghost small" id="reset">カードの記録をすべて消去</button></p>
 </main>
 <script src="assets/data/ch01.js"></script>
 <script src="assets/data/ch02.js"></script>
@@ -91,7 +91,7 @@
     var pool = cards.filter(function (c) { return ch === "all" || c.ch === ch; });
     var counts = [0, 0, 0, 0, 0, 0, 0];
     pool.forEach(function (c) { counts[Math.min(info(c).box, 6)]++; });
-    var names = ["未学習・やり直し", "1日", "3日", "7日", "14日", "30日", "定着"];
+    var names = ["未学習・再学習", "1日", "3日", "7日", "14日", "30日", "定着"];
     document.getElementById("boxes").innerHTML = counts.map(function (n, i) { return "<span>" + names[i] + "：" + n + "枚</span>"; }).join("");
   }
   function draw() {
@@ -99,9 +99,9 @@
     var el = document.getElementById("flash");
     document.getElementById("bar").style.width = queue.length ? (pos / queue.length * 100) + "%" : "100%";
     if (pos >= queue.length) {
-      el.innerHTML = '<div class="qtext">🎉 今日のカードはおしまいです</div><p class="hint">' +
-        (queue.length ? queue.length + " 枚おつかれさまでした。" : "今やるべきカードはありません。") +
-        "「全部」を選ぶと期限に関係なく練習できます。新しい章を読み進めるのもおすすめです。</p>";
+      el.innerHTML = '<div class="qtext">本日の復習は完了しました</div><p class="hint">' +
+        (queue.length ? queue.length + " 枚を復習しました。" : "現在、復習期限が来ているカードはありません。") +
+        "「すべて」を選ぶと、期限に関係なく練習できます。</p>";
       return;
     }
     var c = queue[pos];
@@ -110,8 +110,8 @@
       '<div class="qtext">' + esc(c.q) + "</div>" +
       (shown
         ? '<div class="atext">' + esc(c.a) + "</div>" +
-          '<div class="actions"><button class="btn good" data-r="2">✓ 思い出せた</button><button class="btn ghost" data-r="1">△ あやしい</button><button class="btn bad" data-r="0">✗ 思い出せなかった</button></div>'
-        : '<p class="hint">まず頭の中で答えてください。</p><div class="actions"><button class="btn" data-r="show">答えを見る</button></div>');
+          '<div class="actions"><button class="btn good" data-r="2">✓ 答えられた</button><button class="btn ghost" data-r="1">△ 不確か</button><button class="btn bad" data-r="0">✗ 答えられなかった</button></div>'
+        : '<p class="hint">解答を表示する前に、自分で答えを出してください。</p><div class="actions"><button class="btn" data-r="show">解答を表示</button></div>');
     el.querySelectorAll("button").forEach(function (b) { b.addEventListener("click", function () { answer(b.getAttribute("data-r")); }); });
   }
   function answer(r) {
@@ -125,7 +125,7 @@
     pos++; shown = false; draw();
   }
   document.getElementById("reset").addEventListener("click", function () {
-    if (!confirm("カードの記録をすべて消しますか？")) return;
+    if (!confirm("カードの記録をすべて消去しますか？")) return;
     state = {}; store.save("cards", state); build();
   });
   build();
