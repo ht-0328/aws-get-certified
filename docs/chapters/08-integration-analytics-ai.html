@@ -13,7 +13,114 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第8章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第8章 連携・分析・AIのサービス</h1>
-<p class="lead">この章は、サービス名とその役割を対応づけて覚えることが中心です。扱うサービスは多いものの、<b>5つの分類</b>に整理すると全体を把握しやすくなります。</p>
+<p class="lead">この章はサービス名と役割の対応づけが中心です。扱うサービスは多いですが、連携・データ分析・AI・移行・その他の5つに分けると整理できます。</p>
+
+<div class="box goal">
+  <div class="box-title"><span class="em">🧭</span>この章で理解してほしいこと</div>
+  <ul style="margin:0">
+    <li><b>キュー（SQS）を間に置いて疎結合にする</b>：片方が止まっても要求が失われない
+      <ul>
+        <li>密結合：コンポーネント同士が直接呼び合い、互いに強く依存する
+          <ul>
+          <li>処理側が混雑・停止すると受付も止まる</li>
+          <li>飲食店なら、注文を手渡しして受け取られるまで待つ運用</li>
+          </ul>
+        </li>
+        <li>疎結合：間にキューなどの仲介役を置き、依存を弱める
+          <ul>
+          <li>処理側は自分の能力に合わせてキューから取り出す</li>
+          <li>処理側が止まっても要求は残り、急増してもキューにたまるだけ</li>
+          <li>飲食店なら、注文票を棚に置いてすぐ次の受付に戻る運用</li>
+          </ul>
+        </li>
+        <li>AWS は障害に強くスケールしやすい設計として疎結合を推奨する</li>
+      </ul>
+    </li>
+    <li><b>連携のサービスは5つ。役割で区別する</b>：保持・一斉通知・振り分け・順序制御・窓口
+      <ul>
+        <li>SQS：メッセージを一時的に保持するキュー
+          <ul>
+          <li>受信側がポーリングで取得する。1メッセージは原則1つの受信側</li>
+          <li>「疎結合にしたい」「処理が追いつかないとき要求を保持」の答え</li>
+          </ul>
+        </li>
+        <li>SNS：1つの通知をメール・SMS・SQS・Lambda（コード実行）へ同時配信</li>
+        <li>EventBridge：イベントをルールで振り分ける。「毎日9時」の定期実行も</li>
+        <li>Step Functions：処理を順番に実行し、失敗時の再試行や分岐を制御する</li>
+        <li>API Gateway：外部からのリクエストを受ける API の窓口。Lambda と組む</li>
+        <li>Q は Queue（待ち行列）＝保持、N は Notification（通知）＝一斉</li>
+      </ul>
+    </li>
+    <li><b>分析は「収集 → 加工 → 蓄積 → 分析 → 可視化」</b>：工程ごとにサービスを当てはめる
+      <ul>
+        <li>① 収集：Kinesis。ログやセンサー値をリアルタイムに収集する</li>
+        <li>② 加工：Glue。サーバーレスの ETL。データの目録（カタログ）も持つ</li>
+        <li>③ 蓄積：S3（データレイク）と Redshift（データウェアハウス）</li>
+        <li>④ 分析：Athena（S3 に直接 SQL。スキャン量で課金）と EMR（大量データの分散処理）</li>
+        <li>⑤ 可視化：Quick Sight（旧 QuickSight）。グラフやダッシュボードの BI</li>
+        <li>「リアルタイム」「ストリーミング」とあれば Kinesis。Glue はバッチ向け</li>
+        <li>S3 に直接 SQL なら Athena、DWH に入れて集計なら Redshift</li>
+        <li>OpenSearch：ログや文書の検索。Lake Formation：データレイクの構築と権限</li>
+      </ul>
+    </li>
+    <li><b>AI は3層。学習済み → 生成 AI → 独自モデル</b>：上ほど手軽、下ほど自由
+      <ul>
+        <li>学習済みサービス：API を呼ぶだけ。機械学習の知識は不要（次の項目）</li>
+        <li>Bedrock：基盤モデル（Claude、Nova など）を API で使う生成 AI
+          <ul>
+          <li>インフラ管理は不要</li>
+          <li>「基盤モデルで生成 AI アプリを作りたい」の答え</li>
+          </ul>
+        </li>
+        <li>SageMaker AI：独自の ML モデルを構築・学習・デプロイする基盤</li>
+        <li>Amazon Q：生成 AI アシスタント。開発者向け Q Developer と社内向け Q Business</li>
+      </ul>
+    </li>
+    <li><b>用途別 AI は英単語と「目・耳・口」で覚える</b>：Polly と Transcribe は向きが逆
+      <ul>
+        <li>Rekognition（目）：画像・動画の解析。顔や物体を識別する</li>
+        <li>Textract（文字を読む）：書類の画像から文字と表を抽出する（OCR）</li>
+        <li>Comprehend（理解）：文章の意味や感情を分析する</li>
+        <li>Polly（口）：テキスト → 音声</li>
+        <li>Transcribe（耳）：音声 → テキスト</li>
+        <li>Translate（通訳）：翻訳する</li>
+        <li>Lex（対話）：チャットボットを作る。Alexa と同じ技術</li>
+        <li>Kendra：社内文書から質問に合う回答を探す検索</li>
+        <li>Personalize：利用者ごとのレコメンド</li>
+        <li>Textract は読むだけ、意味の解析は Comprehend</li>
+        <li>「通話を文字起こしして感情分析」→ Transcribe ＋ Comprehend</li>
+      </ul>
+    </li>
+    <li><b>移行はサーバー MGN、DB は DMS、進捗は Migration Hub</b>
+      <ul>
+        <li>MGN：サーバーをほぼそのまま EC2 へ複製する（リホスト、リフト＆シフト）</li>
+        <li>DMS：データベースを動かしたまま移す。異なる種類の DB 間も可（第5章）</li>
+        <li>Migration Hub：移行の進捗を一元的に追跡する。Hub＝集約点</li>
+      </ul>
+    </li>
+    <li><b>移行戦略は「7つの R」</b>：どれだけ作り替えて移すかの違い
+      <ul>
+        <li>Rehost：変更せずそのまま移す（リフト＆シフト）。サーバーを EC2 へ</li>
+        <li>Replatform：一部を最適化して移す。自前の DB を RDS（運用を任せる DB）に</li>
+        <li>Refactor：クラウド向けに設計し直す。サーバーレスやマイクロサービスに</li>
+        <li>Repurchase：別の製品（SaaS など）に切り替える</li>
+        <li>Retire：不要なシステムを廃止する</li>
+        <li>Retain：当面は移行せず残す</li>
+        <li>Relocate：VMware 環境などをそのまま移す（VMware Cloud on AWS）</li>
+        <li>以前は6つの R。現在は Relocate を加えた7つが基本</li>
+      </ul>
+    </li>
+    <li><b>その他は Amplify・IoT Core・WorkSpaces・Connect</b>
+      <ul>
+        <li>Amplify：Web・モバイルアプリを迅速に構築・公開するツール群</li>
+        <li>IoT Core：センサーや家電など多数の機器を AWS に接続する</li>
+        <li>WorkSpaces：クラウド上の仮想デスクトップ。どこでも同じ業務環境</li>
+        <li>Connect：クラウド型のコンタクトセンター。電話応対を短期間で構築</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="muted" style="margin:.7em 0 0;font-size:.9rem">読み終えたら、本文を見ずに各項目を自分の言葉で説明できるか確かめてください。</p>
+</div>
 
 <div class="box map">
   <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>

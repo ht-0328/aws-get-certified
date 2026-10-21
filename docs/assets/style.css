@@ -122,6 +122,11 @@ a.card:hover { transform: translateY(-2px); border-color: var(--accent); }
 .box-title { font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: .4em; font-size: .98rem; }
 .box-title .em { font-size: 1.2rem; }
 .box.map { background: var(--blue-soft); border-color: transparent; }
+.box.goal { background: var(--surface); border: 2px solid var(--accent); }
+.box.goal .box-title { color: var(--accent-ink); }
+.box.goal > ul > li { margin-bottom: .8em; }
+.box ul ul, .box ul ol, .box ol ul { margin: .25em 0 0; padding-left: 1.4em; }
+.box ul ul > li, .box ul ol > li, .box ol ul > li { margin: .15em 0; }
 .box.hook { background: var(--accent-soft); border-color: transparent; }
 .box.kotoba { background: var(--surface); border: 2px dashed var(--line); }
 .box.exam { background: var(--purple-soft); border-color: transparent; }

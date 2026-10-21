@@ -13,7 +13,144 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第4章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第4章 ストレージ（データの保存先）</h1>
-<p class="lead">画像や文書、バックアップ、サーバーのディスクなど、データには必ず保存先が必要です。AWS には用途の異なる保存先が複数あり、試験では「この要件に最も適したストレージはどれか」を選ぶ問題が頻出します。</p>
+<p class="lead">データには必ず保存先が必要です。AWS の保存先は3つが中心です。EBS（EC2 1台のディスク）、EFS・FSx（共有フォルダ）、S3（容量無制限のオブジェクト保存）です。試験では要件に合う保存先を1つ選びます。</p>
+
+<div class="box goal">
+  <div class="box-title"><span class="em">🧭</span>この章で理解してほしいこと</div>
+  <ul style="margin:0">
+    <li><b>ストレージは「保存する単位」で3種類</b>：要件からサービスが1つに決まる
+      <ul>
+        <li>ブロック：1台のサーバーに直結したディスク
+          <ul>
+          <li>AWS のサービスで言うと EBS（EC2 につける外付けディスク）</li>
+          <li>固定長のブロック単位で読み書きする。高速だが原則1台専用</li>
+          <li>「EC2 1台のディスク」→ EBS</li>
+          </ul>
+        </li>
+        <li>ファイル：複数のサーバーで共有するフォルダ
+          <ul>
+          <li>AWS のサービスで言うと EFS（Linux 向け）・FSx（Windows 向けなど）</li>
+          <li>フォルダ階層で管理し、ネットワーク越しに同時に使う</li>
+          <li>「複数の EC2 で共有」→ EFS</li>
+          </ul>
+        </li>
+        <li>オブジェクト：データに名前と付随情報を付けて丸ごと保存
+          <ul>
+          <li>AWS のサービスで言うと S3</li>
+          <li>HTTP 経由で、容量は実質無制限</li>
+          <li>一部だけの書き換えはできず、更新は全体を置き換える</li>
+          <li>「画像やバックアップを大量かつ低コストで」→ S3</li>
+          </ul>
+        </li>
+        <li>S3 に OS を入れて EC2 のディスクにすることはできない</li>
+      </ul>
+    </li>
+    <li><b>S3 は容量無制限で、耐久性はイレブンナイン</b>：耐久性と可用性は別の指標
+      <ul>
+        <li>バケットという入れ物にオブジェクトを保存する</li>
+        <li>バケット名：全世界の AWS アカウントを通じて一意</li>
+        <li>オブジェクト：1個あたり最大5TB。キー（パスを含む名前）で識別</li>
+        <li>データはリージョン内の複数の AZ に自動で複製される</li>
+        <li>耐久性：99.999999999%（イレブンナイン）
+          <ul>
+          <li>データが失われない度合い。1,000万個で平均1万年に1個</li>
+          </ul>
+        </li>
+        <li>可用性：S3 標準で99.99%
+          <ul>
+          <li>必要なときに使える度合い</li>
+          <li>「無事だが一時的に取り出せない」は可用性の問題</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><b>ストレージクラスは、使わないほど安く、遅い</b>：頻繁なら標準、ほぼ参照しないなら Glacier
+      <ol>
+        <li>標準：頻繁に使うデータ。即時。取り出し料なし</li>
+        <li>Intelligent-Tiering：頻度が読めないデータ。自動で安い階層へ移す</li>
+        <li>標準-IA：低頻度だが即時に取り出す。取り出し料あり。最低30日</li>
+        <li>1ゾーン-IA：単一 AZ だけ。失っても作り直せるデータ用</li>
+        <li>Glacier Instant Retrieval：年に数回だが即時に取り出す。最低90日</li>
+        <li>Glacier Flexible Retrieval：バックアップ用。取り出しに数分〜12時間</li>
+        <li>Glacier Deep Archive：長期保管。12〜48時間。最も安い。最低180日</li>
+      </ol>
+    </li>
+    <li><b>S3 の機能は移す・戻す・公開・守る・複製</b>
+      <ul>
+        <li>ライフサイクル設定：「30日後に標準-IA、1年後に Glacier、5年後に削除」</li>
+        <li>バージョニング：上書き・削除しても前の版を残す。誤って消しても復元</li>
+        <li>静的 Web サイトホスティング：サーバーなしで HTML と画像を公開する</li>
+        <li>暗号化：既定で有効（SSE-S3）。KMS の鍵を使う SSE-KMS も選べる</li>
+        <li>ブロックパブリックアクセス：意図しない公開を防ぐ。新規は既定で有効</li>
+        <li>レプリケーション：別のバケット・別リージョンへ自動複製（災害対策）</li>
+        <li>1ゾーン-IA を重要データに、「即座に必要」に Glacier の下2つは誤り</li>
+      </ul>
+    </li>
+    <li><b>EBS は AZ に属する。別 AZ へはスナップショット経由</b>：インスタンスストアは停止で消える
+      <ul>
+        <li>EBS：ネットワーク経由で EC2 に接続するディスク
+          <ul>
+          <li>EC2 を停止してもデータは残る</li>
+          <li>同じ AZ の別の EC2 に付け替えられる。AZ をまたぐのは不可</li>
+          <li>OS やデータベースなど永続化が必要なデータに使う</li>
+          </ul>
+        </li>
+        <li>スナップショット：ある時点のボリュームの複製。S3 に保存される
+          <ul>
+          <li>別の AZ で使うには、スナップショットから新しいボリュームを作る</li>
+          <li>別リージョンへもコピーできる</li>
+          </ul>
+        </li>
+        <li>ボリュームタイプ：gp3（汎用 SSD）、io2（高い I/O 性能を指定できる）</li>
+        <li>インスタンスストア：ホストに直結した高速なディスク
+          <ul>
+          <li>停止・終了すると消える（揮発性）</li>
+          <li>キャッシュや計算途中の一時データ向け</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><b>共有は Linux なら EFS、Windows なら FSx</b>：HPC なら FSx for Lustre
+      <ul>
+        <li>EFS：Linux 向けの共有ファイルストレージ（NFS）
+          <ul>
+          <li>複数の AZ の多数の EC2 から同時に使える</li>
+          <li>容量は使用量に応じて自動で伸縮する</li>
+          </ul>
+        </li>
+        <li>FSx for Windows File Server：Windows 向け。SMB・Active Directory 連携</li>
+        <li>FSx for Lustre：高性能計算（HPC）・機械学習向け。S3 と連携</li>
+        <li>FSx for NetApp ONTAP / OpenZFS：オンプレミスと同じ製品をそのまま移す</li>
+        <li>EBS は「1台専用・単一 AZ」、EFS は「複数台で共有・マルチ AZ」</li>
+      </ul>
+    </li>
+    <li><b>オンプレ連携は Storage Gateway・DataSync・Snowball</b>：継続利用・回線で移す・物理で運ぶ
+      <ul>
+        <li>Storage Gateway：オンプレミスからは普通のファイル共有やディスクに見える
+          <ul>
+          <li>実体は S3 などに保存する。ハイブリッド構成の代表</li>
+          <li>S3 ファイル（NFS/SMB）・ボリューム（iSCSI）・テープの3種類</li>
+          </ul>
+        </li>
+        <li>DataSync：ネットワーク経由で S3・EFS・FSx へ高速に移行・同期する</li>
+        <li>Snowball Edge：物理デバイスにコピーして配送で移す
+          <ul>
+          <li>数十 TB〜PB など、回線では数週間以上かかる場合に使う</li>
+          <li>縮小中だが、試験では「オフラインで移送＝Snowball」で出る</li>
+          </ul>
+        </li>
+        <li>Transfer Family：SFTP・FTPS・FTP で S3・EFS にファイルを送受信する</li>
+      </ul>
+    </li>
+    <li><b>バックアップの一元管理は AWS Backup</b>：ディスク・共有フォルダ・データベースをまとめて
+      <ul>
+        <li>対象は EBS・EFS・FSx（この章）、RDS・DynamoDB（第5章のデータベース）など</li>
+        <li>「毎日2時に取得し、35日間保持する」のようなプランを定義する</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="muted" style="margin:.7em 0 0;font-size:.9rem">読み終えたら、本文を見ずに各項目を自分の言葉で説明できるか確かめてください。</p>
+</div>
 
 <div class="box map">
   <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>

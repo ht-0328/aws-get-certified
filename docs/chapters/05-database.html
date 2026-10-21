@@ -13,7 +13,138 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第5章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第5章 データベース</h1>
-<p class="lead">顧客情報、注文履歴、在庫数など、アプリケーションの中核となるデータはデータベースに保存されます。AWS には十数種類のデータベースサービスがありますが、まず<b>「リレーショナルか、NoSQL か」</b>で大きく二分すると、全体を整理しやすくなります。</p>
+<p class="lead">アプリの中核のデータはデータベースに保存されます。AWS では RDS・Aurora（リレーショナル）と DynamoDB（NoSQL）が中心です。分析は Redshift、キャッシュは ElastiCache です。RDS の複製は、可用性のマルチ AZ と読み取り性能のリードレプリカの2種類です。</p>
+
+<div class="box goal">
+  <div class="box-title"><span class="em">🧭</span>この章で理解してほしいこと</div>
+  <ul style="margin:0">
+    <li><b>まず「リレーショナルか NoSQL か」</b>：整合性ならリレーショナル、大量・高速なら NoSQL
+      <ul>
+        <li>リレーショナル：表を関連付けて SQL で扱う
+          <ul>
+          <li>AWS のサービスで言うと RDS（運用を任せる DB）・Aurora（AWS 独自の DB）</li>
+          <li>列の定義が厳密な表を、顧客 ID などで関連付けて扱う</li>
+          <li>整合性に強く、金銭計算で矛盾が起きにくい</li>
+          </ul>
+        </li>
+        <li>NoSQL：キーを指定すると値が直接返る
+          <ul>
+          <li>AWS のサービスで言うと DynamoDB（キーバリュー）・ElastiCache（キャッシュ）</li>
+          <li>表に限らない構造。項目ごとに属性が違ってもよい</li>
+          <li>制約が緩い分、大量のデータを高速に処理できる</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><b>マネージド（RDS）は OS に入れない代わりに楽</b>：OS と DB ソフトの面倒は AWS が見る
+      <ul>
+        <li>AWS が行う
+          <ul>
+          <li>サーバー・ハードウェアの用意</li>
+          <li>OS のインストール・パッチ、DB ソフトの導入・更新</li>
+          <li>バックアップ、障害時の切り替え</li>
+          </ul>
+        </li>
+        <li>利用者が行う：テーブル設計、データ、利用方法、アクセス権</li>
+        <li>OS レベルの操作が必要なら、EC2 に自分で構築するか RDS Custom</li>
+      </ul>
+    </li>
+    <li><b>RDS のエンジンは「OSS 3つ＋商用3つ＋Aurora」</b>：Aurora は AWS 独自で高性能・高可用
+      <ul>
+        <li>オープンソース：MySQL・PostgreSQL・MariaDB</li>
+        <li>商用：Oracle・SQL Server・Db2</li>
+        <li>Aurora：MySQL・PostgreSQL 互換の高性能リレーショナル DB
+          <ul>
+          <li>データを3つの AZ に計6つ複製して守る</li>
+          <li>Aurora Serverless は負荷に応じて容量が自動で伸縮する</li>
+          <li>「MySQL 互換で、より高性能・高可用」の答え</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><b>マルチ AZ は可用性、リードレプリカは読み取り性能</b>：RDS で最も頻出の区別
+      <ul>
+        <li>マルチ AZ：別の AZ に待機系（スタンバイ）を置く
+          <ul>
+          <li>同期レプリケーションで常に同じ内容を保つ</li>
+          <li>本番系の障害時に自動で待機系へ切り替わる（フェイルオーバー）</li>
+          <li>待機系は通常時の読み取りに使えない。性能向上の機能ではない</li>
+          </ul>
+        </li>
+        <li>リードレプリカ：読み取り専用の複製を作る
+          <ul>
+          <li>非同期レプリケーション。わずかな遅延がある</li>
+          <li>参照の問い合わせを振り分けて本番系の負荷を下げる</li>
+          <li>別の AZ・別リージョンにも置ける。手動で本番系に昇格できる</li>
+          </ul>
+        </li>
+        <li>「可用性を高めたい」→ マルチ AZ、「読み取りが多い」→ リードレプリカ</li>
+      </ul>
+    </li>
+    <li><b>DynamoDB はサーバーレスでミリ秒の NoSQL</b>：JOIN が要る要件には向かない
+      <ul>
+        <li>キーバリュー型（およびドキュメント型）。サーバー台数を意識しない</li>
+        <li>データ量が増えても1桁ミリ秒の応答。容量と性能は自動で拡張</li>
+        <li>用途：ゲームのスコア、ショッピングカート、セッション情報、IoT データ</li>
+        <li>DAX：DynamoDB 専用のインメモリキャッシュ。読み取りをマイクロ秒に</li>
+        <li>グローバルテーブル：複数リージョンに自動で複製する</li>
+        <li>キャパシティモード：オンデマンド（従量）とプロビジョンド（事前指定）</li>
+      </ul>
+    </li>
+    <li><b>ElastiCache は消えてよい、MemoryDB は消えない</b>：どちらもインメモリで高速
+      <ul>
+        <li>ElastiCache：メモリ上のキャッシュ（Valkey・Redis OSS・Memcached）
+          <ul>
+          <li>アプリはまずキャッシュを見て、なければ RDS へ行く</li>
+          <li>よく読まれるデータほど RDS まで行かずに返せる。速く、負荷も下がる</li>
+          <li>消えても元の DB から取り直せることが前提</li>
+          </ul>
+        </li>
+        <li>MemoryDB：インメモリの速さのまま複数の AZ に永続化する
+          <ul>
+          <li>耐久性があるので、プライマリーデータベースとして使える</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><b>分析（OLAP）は Redshift、業務（OLTP）は RDS</b>
+      <ul>
+        <li>Redshift：分析専用のデータウェアハウス（DWH）
+          <ul>
+          <li>「昨年の売上を地域別・月別に集計」のような処理が得意</li>
+          <li>列指向で、特定の列だけの集計が速い。サーバーレス版もある</li>
+          </ul>
+        </li>
+        <li>OLTP：「注文を1件登録する」のような小さな処理を大量・高速にこなす</li>
+        <li>OLTP は RDS・Aurora・DynamoDB の役割</li>
+      </ul>
+    </li>
+    <li><b>目的別データベースは名前から用途を連想</b>
+      <ul>
+        <li>DocumentDB：Document（文書）→ JSON。MongoDB 互換</li>
+        <li>Neptune：星図のように線で結ぶ → グラフ。SNS・レコメンド・不正検知</li>
+        <li>Keyspaces：Cassandra の用語 keyspace → Apache Cassandra 互換</li>
+        <li>Timestream：Time の Stream → 時系列。センサー値・メトリクス</li>
+      </ul>
+    </li>
+    <li><b>移行は DMS。エンジンが変わるなら SCT も</b>：止めずに移す。SCT はスキーマ変換
+      <ul>
+        <li>DMS：移行元を動かしたまま変更分を複製し続ける
+          <ul>
+          <li>停止時間を最小限にして AWS へ移す。異なる種類の DB 間も可</li>
+          </ul>
+        </li>
+        <li>SCT：エンジンが異なる移行で、先にスキーマを変換する
+          <ul>
+          <li>例：Oracle → Aurora PostgreSQL。DMS Schema Conversion でもよい</li>
+          </ul>
+        </li>
+        <li>同じエンジンどうし（MySQL → RDS for MySQL）なら DMS だけでよい</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="muted" style="margin:.7em 0 0;font-size:.9rem">読み終えたら、本文を見ずに各項目を自分の言葉で説明できるか確かめてください。</p>
+</div>
 
 <div class="box map">
   <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>
