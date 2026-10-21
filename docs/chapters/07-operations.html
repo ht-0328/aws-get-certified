@@ -13,7 +13,103 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第7章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第7章 監視・運用・自動化</h1>
-<p class="lead">システムは構築して終わりではなく、稼働状況の監視、操作の記録、環境の再現といった運用が続きます。この章では、AWS 環境を<b>安定して運用し続けるためのサービス</b>を扱います。</p>
+<p class="lead">システムは構築して終わりではなく、監視・記録・再現といった運用が続きます。監視は CloudWatch、操作の記録は CloudTrail、設定の履歴は Config です。環境の再現は CloudFormation です。設計は Well-Architected の6つの柱で評価します。</p>
+
+<div class="box goal">
+  <div class="box-title"><span class="em">🧭</span>この章で理解してほしいこと</div>
+  <ul style="margin:0">
+    <li><b>CloudWatch は性能、CloudTrail は操作、Config は設定</b>：共通の Cloud に惑わされない
+      <ul>
+        <li>CloudWatch：メトリクスとログを集めて監視する（計器盤と警報）
+          <ul>
+          <li>閾値を超えたらアラームで SNS（通知）や Auto Scaling（台数の増減）を動かす</li>
+          <li>「CPU 使用率が80%を超えたら通知」の答え</li>
+          </ul>
+        </li>
+        <li>CloudTrail：「誰が・いつ・どの API を呼んだか」を記録する
+          <ul>
+          <li>「EC2 を誰が削除したか」「監査のために操作を記録」の答え</li>
+          </ul>
+        </li>
+        <li>Config：設定が「いつ・どう変わったか」を記録し、ルール準拠を評価
+          <ul>
+          <li>「設定の変更履歴」「コンプライアンスの継続評価」の答え</li>
+          <li>CloudTrail と組み合わせて調査することも多い</li>
+          </ul>
+        </li>
+        <li>Watch＝観察、Trail＝足跡、Config＝設定。英単語がそのまま役割</li>
+      </ul>
+    </li>
+    <li><b>サーバー群の一括管理は Systems Manager</b>：Session Manager なら鍵もポート開放も不要
+      <ul>
+        <li>Session Manager：鍵やポート開放なしに、ブラウザから安全に接続する</li>
+        <li>Patch Manager：パッチの適用を一括で自動化する</li>
+        <li>Run Command：複数のサーバーに同じコマンドを一斉に実行する</li>
+        <li>Parameter Store：設定値やパスワードを安全に保管する</li>
+      </ul>
+    </li>
+    <li><b>環境の再現は構成をコードにする（IaC）</b>：CloudFormation か CDK
+      <ul>
+        <li>手作業の構築は再現に手間がかかり、設定ミスも起きやすい</li>
+        <li>CloudFormation：YAML/JSON のテンプレートどおりに自動構築する
+          <ul>
+          <li>利用は無料。作ったリソースの料金だけかかる</li>
+          <li>スタック：テンプレートから作られたリソースの集合。まとめて削除可</li>
+          <li>同じテンプレートから開発・本番・別リージョンを同じ構成で作れる</li>
+          </ul>
+        </li>
+        <li>CDK：Python や TypeScript で書き、CloudFormation のテンプレートに変換</li>
+        <li>Elastic Beanstalk はコードを渡すと実行環境を自動で用意する PaaS</li>
+        <li>インフラをコードで細かく管理したいなら CloudFormation</li>
+      </ul>
+    </li>
+    <li><b>点検は Trusted Advisor、障害情報は Health Dashboard</b>：処理が遅い場所は X-Ray
+      <ul>
+        <li>Trusted Advisor：環境を自動で点検し、改善点を提案する
+          <ul>
+          <li>分野はコスト・パフォーマンス・セキュリティ・耐障害性・クォータ</li>
+          <li>運用上の優秀性も加わる。全チェックは Business 以上のプラン</li>
+          </ul>
+        </li>
+        <li>Health Dashboard：AWS 側の障害・メンテナンスの情報。自分への影響を通知</li>
+        <li>X-Ray：リクエストがどこで時間を使ったかを可視化（分散トレーシング）</li>
+        <li>「自分のリソースの数値」は CloudWatch、「AWS 側の障害」は Health Dashboard</li>
+      </ul>
+    </li>
+    <li><b>複数アカウントの管理は3つのサービス</b>：Organizations・Control Tower・Service Catalog
+      <ul>
+        <li>Organizations：複数アカウントの一元管理。一括請求と SCP（第2章）</li>
+        <li>Control Tower：整った複数アカウント環境（ランディングゾーン）を自動構築
+          <ul>
+          <li>Organizations を基盤に動く</li>
+          <li>「ベストプラクティスに沿って自動構築」の答え</li>
+          </ul>
+        </li>
+        <li>Service Catalog：承認した構成だけをカタログにして選ばせる
+          <ul>
+          <li>統制を保ちながらセルフサービスで使える</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><b>設計の評価は Well-Architected の6つの柱</b>：覚え方は「運・セ・信・パ・コ・サ」
+      <ol>
+        <li>運用上の優秀性：運用を自動化し、小さな変更を頻繁に行って改善する</li>
+        <li>セキュリティ：データとシステムを守る（最小権限・暗号化・追跡可能性）</li>
+        <li>信頼性：障害から自動で復旧できるようにする（マルチ AZ・バックアップ）</li>
+        <li>パフォーマンス効率：要件に合うリソースを選び、効率よく性能を出す</li>
+        <li>コスト最適化：不要な支出を避け、費用対効果を高める</li>
+        <li>サステナビリティ：環境負荷を最小化する。2021年に追加された柱</li>
+      </ol>
+    </li>
+    <li><b>Well-Architected Tool は設計の自己評価</b>：設問に答えて無料で評価する
+      <ul>
+        <li>Trusted Advisor（実際の環境を自動で点検）とは別物</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="muted" style="margin:.7em 0 0;font-size:.9rem">読み終えたら、本文を見ずに各項目を自分の言葉で説明できるか確かめてください。</p>
+</div>
 
 <div class="box map">
   <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>

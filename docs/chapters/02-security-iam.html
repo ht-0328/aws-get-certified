@@ -13,7 +13,149 @@
 <div class="breadcrumb"><a href="../index.html">ホーム</a> › 第2章</div>
 <p><span class="badge clf">CLF</span><span class="badge saa">SAA</span></p>
 <h1>第2章 セキュリティとIAM</h1>
-<p class="lead">セキュリティは、CLF・SAA のいずれでも配点が最も大きい分野の一つです。本章では「誰が何を守るのか（責任の分担）」と「誰に何を許可するのか（アクセス管理）」を軸に、主要なセキュリティサービスを整理します。</p>
+<p class="lead">セキュリティは CLF・SAA とも配点が最も大きい分野の一つです。AWS は設備と基盤を守り、利用者はデータ・権限・設定を守ります（責任共有モデル）。権限は IAM、攻撃の防御は Shield と WAF、脅威の検出は GuardDuty などです。</p>
+
+<div class="box goal">
+  <div class="box-title"><span class="em">🧭</span>この章で理解してほしいこと</div>
+  <ul style="margin:0">
+    <li><b>守る責任は AWS と利用者で分担する</b>：AWS は器、利用者は中身（責任共有モデル）
+      <ul>
+        <li>AWS が守る（Security OF the Cloud）
+          <ul>
+          <li>データセンターの建物・電源・物理的な警備</li>
+          <li>物理サーバー・仮想化基盤・基盤ネットワーク</li>
+          </ul>
+        </li>
+        <li>利用者が守る（Security IN the Cloud）
+          <ul>
+          <li>データ、IAM のアクセス権限</li>
+          <li>アプリケーションのコード、セキュリティグループの設定</li>
+          <li>EC2 の OS の更新・パッチ</li>
+          </ul>
+        </li>
+        <li>マネージドなサービスほど AWS の範囲が広い
+          <ul>
+          <li>RDS（データベース）のエンジン、Lambda（コード実行）の OS のパッチは AWS</li>
+          <li>データとアクセス権限は、どのサービスでも利用者</li>
+          </ul>
+        </li>
+        <li>賃貸なら、AWS は建物と共用部、利用者は自室の施錠と中身</li>
+      </ul>
+    </li>
+    <li><b>権限は IAM で決める</b>：人にはグループ経由でポリシー、サービスにはロール
+      <ul>
+        <li>IAM：誰が AWS を使え、どの操作ができるかを管理する。無料</li>
+        <li>リージョンに属さないグローバルサービス</li>
+        <li>ユーザー：1人（または1つのアプリ）に1つの認証情報。共有しない</li>
+        <li>グループ：ユーザーの集合。ポリシーはグループに付ける。入れ子は不可</li>
+        <li>ポリシー：JSON で書く許可・拒否の規則
+          <ul>
+          <li>明示的な拒否（Deny）が最優先</li>
+          <li>どこにも許可がなければ拒否（暗黙の拒否）</li>
+          </ul>
+        </li>
+        <li>ロール：必要なときだけ引き受ける一時的な権限
+          <ul>
+          <li>EC2・Lambda などのサービスや、別アカウントの利用者に付ける</li>
+          <li>有効期限付きの認証情報が自動で発行される</li>
+          </ul>
+        </li>
+        <li>「EC2 から S3（ストレージ）へ」はアクセスキーを置かず、IAM ロールを付ける</li>
+      </ul>
+    </li>
+    <li><b>ルートユーザーは日常で使わない</b>：原則は最小権限・MFA・ルートを使わない
+      <ul>
+        <li>ルートユーザー：アカウント作成時に作られる全権限のユーザー
+          <ul>
+          <li>MFA を設定して厳重に保管し、アクセスキーは作らない</li>
+          <li>管理者全員で共有するのは誤り。1人1つの IAM ユーザーを作る</li>
+          </ul>
+        </li>
+        <li>ルートユーザーでしかできない操作
+          <ul>
+          <li>アカウントの解約</li>
+          <li>サポートプランの変更</li>
+          <li>ルートユーザーのメールアドレスなどアカウント設定の変更</li>
+          </ul>
+        </li>
+        <li>最小権限：業務に必要な範囲だけの権限を付ける</li>
+        <li>MFA：パスワード（知っているもの）＋認証アプリ（持っているもの）</li>
+      </ul>
+    </li>
+    <li><b>複数アカウントは Organizations</b>：SCP は上限を決めるだけで権限は付与しない
+      <ul>
+        <li>Organizations：複数のアカウントを1つの組織として管理する
+          <ul>
+          <li>一括請求：請求をまとめ、ボリューム割引を受けやすくする</li>
+          <li>SCP：アカウント単位で使えるサービスやリージョンを制限する</li>
+          <li>IAM で許可していても、SCP で禁止された操作はできない</li>
+          </ul>
+        </li>
+        <li>IAM Identity Center：1回のサインインで複数のアカウントに入れる（SSO）</li>
+        <li>Identity Center は Microsoft Entra ID などの ID 基盤と連携できる</li>
+      </ul>
+    </li>
+    <li><b>鍵・パスワード・証明書は専用のサービスで管理</b>：名前の英単語がそのまま役割
+      <ul>
+        <li>KMS（Key）：暗号鍵の作成・管理
+          <ul>
+          <li>S3（ストレージ）・EBS（ディスク）・RDS（データベース）と連携できる</li>
+          <li>鍵の使用履歴は CloudTrail に残る</li>
+          </ul>
+        </li>
+        <li>CloudHSM（Hardware）：専用機器で鍵を利用者だけが管理。厳格な規制向け</li>
+        <li>Secrets Manager：DB のパスワードなどを保管し、自動でローテーション
+          <ul>
+          <li>Parameter Store も値を保存できるが、自動ローテーションはこちら</li>
+          </ul>
+        </li>
+        <li>ACM（Certificate）：SSL/TLS 証明書を発行し自動更新する</li>
+        <li>ELB・CloudFront で使うパブリック証明書は無料</li>
+      </ul>
+    </li>
+    <li><b>DDoS は Shield、Web 攻撃は WAF</b>：Shield は量、WAF は内容を防ぐ
+      <ul>
+        <li>Shield Standard：一般的な DDoS を防ぐ。無料で全利用者に自動適用</li>
+        <li>Shield Advanced：大規模・高度な DDoS 向け。有料
+          <ul>
+          <li>24時間365日の専門チーム（SRT）が支援する</li>
+          <li>攻撃に伴う利用料の増加を補償する</li>
+          </ul>
+        </li>
+        <li>WAF：SQL インジェクション・XSS など Web への攻撃を遮断する
+          <ul>
+          <li>特定の IP・国・不審なリクエストを規則で遮断する</li>
+          <li>CloudFront（配信）・ALB（負荷分散）・API Gateway（API の窓口）に適用する</li>
+          </ul>
+        </li>
+        <li>Shield は防波堤、WAF は入口の検査</li>
+      </ul>
+    </li>
+    <li><b>脅威対応は「検出 → 集約 → 調査」</b>：検出するサービスは遮断しない
+      <ul>
+        <li>GuardDuty：ログを機械学習で分析して脅威を検出する
+          <ul>
+          <li>CloudTrail（操作の記録）・VPC フローログ（通信の記録）・DNS ログを分析する</li>
+          <li>「誰が操作したか」の記録は CloudTrail。GuardDuty は分析する側</li>
+          </ul>
+        </li>
+        <li>Inspector：EC2・コンテナイメージ・Lambda の脆弱性を検査する</li>
+        <li>Macie：S3 の個人情報（PII）など機密データを検出する</li>
+        <li>Security Hub：各サービスの検出結果を1か所に集約する</li>
+        <li>Detective：検出された問題の根本原因と経緯を調査する</li>
+        <li>遮断は WAF やセキュリティグループの役割</li>
+      </ul>
+    </li>
+    <li><b>監査レポートは Artifact、アプリの利用者認証は Cognito</b>
+      <ul>
+        <li>Artifact：AWS の第三者監査レポート（ISO・SOC・PCI DSS）を取得する</li>
+        <li>Cognito：自社アプリの会員登録・サインイン・外部 ID 連携</li>
+        <li>IAM は「AWS を操作する人」、Cognito は「アプリのエンドユーザー」</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="muted" style="margin:.7em 0 0;font-size:.9rem">読み終えたら、本文を見ずに各項目を自分の言葉で説明できるか確かめてください。</p>
+</div>
 
 <div class="box map">
   <div class="box-title"><span class="em">🗺️</span>この章の全体像</div>
