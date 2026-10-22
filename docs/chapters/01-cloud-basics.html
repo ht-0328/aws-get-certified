@@ -102,6 +102,7 @@
           <ul>
           <li>CloudFront（キャッシュ配信）と Route 53（DNS）が使う</li>
           <li>「海外の利用者に低遅延で配信したい」の答え</li>
+          <li>複数のリージョンに置くのも答え。ELB はリージョンをまたげない</li>
           </ul>
         </li>
       </ul>
@@ -119,6 +120,7 @@
         <li>マネジメントコンソール：ブラウザの画面で操作する</li>
         <li>CLI：コマンドで操作する。スクリプトにして自動化しやすい</li>
         <li>SDK：Python や Java のプログラムから操作する</li>
+        <li>CLI・SDK はアクセスキー ID とシークレットアクセスキーで認証する</li>
       </ul>
     </li>
   </ul>
@@ -304,11 +306,29 @@
   <p>リージョン選択の基準として<b>適切でないもの</b>を選ばせる問題がよく出題されます。「AZ の数」や「サポートプランの種類」は、通常リージョン選択の基準には含まれません。上記の4つを正確に挙げられるようにしてください。</p>
 </div>
 
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
+  <ul style="margin:0">
+    <li>「1つのデータセンター（AZ）が止まってもサービスを続けたい」→ <b>複数の AZ に配置</b>（単一障害点をなくし、可用性を上げる）</li>
+    <li>複数の AZ で得られるのは<b>可用性</b>。「コストが下がる」「性能が上がる」は誤り</li>
+    <li>「世界中の利用者に低遅延で」→ <b>CloudFront のエッジロケーション</b>、または<b>複数のリージョンに配置</b></li>
+    <li>ELB はリージョンをまたいで振り分けられない（同じリージョンの AZ 間だけ）</li>
+  </ul>
+</div>
+
 <h2>5. AWS の操作方法</h2>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSManagementConsole.svg" alt=""><div><div class="name">AWS マネジメントコンソール<span class="yomi">Management Console</span></div><div class="one">Web ブラウザから利用する<b>GUI</b>。画面操作でリソースを作成・管理する。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSCommandLineInterface.svg" alt=""><div><div class="name">AWS CLI<span class="yomi">Command Line Interface</span></div><div class="one">ターミナルから<b>コマンド</b>で操作するツール。スクリプト化により作業を自動化しやすい。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSToolsandSDKs.svg" alt=""><div><div class="name">AWS SDK<span class="yomi">Software Development Kit</span></div><div class="one">Python や Java などの<b>プログラムから</b> AWS を操作するためのライブラリ群。</div></div></div>
 <p>いずれの方法も、内部では同じ AWS の <span class="term" data-tip="API（Application Programming Interface）：ソフトウェア同士が機能を呼び出し合うための窓口と、その呼び出し方の取り決め。">API</span> を呼び出しています。</p>
+<p>サインインに使う<b>認証情報</b>は入口で違います。コンソールはユーザー名と<b>パスワード</b>（＋MFA）、CLI や SDK のような<b>プログラムからのアクセス</b>は<b>アクセスキー ID とシークレットアクセスキー</b>の組です（第2章の IAM で発行します）。</p>
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
+  <ul style="margin:0">
+    <li>「プログラムによるアクセスに必要な認証情報は（2つ選ぶ）」→ <b>アクセスキー ID</b> と <b>シークレットアクセスキー</b></li>
+    <li>ユーザー ID・パスワードはコンソール用。「プライマリキー」はデータベースの用語で無関係</li>
+  </ul>
+</div>
 
 <div class="recall">
   <h2>🧠 想起練習</h2>

@@ -69,6 +69,7 @@
           <ul>
           <li>分野はコスト・パフォーマンス・セキュリティ・耐障害性・クォータ</li>
           <li>運用上の優秀性も加わる。全チェックは Business 以上のプラン</li>
+          <li>例：全開放（0.0.0.0/0）の SG、S3 の公開、ルートの MFA 無し</li>
           </ul>
         </li>
         <li>Health Dashboard：AWS 側の障害・メンテナンスの情報。自分への影響を通知</li>
@@ -82,12 +83,12 @@
         <li>Control Tower：整った複数アカウント環境（ランディングゾーン）を自動構築
           <ul>
           <li>Organizations を基盤に動く</li>
-          <li>「ベストプラクティスに沿って自動構築」の答え</li>
+          <li>「定石（ベストプラクティス）に沿って自動構築」の答え</li>
           </ul>
         </li>
         <li>Service Catalog：承認した構成だけをカタログにして選ばせる
           <ul>
-          <li>統制を保ちながらセルフサービスで使える</li>
+          <li>統制を保ちながら、利用者が自分で選んで作れる</li>
           </ul>
         </li>
       </ul>
@@ -96,7 +97,7 @@
       <ol>
         <li>運用上の優秀性：運用を自動化し、小さな変更を頻繁に行って改善する</li>
         <li>セキュリティ：データとシステムを守る（最小権限・暗号化・追跡可能性）</li>
-        <li>信頼性：障害から自動で復旧できるようにする（マルチ AZ・バックアップ）</li>
+        <li>信頼性：障害から自動で復旧する。「複数 AZ に配置」はこの柱</li>
         <li>パフォーマンス効率：要件に合うリソースを選び、効率よく性能を出す</li>
         <li>コスト最適化：不要な支出を避け、費用対効果を高める</li>
         <li>サステナビリティ：環境負荷を最小化する。2021年に追加された柱</li>
@@ -211,7 +212,7 @@
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt=""><div><div class="name">（参考）Elastic Beanstalk</div><div class="one">アプリケーションのコードをアップロードするだけで、実行環境を自動で構築する PaaS。<b>「インフラを意識せずにアプリケーションを動かしたい」</b>なら Elastic Beanstalk、<b>「インフラをコードで細かく管理したい」</b>なら CloudFormation。</div></div></div>
 
 <h2>4. 助言と通知</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor</div><div class="one">利用中の AWS 環境を自動で点検し、<b>ベストプラクティスに基づく改善提案</b>を行う。対象分野は<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）</b>（加えて運用上の優秀性）。すべてのチェック項目を利用するには <b>Business 以上のサポートプラン</b>が必要。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor</div><div class="one">利用中の AWS 環境を自動で点検し、<b>ベストプラクティスに基づく改善提案</b>を行う。対象分野は<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）</b>（加えて運用上の優秀性）。すべてのチェック項目を利用するには <b>Business 以上のサポートプラン</b>が必要。例：使われていない EBS（コスト）、<b>無制限アクセス（0.0.0.0/0）を許可しているセキュリティグループ</b>・S3 の公開設定・ルートユーザーの MFA 未設定（セキュリティ）。</div></div></div>
 <div class="box hook">
   <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の5分野「コ・パ・セ・耐・上」</div>
   <p><b>コ</b>スト／<b>パ</b>フォーマンス／<b>セ</b>キュリティ／<b>耐</b>障害性／サービスの<b>上</b>限。Well-Architected の柱と重なる項目が多いので、対応づけて覚えると効率的です。</p>
@@ -240,6 +241,15 @@
   <div class="box-title"><span class="em">🔑</span>覚え方：「運・セ・信・パ・コ・サ」</div>
   <p>学習方法のページで紹介した頭字法です。あわせて、6番目の<b>サステナビリティは 2021 年に追加された</b>柱であることも押さえておきます。</p>
 </div>
+<div class="box exam">
+  <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
+  <ul style="margin:0">
+    <li>「RDS や EC2 を<b>複数の AZ に配置</b>する」→ <b>信頼性</b>の柱（単一障害点をなくす）。コストは上がるのでコスト最適化ではなく、性能も上がらない</li>
+    <li>「最小権限・暗号化・操作の追跡」→ <b>セキュリティ</b></li>
+    <li>「不要な支出を避ける・購入オプションを見直す」→ <b>コスト最適化</b></li>
+    <li>「要件に合うインスタンスタイプを選ぶ」→ <b>パフォーマンス効率</b></li>
+  </ul>
+</div>
 
 <div class="box warn">
   <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
@@ -248,6 +258,7 @@
     <li><b>Config と CloudTrail</b>：Config は「<b>設定がどう変わったか</b>」、CloudTrail は「<b>誰が操作したか</b>」。両者を組み合わせて調査することも多い。</li>
     <li><b>Trusted Advisor と Well-Architected Tool</b>：Trusted Advisor は<b>実際の環境を自動で点検</b>し、Well-Architected Tool は<b>設問への回答を通じて設計を見直す</b>。</li>
     <li><b>Health Dashboard と CloudWatch</b>：AWS 側の障害情報は Health Dashboard、自分のリソースのメトリクスは CloudWatch。</li>
+    <li>「<b>無制限アクセスを許可しているセキュリティグループを見つけたい</b>」→ <b>Trusted Advisor</b>。IAM は権限の管理、CloudTrail は操作の記録で、設定の点検はしない。</li>
   </ul>
 </div>
 

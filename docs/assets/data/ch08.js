@@ -2,6 +2,8 @@
 window.AWSNOTE = window.AWSNOTE || { cards: [], terms: [] };
 
 AWSNOTE.cards.push(
+  { ch: "ch08", q: "データベースが動いているオンプレミスのサーバーを、そのまま EC2 へ移すサービスは？", a: "AWS Application Migration Service（MGN）。DMS はデータベースの中身を移すサービス。" },
+  { ch: "ch08", q: "テキストを音声で読み上げるサービスは？", a: "Polly。Transcribe は音声→文字、Textract は画像から文字を抽出。" },
   { ch: "ch08", q: "疎結合とは？", a: "コンポーネント間の依存を弱め、一方が停止・遅延しても他方が影響を受けにくくする設計。AWS が推奨している。" },
   { ch: "ch08", q: "コンポーネントを疎結合にし、処理しきれないリクエストを一時的に保持するサービスは？", a: "Amazon SQS（メッセージキュー。受信側がポーリングで取得する）。" },
   { ch: "ch08", q: "1つの通知を、メール・SMS・Lambda など複数の宛先に同時配信するサービスは？", a: "Amazon SNS（プッシュ型、Pub/Sub）。" },

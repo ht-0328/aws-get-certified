@@ -2,6 +2,8 @@
 window.AWSNOTE = window.AWSNOTE || { cards: [], terms: [] };
 
 AWSNOTE.cards.push(
+  { ch: "ch07", q: "RDS を複数の AZ に配置するのは Well-Architected のどの柱？", a: "信頼性（単一障害点をなくす）。コスト最適化やパフォーマンス効率ではない。" },
+  { ch: "ch07", q: "無制限アクセス（0.0.0.0/0）を許可しているセキュリティグループを見つけるサービスは？", a: "Trusted Advisor（セキュリティのチェック）。IAM や CloudTrail では見つからない。" },
   { ch: "ch07", q: "CloudWatch・CloudTrail・Config は、それぞれ何を対象とするか。", a: "CloudWatch＝性能・稼働状況（メトリクス・ログ）、CloudTrail＝誰が何をしたか（API 操作の記録）、Config＝設定とその変更履歴・ルールへの準拠状況。" },
   { ch: "ch07", q: "「誰が EC2 を削除したか」を調べたい。使うサービスは何か。", a: "AWS CloudTrail。" },
   { ch: "ch07", q: "CPU 使用率が閾値を超えたら通知したい。どうするか。", a: "CloudWatch アラームを設定し、SNS で通知する。" },
