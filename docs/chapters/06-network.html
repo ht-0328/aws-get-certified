@@ -265,7 +265,7 @@
 </table></div>
 <p class="muted"><code>0.0.0.0/0</code> は「すべての IPv4 アドレス」、つまりインターネット上の任意の宛先を意味します。</p>
 
-<div class="svc"><img src="../assets/aws-icons/resource/AmazonVPCInternetGateway.svg" alt=""><div><div class="name">インターネットゲートウェイ（IGW）</div><div class="one">VPC とインターネットを接続するコンポーネント。VPC に 1 つアタッチする。<b>受信と送信の両方</b>が可能。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/resource/AmazonVPCInternetGateway.svg" alt=""><div><div class="name">インターネットゲートウェイ（IGW）</div><div class="one">VPC とインターネットを接続する部品（コンポーネント）。VPC に 1 つアタッチする。<b>受信と送信の両方</b>が可能。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/resource/AmazonVPCNATGateway.svg" alt=""><div><div class="name">NAT ゲートウェイ</div><div class="one">プライベートサブネットのリソースが<b>外部へ接続するための送信専用</b>の経路。<b>外部から内部への接続は受け付けない</b>。パブリックサブネットに配置する。AZ ごとに配置すると、1 つの AZ で障害が起きても影響を受けにくい。<br><small class="muted"><span class="term" data-tip="NAT（Network Address Translation）：内部のプライベート IP アドレスを、外部で通用するアドレスに変換して通信させる仕組み。">NAT</span>：アドレス変換の仕組み。</small></div></div></div>
 
 <div class="box hook">
@@ -294,9 +294,12 @@
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：SG は「イ・キョ・フル」</div>
-  <p><b>SG</b>：<b>イ</b>ンスタンス単位／<b>許</b>可のみ／ステート<b>フル</b>。<br>
-  <b>NACL</b> はその<b>すべてが逆</b>（サブネット単位／許可と拒否／ステートレス）です。片方を確実に覚えれば、もう片方は導き出せます。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：SG は「部屋の入口」、NACL は「フロアの入口」</div>
+  <ul style="margin:0">
+    <li><b>SG（部屋の入口）</b>：1台（インスタンス）ごと。通す人の名簿だけを持つ（拒否は書けない）。入った人の帰りは顔パス（ステートフル）。</li>
+    <li><b>NACL（フロアの入口）</b>：サブネットごと。通す人と止める人の両方の名簿を持つ。行きも帰りも確認する（ステートレス）。番号順に見る。</li>
+    <li>片方を確実に覚えれば、もう片方は<b>すべて逆</b>と導き出せます。</li>
+  </ul>
 </div>
 
 <div class="box exam">
@@ -385,7 +388,7 @@
   <tr><th>ルーティングポリシー</th><th>概要</th></tr>
   <tr><td>シンプル</td><td>単一の応答を返す</td></tr>
   <tr><td>加重（Weighted）</td><td>「新バージョンに 10%、旧バージョンに 90%」のように<b>比率で</b>振り分ける</td></tr>
-  <tr><td>レイテンシー</td><td>利用者にとって<b>最も遅延の小さい</b>リージョンへ振り分ける</td></tr>
+  <tr><td>レイテンシー（遅延）</td><td>利用者にとって<b>最も遅延の小さい</b>リージョンへ振り分ける</td></tr>
   <tr><td>フェイルオーバー</td><td>プライマリに障害が起きたら<b>セカンダリ</b>へ切り替える（ヘルスチェックと併用）</td></tr>
   <tr><td>位置情報（Geolocation）</td><td>利用者の<b>国・地域</b>に応じて振り分ける（例：日本からのアクセスは日本語サイトへ）</td></tr>
   <tr><td>地理的近接性・複数値回答・IP ベース</td><td>距離に応じた振り分け／複数の応答を返す／送信元 IP の範囲による振り分け</td></tr>

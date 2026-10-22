@@ -184,8 +184,8 @@
   </dl>
 </div>
 
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSimpleQueueService.svg" alt=""><div><div class="name">Amazon SQS<span class="yomi">Simple Queue Service</span></div><div class="one">メッセージを<b>一時的に保持する</b>フルマネージドのキュー。受信側がポーリングで取得する。<b>疎結合化の代表的な手段</b>。1つのメッセージは原則として1つの受信側が処理する。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSimpleNotificationService.svg" alt=""><div><div class="name">Amazon SNS<span class="yomi">Simple Notification Service</span></div><div class="one">1つの通知を<b>複数の宛先へ同時に配信する</b>（プッシュ型）。メール・SMS・SQS・Lambda などに送信できる。<span class="term" data-tip="Pub/Sub：Publish（発行）/Subscribe（購読）モデル。発行者が1回送信すると、購読しているすべての受信者に配信される。">Pub/Sub</span> 型のメッセージング。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSimpleQueueService.svg" alt=""><div><div class="name">Amazon SQS<span class="yomi">Simple Queue Service</span></div><div class="one">メッセージを<b>一時的に保持する</b>フルマネージドのキュー。受信側が取りに行って受け取る（ポーリング）。<b>疎結合化の代表的な手段</b>。1つのメッセージは原則として1つの受信側が処理する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSimpleNotificationService.svg" alt=""><div><div class="name">Amazon SNS<span class="yomi">Simple Notification Service</span></div><div class="one">1つの通知を<b>複数の宛先へ同時に配信する</b>（プッシュ型＝送る側から届ける）。メール・SMS・SQS・Lambda などに送信できる。<span class="term" data-tip="Pub/Sub：Publish（発行）/Subscribe（購読）モデル。発行者が1回送信すると、購読しているすべての受信者に配信される。">Pub/Sub</span> 型のメッセージング。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEventBridge.svg" alt=""><div><div class="name">Amazon EventBridge<span class="yomi">イベントブリッジ</span></div><div class="one">AWS サービスや外部 SaaS で発生した<b>イベントをルールに基づいて振り分ける</b>イベントバス。「毎日9時に実行」といった<span class="term" data-tip="スケジュール実行：指定した日時・間隔で処理を自動起動すること。かつて CloudWatch Events と呼ばれていた機能を引き継いでいる。">スケジュール実行</span>にも対応する。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSStepFunctions.svg" alt=""><div><div class="name">AWS Step Functions<span class="yomi">ステップ ファンクションズ</span></div><div class="one">複数の処理を<b>定義した順序で実行し、失敗時の再試行や分岐を制御する</b>オーケストレーションサービス。処理の流れ（<span class="term" data-tip="ワークフロー：業務や処理の手順を定義したもの。">ワークフロー</span>）を視覚的に設計できる。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonAPIGateway.svg" alt=""><div><div class="name">Amazon API Gateway<span class="yomi">API ゲートウェイ</span></div><div class="one">外部からのリクエストを受け付ける<b>API の窓口</b>を作成・公開・管理する。認証やアクセス制限も担う。<b>API Gateway ＋ Lambda</b> はサーバーレス構成の定番。</div></div></div>
@@ -246,7 +246,7 @@
   </dl>
 </div>
 
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonKinesis.svg" alt=""><div><div class="name">Amazon Kinesis<span class="yomi">キネシス</span></div><div class="one"><b>リアルタイム</b>に発生するデータを収集・処理する。<b>Kinesis Data Streams</b>（ストリームの受け取り）、<b>Amazon Data Firehose</b>（旧 Kinesis Data Firehose。S3 や Redshift などへ自動配信）、<b>Kinesis Video Streams</b>（動画）がある。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonKinesis.svg" alt=""><div><div class="name">Amazon Kinesis<span class="yomi">キネシス</span></div><div class="one">発生し続けるデータを、<b>起きたそばから（リアルタイムに）</b>収集・処理する。<b>Kinesis Data Streams</b>（ストリームの受け取り）、<b>Amazon Data Firehose</b>（旧 Kinesis Data Firehose。S3 や Redshift などへ自動配信）、<b>Kinesis Video Streams</b>（動画）がある。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSGlue.svg" alt=""><div><div class="name">AWS Glue<span class="yomi">グルー</span></div><div class="one">サーバーレスの <b>ETL</b> サービス。どこにどのようなデータがあるかを管理する<b>データカタログ</b>（データの目録）も提供する。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonAthena.svg" alt=""><div><div class="name">Amazon Athena<span class="yomi">アテナ</span></div><div class="one"><b>S3 上のデータに対して、直接 SQL でクエリを実行できる</b>。サーバーレスで、<b>スキャンしたデータ量に応じて</b>課金される。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEMR.svg" alt=""><div><div class="name">Amazon EMR<span class="yomi">イーエムアール</span></div><div class="one"><b>ビッグデータ</b>を多数のサーバーで分散処理する。<span class="term" data-tip="Hadoop・Spark：大量のデータを複数のコンピューターで分散処理するためのオープンソースのフレームワーク。">Hadoop や Spark</span> の環境を容易に構築できる。</div></div></div>
@@ -294,8 +294,8 @@
 </div>
 
 <h3>下の層・中間の層：独自に構築する／生成 AI</h3>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSageMakerAI.svg" alt=""><div><div class="name">Amazon SageMaker AI<span class="yomi">セージメーカー</span></div><div class="one">機械学習モデルの<b>構築・学習・デプロイ</b>までを一貫して行える、開発者・データサイエンティスト向けのプラットフォーム。（2024年末に「SageMaker AI」へ改称され、「SageMaker」はデータ分析も含む上位ブランド名になりました）</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonBedrock.svg" alt=""><div><div class="name">Amazon Bedrock<span class="yomi">ベッドロック</span></div><div class="one">複数の企業の<b>基盤モデル</b>（Anthropic の Claude、Amazon Nova など）を <b>API 経由で利用できる</b>フルマネージドの生成 AI サービス。インフラ管理は不要。Bedrock は英語で「岩盤（基盤）」の意。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonSageMakerAI.svg" alt=""><div><div class="name">Amazon SageMaker AI<span class="yomi">セージメーカー</span></div><div class="one">機械学習モデルの<b>構築・学習・デプロイ（配置して動かすこと）</b>までを一貫して行える、開発者・データサイエンティスト向けのプラットフォーム。（2024年末に「SageMaker AI」へ改称され、「SageMaker」はデータ分析も含む上位ブランド名になりました）</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonBedrock.svg" alt=""><div><div class="name">Amazon Bedrock<span class="yomi">ベッドロック</span></div><div class="one">複数の企業の<b>基盤モデル</b>（Anthropic の Claude、Amazon Nova など）を <b>API 経由で利用できる</b>フルマネージドの生成 AI サービス。インフラ（サーバーなどの土台）の管理は不要。Bedrock は英語で「岩盤（基盤）」の意。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonQ.svg" alt=""><div><div class="name">Amazon Q<span class="yomi">アマゾン キュー</span></div><div class="one">業務を支援する<b>生成 AI アシスタント</b>。開発者向けの <b>Amazon Q Developer</b>（コード生成や AWS に関する質問への回答）と、社内データに基づいて回答する <b>Amazon Q Business</b> がある。</div></div></div>
 
 <h3>上の層：用途別の学習済み AI サービス</h3>

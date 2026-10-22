@@ -296,7 +296,7 @@
 <h2>4. DynamoDB —— 高速・高可用な NoSQL</h2>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonDynamoDB.svg" alt=""><div><div class="name">Amazon DynamoDB<span class="yomi">ダイナモディービー</span></div><div class="one"><b>キーバリュー型</b>（およびドキュメント型）の NoSQL データベース。<b>サーバーレス</b>でサーバー台数を意識する必要がなく、データ量が増えても<b>1桁ミリ秒</b>の応答性能を維持する。</div></div></div>
 
-<p>キーを指定した読み書きは極めて高速で、容量やスループットも AWS 側で自動的に拡張されます。一方で、複数のテーブルを結合（JOIN）するような<b>複雑な検索には向いていません</b>。</p>
+<p>キーを指定した読み書きは極めて高速で、容量や処理量（スループット）も AWS 側で自動的に拡張されます。一方で、複数のテーブルを結合（JOIN）するような<b>複雑な検索には向いていません</b>。</p>
 
 <div class="table-wrap"><table>
   <tr><th>押さえるべき点</th><th>内容</th></tr>
@@ -382,7 +382,7 @@
 
 <h2>8. データベースの移行 —— DMS と SCT</h2>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSDatabaseMigrationService.svg" alt=""><div><div class="name">AWS DMS<span class="yomi">ディーエムエス / Database Migration Service</span></div><div class="one">データベースを AWS へ<b>移行する</b>サービス。<b>移行元を稼働させたまま</b>変更分を継続的に複製できるため、停止時間を最小限に抑えられる。</div></div></div>
-<p>移行元と移行先で<b>エンジンが異なる場合</b>（例：Oracle → Aurora PostgreSQL）は、スキーマの変換が必要です。これを行うのが <b>SCT（Schema Conversion Tool）</b>、または DMS に統合された <b>DMS Schema Conversion</b> です。</p>
+<p>移行元と移行先で<b>エンジンが異なる場合</b>（例：Oracle → Aurora PostgreSQL）は、スキーマ（表の構造の定義）の変換が必要です。これを行うのが <b>SCT（Schema Conversion Tool）</b>、または DMS に統合された <b>DMS Schema Conversion</b> です。</p>
 
 <div class="diagram">
   <div class="dtitle">異なるエンジン間の移行（異種移行）</div>
