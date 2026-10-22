@@ -37,6 +37,7 @@ docs/
 └── assets/
     ├── style.css / site.js   共通デザインとスクリプト
     ├── data/chXX.js          各章の復習カードと用語
+    ├── data/words.js         問題文によく出る言葉（用語集に表示）
     └── aws-icons/            AWS Architecture Icons（SVG）
 ```
 
@@ -55,6 +56,10 @@ docs/
 
 - 新しい章：`docs/chapters/` に HTML を追加し、`docs/assets/site.js` の `CHAPTERS` に1行足す
 - カード・用語：`docs/assets/data/chXX.js` に追記（新しいファイルを作ったら `cards.html` と `glossary.html` の `<script>` にも追加）
+
+## 練習問題の結果
+
+`practice-results/<試験>/` に、Skill Builder の結果ページ（保存した HTML）と、その回のまとめ（Markdown）を置きます。HTML は氏名やメールアドレスを含むため Git には入れません（`.gitignore`）。置き方は `practice-results/README.md` を参照してください。
 
 ## クレジット
 

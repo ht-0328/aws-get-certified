@@ -21,6 +21,7 @@
     <li>出題分野と本サイトの章の対応</li>
     <li>4週間の学習計画の例</li>
     <li>解答の進め方</li>
+    <li>問題文によく出る言葉</li>
   </ol>
 </div>
 
@@ -88,7 +89,7 @@
 </table></div>
 <div class="box science">
   <div class="box-title"><span class="em">🔬</span>根拠：模擬試験も想起練習である</div>
-  問題を解くことは、それ自体が効果の高い復習になります（テスト効果）。AWS Skill Builder の<b>公式練習問題</b>（無料版あり）は本番に近い形式のため、必ず取り組んでください。誤答した問題は、正答の根拠を自分の言葉で説明できるまで復習します。
+  問題を解くことは、それ自体が効果の高い復習になります（テスト効果）。AWS Skill Builder の<a href="https://skillbuilder.aws/learn/E4W52ZKK6P/official-practice-question-set-aws-certified-cloud-practitioner-clfc02--/7Z82N2MBYU" target="_blank" rel="noopener"><b>公式練習問題（CLF-C02、20問・無料）</b></a>は本番に近い形式のため、必ず取り組んでください。誤答した問題は、正答の根拠を自分の言葉で説明できるまで復習します。
 </div>
 
 <h2>5. 解答の進め方</h2>
@@ -109,10 +110,129 @@
 <ul>
   <li>まず<b>明らかに誤りの選択肢</b>を除外する（存在しないサービス、役割がまったく異なるサービスなど）。</li>
   <li>「<b>最もコスト効率が高い</b>」「<b>運用上の負担が最も少ない</b>」など、問題文の<b>制約条件</b>を正確に読み取る。</li>
-  <li>複数選択問題では、指定された選択数を確認する。</li>
+  <li>複数選択問題（「<b>2つ選択してください</b>」など）は、<b>指定された数だけ選ぶ</b>。1つしか選ばないと、それが正しくても不正解になる。</li>
 </ul>
+<h3>公式練習問題の結果の使い方</h3>
+<p>結果画面の「問題の詳細」には、問題ごとの正誤・選んだ答え・各選択肢の根拠が出ます。次の順に使ってください。</p>
+<ol>
+  <li><b>選ぶ数を間違えた問題</b>を先に除く。「2つ選択」で1つしか選んでいない不正解は、知識ではなく読み方の問題。</li>
+  <li>残りの不正解は、<b>問題文のどの言葉で答えが決まるか</b>を書き出す。例：「既存のインターネット接続を使う」→ VPN、「サーバーを EC2 へ移行」→ MGN。</li>
+  <li>正解でも「わからない」「根拠のある推測」で答えた問題は、不正解と同じ扱いで復習する。</li>
+  <li>1問あたり30秒未満で答えていたら速すぎる。本番は65問90分（1問あたり約80秒）なので、問題文を最後まで読む。</li>
+  <li>結果ページは保存しておき、2回目以降と比べる。</li>
+</ol>
+<p>練習問題で落としやすい問いと、その答え・該当する章です。</p>
+<div class="table-wrap"><table>
+  <tr><th>問い</th><th>答え</th><th>章</th></tr>
+  <tr><td>プログラムによるアクセスに必要な認証情報（2つ）</td><td>アクセスキー ID とシークレットアクセスキー</td><td><a href="chapters/01-cloud-basics.html">第1章</a>・<a href="chapters/02-security-iam.html">第2章</a></td></tr>
+  <tr><td>RDS を複数の AZ に置くのは Well-Architected のどの柱か</td><td>信頼性</td><td><a href="chapters/07-operations.html">第7章</a></td></tr>
+  <tr><td>データベースが動いているサーバーをそのまま EC2 へ移す</td><td>MGN（DMS はデータの移行）</td><td><a href="chapters/08-integration-analytics-ai.html">第8章</a></td></tr>
+  <tr><td>テキストを音声で読み上げる</td><td>Polly</td><td><a href="chapters/08-integration-analytics-ai.html">第8章</a></td></tr>
+  <tr><td>既存のインターネット接続で暗号化した接続を作る</td><td>Site-to-Site VPN</td><td><a href="chapters/06-network.html">第6章</a></td></tr>
+  <tr><td>責任共有モデルで利用者の責任（2つ）</td><td>IAM の最小権限、セキュリティグループの設定</td><td><a href="chapters/02-security-iam.html">第2章</a></td></tr>
+  <tr><td>部門ごとのアカウントの支払いをまとめ、統制（ガバナンス）を1か所に</td><td>Organizations</td><td><a href="chapters/09-billing-support.html">第9章</a></td></tr>
+  <tr><td>S3 の静的サイトを低遅延・高速に配信</td><td>CloudFront（Route 53 ではない）</td><td><a href="chapters/06-network.html">第6章</a></td></tr>
+  <tr><td>電話のテクニカルサポートがある最下位のプラン</td><td>ビジネス</td><td><a href="chapters/09-billing-support.html">第9章</a></td></tr>
+  <tr><td>無制限アクセスを許可しているセキュリティグループを特定</td><td>Trusted Advisor</td><td><a href="chapters/07-operations.html">第7章</a>・<a href="chapters/09-billing-support.html">第9章</a></td></tr>
+  <tr><td>S3 の機密データを自動で検出・分類</td><td>Macie（Secrets Manager ではない）</td><td><a href="chapters/02-security-iam.html">第2章</a></td></tr>
+  <tr><td>世界中に顧客がいる企業の利点（2つ）</td><td>CloudFront のエッジロケーション、複数リージョンへの配置（ELB はリージョンをまたげない）</td><td><a href="chapters/01-cloud-basics.html">第1章</a></td></tr>
+  <tr><td>S3 の特性（2つ）</td><td>オブジェクトストレージ、高い耐久性</td><td><a href="chapters/04-storage.html">第4章</a></td></tr>
+</table></div>
+
 <h3>選んだ答えを検証する</h3>
 <p>1つの選択肢を選んだら、「この答えが誤りだとすればどこか」を確認し、他の選択肢と<b>可用性・コスト・性能・運用負荷・セキュリティ</b>の観点で比較してください。詳しくは<a href="chapters/study-method.html">学習方法</a>の「試験問題で判断を誤らないための6つの視点」を参照してください。</p>
+
+<h2>6. 問題文によく出る言葉</h2>
+<p>問題文や選択肢には、AWS のサービス名以外にも IT 業界のカタカナ語が多く出ます。意味が分からないと問題文が読めないので、やさしい日本語で言い換えます。<a href="glossary.html">用語集</a>でも検索できます。</p>
+<h3>問題文の型</h3>
+<div class="table-wrap"><table>
+  <tr><th>言葉</th><th>やさしく言うと</th></tr>
+  <tr><td><b>ソリューション</b><br><small class="muted">Solution</small></td><td>解決策。どの方法やサービスの組み合わせで実現するか。<br><small class="muted">「要件を満たすソリューションはどれか」＝どうやって実現するか</small></td></tr>
+  <tr><td><b>コンポーネント</b><br><small class="muted">Component</small></td><td>部品。システムを作っている個々のサーバーやプログラム。<br><small class="muted">「コンポーネントを疎結合にする」＝部品どうしの依存を弱める</small></td></tr>
+  <tr><td><b>ワークロード</b><br><small class="muted">Workload</small></td><td>動かしている仕事。システムやアプリのまとまり。<br><small class="muted">「ワークロードを AWS に移行」＝そのシステムを移す</small></td></tr>
+  <tr><td><b>アーキテクチャ</b><br><small class="muted">Architecture</small></td><td>構成。どのサービスをどうつないで作るか。<br><small class="muted">「アーキテクチャを設計する」＝構成を決める</small></td></tr>
+  <tr><td><b>インフラストラクチャ（インフラ）</b><br><small class="muted">Infrastructure</small></td><td>土台。サーバー・ネットワーク・保存場所などの設備。<br><small class="muted">「インフラを管理したくない」＝設備の面倒を見たくない</small></td></tr>
+  <tr><td><b>デプロイ</b><br><small class="muted">Deploy</small></td><td>配置して動かすこと。<br><small class="muted">「複数の AZ にデプロイ」＝複数の AZ に置いて動かす</small></td></tr>
+  <tr><td><b>プロビジョニング</b><br><small class="muted">Provisioning</small></td><td>用意すること。サーバーや容量を使える状態にする。<br><small class="muted">「プロビジョンド」＝事前に用意した</small></td></tr>
+  <tr><td><b>マネージド</b><br><small class="muted">Managed</small></td><td>運用を AWS が引き受けること。フルマネージドは全部任せる。<br><small class="muted">「マネージドサービスを使う」＝運用の手間を減らす</small></td></tr>
+  <tr><td><b>サーバーレス</b><br><small class="muted">Serverless</small></td><td>サーバーの用意・管理が要らないこと。<br><small class="muted">「サーバーレスで」＝サーバーを意識せずに</small></td></tr>
+  <tr><td><b>オンプレミス</b><br><small class="muted">On-premises</small></td><td>自社の設備で動かすこと。<br><small class="muted">「オンプレミスから移行」＝自社設備からクラウドへ</small></td></tr>
+  <tr><td><b>ハイブリッド</b><br><small class="muted">Hybrid</small></td><td>自社設備とクラウドの併用。</td></tr>
+  <tr><td><b>マイグレーション</b><br><small class="muted">Migration</small></td><td>移行。別の場所へ引っ越すこと。</td></tr>
+  <tr><td><b>リフト＆シフト</b><br><small class="muted">Lift and shift</small></td><td>作り替えずにそのまま移すこと（リホスト）。</td></tr>
+  <tr><td><b>スケーラブル（スケーリング、スケーラビリティ）</b><br><small class="muted">Scalable</small></td><td>規模を増やせること。台数や容量を増減できる。<br><small class="muted">「スケーラブルな構成」＝増やせる作り</small></td></tr>
+  <tr><td><b>伸縮性（エラスティック）</b><br><small class="muted">Elasticity</small></td><td>需要に合わせて増やしたり減らしたりできること。</td></tr>
+  <tr><td><b>俊敏性（アジリティ）</b><br><small class="muted">Agility</small></td><td>すぐ試して、すぐ変えられること。</td></tr>
+</table></div>
+<h3>速さ・止まらなさ</h3>
+<div class="table-wrap"><table>
+  <tr><th>言葉</th><th>やさしく言うと</th></tr>
+  <tr><td><b>レイテンシー</b><br><small class="muted">Latency</small></td><td>遅延。要求してから返事が来るまでの時間。<br><small class="muted">「レイテンシーの短縮」＝応答を速くする</small></td></tr>
+  <tr><td><b>スループット</b><br><small class="muted">Throughput</small></td><td>処理量。一定時間にさばける量。</td></tr>
+  <tr><td><b>可用性（高可用性）</b><br><small class="muted">Availability</small></td><td>止まらずに使える度合い。<br><small class="muted">「可用性を高める」＝止まりにくくする</small></td></tr>
+  <tr><td><b>耐久性</b><br><small class="muted">Durability</small></td><td>保存したデータが失われない度合い。</td></tr>
+  <tr><td><b>冗長性（冗長化）</b><br><small class="muted">Redundancy</small></td><td>予備を持つこと。1つ壊れても別のもので続けられる。</td></tr>
+  <tr><td><b>単一障害点</b><br><small class="muted">Single point of failure</small></td><td>そこが壊れると全体が止まる1か所。<br><small class="muted">「単一障害点をなくす」＝予備を持つ</small></td></tr>
+  <tr><td><b>レジリエンス（耐障害性）</b><br><small class="muted">Resilience</small></td><td>障害が起きても立ち直る力。</td></tr>
+  <tr><td><b>フェイルオーバー</b><br><small class="muted">Failover</small></td><td>故障したら予備に自動で切り替えること。</td></tr>
+  <tr><td><b>ボトルネック</b><br><small class="muted">Bottleneck</small></td><td>全体の速さを決めてしまう、いちばん遅い部分。</td></tr>
+  <tr><td><b>パフォーマンス</b><br><small class="muted">Performance</small></td><td>性能。速さや処理量。</td></tr>
+</table></div>
+<h3>組織・運用・お金</h3>
+<div class="table-wrap"><table>
+  <tr><th>言葉</th><th>やさしく言うと</th></tr>
+  <tr><td><b>ガバナンス</b><br><small class="muted">Governance</small></td><td>統制。誰が何をしてよいかの決まりと、その管理。<br><small class="muted">「ガバナンスを一元化」＝決まりと管理を1か所にまとめる</small></td></tr>
+  <tr><td><b>一元化／集約／統合</b><br><small class="muted">Centralize / Consolidate</small></td><td>ばらばらのものを1か所にまとめること。</td></tr>
+  <tr><td><b>コンプライアンス</b><br><small class="muted">Compliance</small></td><td>法令や規則を守ること。</td></tr>
+  <tr><td><b>監査（監査証跡）</b><br><small class="muted">Audit</small></td><td>決まりどおりかを第三者が確かめること。証跡はあとで確かめるための記録。</td></tr>
+  <tr><td><b>ベストプラクティス</b><br><small class="muted">Best practice</small></td><td>うまくいくと分かっている定石のやり方。</td></tr>
+  <tr><td><b>運用負荷（運用上のオーバーヘッド）</b><br><small class="muted">Operational overhead</small></td><td>日々の管理にかかる手間。<br><small class="muted">「運用負荷を最小限に」＝任せられるサービスを選ぶ</small></td></tr>
+  <tr><td><b>コスト効率</b><br><small class="muted">Cost-effective</small></td><td>同じ結果をより安く。</td></tr>
+  <tr><td><b>従量課金</b><br><small class="muted">Pay-as-you-go</small></td><td>使った分だけ払うこと。</td></tr>
+  <tr><td><b>コミット（コミットメント）</b><br><small class="muted">Commitment</small></td><td>一定期間使うと約束すること。割引と引き換え。</td></tr>
+  <tr><td><b>ライフサイクル</b><br><small class="muted">Lifecycle</small></td><td>作られてから消えるまでの流れ。<br><small class="muted">S3 では日数に応じた自動移動の設定</small></td></tr>
+  <tr><td><b>ポリシー</b><br><small class="muted">Policy</small></td><td>決まり。IAM では許可・拒否を書いた設定。</td></tr>
+  <tr><td><b>最小権限</b><br><small class="muted">Least privilege</small></td><td>必要な分だけの権限を与えること。</td></tr>
+  <tr><td><b>認証／認可</b><br><small class="muted">Authentication / Authorization</small></td><td>本人確認／何をしてよいかの許可。</td></tr>
+  <tr><td><b>認証情報（クレデンシャル）</b><br><small class="muted">Credentials</small></td><td>本人であることを示すもの。パスワード、アクセスキーなど。</td></tr>
+  <tr><td><b>プログラムによるアクセス</b><br><small class="muted">Programmatic access</small></td><td>人が画面から操作するのではなく、プログラムや CLI から呼ぶこと。</td></tr>
+  <tr><td><b>暗号化（転送中／保管中）</b><br><small class="muted">Encryption in transit / at rest</small></td><td>盗み見されても読めなくすること。通信の途中／保存したデータ。</td></tr>
+  <tr><td><b>脆弱性</b><br><small class="muted">Vulnerability</small></td><td>攻撃に使われるおそれのある弱点。</td></tr>
+  <tr><td><b>パッチ</b><br><small class="muted">Patch</small></td><td>不具合や弱点を直す更新。</td></tr>
+</table></div>
+<h3>通信・つなぎ方</h3>
+<div class="table-wrap"><table>
+  <tr><th>言葉</th><th>やさしく言うと</th></tr>
+  <tr><td><b>トラフィック</b><br><small class="muted">Traffic</small></td><td>通信の流れや量。</td></tr>
+  <tr><td><b>ルーティング</b><br><small class="muted">Routing</small></td><td>どの経路で届けるかを決めること。</td></tr>
+  <tr><td><b>キャッシュ</b><br><small class="muted">Cache</small></td><td>一度取ったものを近くに置いておき、次を速くする仕組み。</td></tr>
+  <tr><td><b>エッジロケーション</b><br><small class="muted">Edge location</small></td><td>利用者の近くにある小さな拠点。</td></tr>
+  <tr><td><b>エンドポイント</b><br><small class="muted">Endpoint</small></td><td>接続先の入口（URL や IP アドレス）。</td></tr>
+  <tr><td><b>疎結合／密結合</b><br><small class="muted">Loose / tight coupling</small></td><td>部品どうしの依存が弱い／強い。</td></tr>
+  <tr><td><b>キュー</b><br><small class="muted">Queue</small></td><td>順番待ちの列。メッセージを一時的にためる。</td></tr>
+  <tr><td><b>サブスクライバー</b><br><small class="muted">Subscriber</small></td><td>通知を受け取る側として登録した人や仕組み。</td></tr>
+  <tr><td><b>ポーリング／プッシュ</b><br><small class="muted">Polling / Push</small></td><td>受け取る側が取りに行く／送る側が届ける。</td></tr>
+  <tr><td><b>イベント駆動</b><br><small class="muted">Event-driven</small></td><td>何かが起きたことをきっかけに処理が動くこと。</td></tr>
+  <tr><td><b>バッチ／リアルタイム</b><br><small class="muted">Batch / Real-time</small></td><td>まとめて一度に処理／起きたそばから処理。</td></tr>
+  <tr><td><b>オムニチャネル</b><br><small class="muted">Omnichannel</small></td><td>電話・チャット・メールなど複数の窓口を1つに扱うこと。</td></tr>
+</table></div>
+<h3>データ・監視</h3>
+<div class="table-wrap"><table>
+  <tr><th>言葉</th><th>やさしく言うと</th></tr>
+  <tr><td><b>インスタンス</b><br><small class="muted">Instance</small></td><td>起動した1台分。EC2 なら仮想サーバー1台、RDS ならデータベース1つ。</td></tr>
+  <tr><td><b>スナップショット</b><br><small class="muted">Snapshot</small></td><td>ある時点の丸ごとコピー。</td></tr>
+  <tr><td><b>レプリケーション（レプリカ）</b><br><small class="muted">Replication</small></td><td>複製を作って同じ内容を保つこと（その複製）。</td></tr>
+  <tr><td><b>スキーマ</b><br><small class="muted">Schema</small></td><td>データベースの表の構造の定義。</td></tr>
+  <tr><td><b>メトリクス</b><br><small class="muted">Metrics</small></td><td>測った数値。CPU 使用率など。</td></tr>
+  <tr><td><b>しきい値</b><br><small class="muted">Threshold</small></td><td>超えたら動く境目の値。</td></tr>
+  <tr><td><b>ログ</b><br><small class="muted">Log</small></td><td>起きたことの記録。</td></tr>
+  <tr><td><b>ダッシュボード</b><br><small class="muted">Dashboard</small></td><td>数字やグラフを1画面にまとめた表示。</td></tr>
+  <tr><td><b>テンプレート</b><br><small class="muted">Template</small></td><td>ひな形。</td></tr>
+  <tr><td><b>データレイク／データウェアハウス</b><br><small class="muted">Data lake / Data warehouse</small></td><td>生のまま貯める置き場／分析用に整えた置き場。</td></tr>
+  <tr><td><b>ETL</b><br><small class="muted">Extract, Transform, Load</small></td><td>取り出して、形を整えて、入れること。</td></tr>
+  <tr><td><b>オーケストレーション</b><br><small class="muted">Orchestration</small></td><td>多数の部品をまとめて動かし、管理すること。</td></tr>
+  <tr><td><b>機械学習／推論</b><br><small class="muted">Machine learning / Inference</small></td><td>データから規則を学ばせること／学んだ規則で答えを出すこと。</td></tr>
+</table></div>
 
 </main>
 <script src="assets/site.js"></script>

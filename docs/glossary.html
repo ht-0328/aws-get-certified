@@ -23,7 +23,7 @@
 <body data-root="./" data-page="glossary">
 <main class="wrap">
 <h1>📖 用語集</h1>
-<p class="lead">全章に登場する専門用語の定義をまとめています。日本語・英語のどちらでも検索できます。</p>
+<p class="lead">全章に登場する専門用語の定義と、問題文によく出る言葉（カタカナ語）の意味をまとめています。日本語・英語のどちらでも検索できます。</p>
 <input class="search" id="q" type="search" placeholder="例：リージョン、S3、レイテンシー" aria-label="用語を検索">
 <div class="filters" id="filters"></div>
 <p class="muted" id="count"></p>
@@ -38,6 +38,7 @@
 <script src="assets/data/ch07.js"></script>
 <script src="assets/data/ch08.js"></script>
 <script src="assets/data/ch09.js"></script>
+<script src="assets/data/words.js"></script>
 <script src="assets/site.js"></script>
 <script>
 (function () {
@@ -48,7 +49,8 @@
   var current = "all";
   var filters = document.getElementById("filters");
   filters.innerHTML = '<button class="chip" data-ch="all" aria-pressed="true">すべて</button>' +
-    chapters.map(function (c) { return '<button class="chip" data-ch="' + c.id + '" aria-pressed="false">' + c.short + "</button>"; }).join("");
+    chapters.map(function (c) { return '<button class="chip" data-ch="' + c.id + '" aria-pressed="false">' + c.short + "</button>"; }).join("") +
+    '<button class="chip" data-ch="words" aria-pressed="false">問題文の言葉</button>';
   filters.addEventListener("click", function (e) {
     var b = e.target.closest(".chip"); if (!b) return;
     current = b.getAttribute("data-ch");

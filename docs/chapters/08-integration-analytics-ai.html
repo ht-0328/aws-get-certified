@@ -20,27 +20,27 @@
   <ul style="margin:0">
     <li><b>キュー（SQS）を間に置いて疎結合にする</b>：片方が止まっても要求が失われない
       <ul>
-        <li>密結合：コンポーネント同士が直接呼び合い、互いに強く依存する
+        <li>密結合：部品（コンポーネント）同士が直接呼び合い、強く依存する
           <ul>
           <li>処理側が混雑・停止すると受付も止まる</li>
           <li>飲食店なら、注文を手渡しして受け取られるまで待つ運用</li>
           </ul>
         </li>
-        <li>疎結合：間にキューなどの仲介役を置き、依存を弱める
+        <li>疎結合：間にキュー（順番待ちの列）などを置き、依存を弱める
           <ul>
           <li>処理側は自分の能力に合わせてキューから取り出す</li>
           <li>処理側が止まっても要求は残り、急増してもキューにたまるだけ</li>
           <li>飲食店なら、注文票を棚に置いてすぐ次の受付に戻る運用</li>
           </ul>
         </li>
-        <li>AWS は障害に強くスケールしやすい設計として疎結合を推奨する</li>
+        <li>AWS は障害に強く、規模を増やしやすい設計として疎結合を推奨する</li>
       </ul>
     </li>
     <li><b>連携のサービスは5つ。役割で区別する</b>：保持・一斉通知・振り分け・順序制御・窓口
       <ul>
         <li>SQS：メッセージを一時的に保持するキュー
           <ul>
-          <li>受信側がポーリングで取得する。1メッセージは原則1つの受信側</li>
+          <li>受信側が取りに行く（ポーリング）。1メッセージは原則1つの受信側</li>
           <li>「疎結合にしたい」「処理が追いつかないとき要求を保持」の答え</li>
           </ul>
         </li>
@@ -72,7 +72,7 @@
           <li>「基盤モデルで生成 AI アプリを作りたい」の答え</li>
           </ul>
         </li>
-        <li>SageMaker AI：独自の ML モデルを構築・学習・デプロイする基盤</li>
+        <li>SageMaker AI：独自の ML モデルを作り、学習させ、動かす（デプロイ）基盤</li>
         <li>Amazon Q：生成 AI アシスタント。開発者向け Q Developer と社内向け Q Business</li>
       </ul>
     </li>
@@ -82,6 +82,7 @@
         <li>Textract（文字を読む）：書類の画像から文字と表を抽出する（OCR）</li>
         <li>Comprehend（理解）：文章の意味や感情を分析する</li>
         <li>Polly（口）：テキスト → 音声</li>
+        <li>「読み上げ」は Polly。Textract（読み取り）と混同しない</li>
         <li>Transcribe（耳）：音声 → テキスト</li>
         <li>Translate（通訳）：翻訳する</li>
         <li>Lex（対話）：チャットボットを作る。Alexa と同じ技術</li>
@@ -94,6 +95,7 @@
     <li><b>移行はサーバー MGN、DB は DMS、進捗は Migration Hub</b>
       <ul>
         <li>MGN：サーバーをほぼそのまま EC2 へ複製する（リホスト、リフト＆シフト）</li>
+        <li>DB が載ったサーバーをそのまま EC2 へ → MGN（DMS ではない）</li>
         <li>DMS：データベースを動かしたまま移す。異なる種類の DB 間も可（第5章）</li>
         <li>Migration Hub：移行の進捗を一元的に追跡する。Hub＝集約点</li>
       </ul>
@@ -102,7 +104,7 @@
       <ul>
         <li>Rehost：変更せずそのまま移す（リフト＆シフト）。サーバーを EC2 へ</li>
         <li>Replatform：一部を最適化して移す。自前の DB を RDS（運用を任せる DB）に</li>
-        <li>Refactor：クラウド向けに設計し直す。サーバーレスやマイクロサービスに</li>
+        <li>Refactor：クラウド向けに設計し直す。サーバーレスや小さな部品の組み合わせに</li>
         <li>Repurchase：別の製品（SaaS など）に切り替える</li>
         <li>Retire：不要なシステムを廃止する</li>
         <li>Retain：当面は移行せず残す</li>
@@ -330,6 +332,7 @@
 <div class="box warn">
   <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
   <p><b>Polly と Transcribe は変換の方向が逆</b>です。Polly は「テキスト→音声」、Transcribe は「音声→テキスト」。<br><b>Textract と Comprehend</b> も混同しやすい組み合わせです。Textract は<b>画像から文字を抽出する</b>だけで、文章の<b>意味を解析する</b>のは Comprehend です。</p>
+  <p>「テキストを<b>音声で読み上げる</b>」→ <b>Polly</b>。Textract は<b>画像から文字を読み取る</b>（OCR）だけで、読み上げはしません。</p>
 </div>
 
 <h2>4. 移行（マイグレーション）のサービス</h2>
@@ -364,6 +367,15 @@
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSMigrationHub.svg" alt=""><div><div class="name">AWS Migration Hub<span class="yomi">マイグレーション ハブ</span></div><div class="one">移行の<b>進捗を一元的に追跡する</b>管理サービス。Hub は「中心・集約点」の意。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSApplicationMigrationService.svg" alt=""><div><div class="name">AWS Application Migration Service（MGN）<span class="yomi">アプリケーション マイグレーション サービス</span></div><div class="one">既存のサーバーを<b>ほぼそのままの構成で</b> AWS（EC2）へ複製して移行する。<b>リホスト（リフト＆シフト）</b>の代表的な手段。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSDatabaseMigrationService.svg" alt=""><div><div class="name">AWS Database Migration Service（DMS）<span class="yomi">データベース マイグレーション サービス</span></div><div class="one"><b>データベース</b>を、稼働させたまま（停止時間を最小限にして）AWS へ移行する。異なる種類のデータベース間の移行にも対応する。詳しくは<a href="05-database.html">第5章</a>を参照。</div></div></div>
+
+<div class="box warn">
+  <div class="box-title"><span class="em">⚠️</span>間違えやすい点</div>
+  <ul style="margin:0">
+    <li>「データベースが動いている<b>サーバーを、そのまま EC2 へ</b>移したい」→ <b>MGN</b>。サーバーごと移すのは MGN で、DMS ではない。</li>
+    <li>「データベースの<b>中身を RDS などへ</b>移したい」→ <b>DMS</b>（エンジンが変わるなら SCT も）。</li>
+    <li>判断の軸は「移すのは<b>サーバー</b>か、<b>データ</b>か」。</li>
+  </ul>
+</div>
 
 <h3>移行戦略「7つの R」</h3>
 <div class="table-wrap"><table>
