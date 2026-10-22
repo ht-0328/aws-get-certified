@@ -206,15 +206,15 @@
 <div class="table-wrap"><table>
   <tr><th>購入方法</th><th>仕組み</th><th>割引率</th><th>適した用途</th></tr>
   <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt=""><b>オンデマンド</b></td><td>使用した分だけ支払う。契約期間の縛りなし</td><td>なし（定価）</td><td>短期間・需要が予測できない・検証用途</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/SavingsPlans.svg" alt=""><b>Savings Plans</b></td><td>「1時間あたり〇ドル分を利用する」と<b>1年または3年</b>コミット</td><td>最大約72%</td><td>継続的に利用し、インスタンスの種類を<b>後から変更したい</b></td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/SavingsPlans.svg" alt=""><b>Savings Plans</b></td><td>「1時間あたり〇ドル分を利用する」と<b>1年または3年</b>使うと約束（コミット）</td><td>最大約72%</td><td>継続的に利用し、インスタンスの種類を<b>後から変更したい</b></td></tr>
   <tr><td><img class="ico-s" src="../assets/aws-icons/architecture-service/ReservedInstanceReporting.svg" alt=""><b>リザーブドインスタンス（RI）</b></td><td>特定のインスタンス構成を<b>1年または3年</b>予約</td><td>最大約72%</td><td>同じ構成で継続的に利用する</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonEC2SpotInstance.svg" alt=""><b>スポットインスタンス</b></td><td>AWS の<b>余剰キャパシティ</b>を割安に利用。AWS 側の都合で<b>中断</b>される場合がある</td><td>最大約90%</td><td>中断されても問題ない処理（バッチ・分析など）</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/AmazonEC2SpotInstance.svg" alt=""><b>スポットインスタンス</b></td><td>AWS の<b>余剰キャパシティ</b>を割安に利用。AWS 側の都合で<b>中断</b>される場合がある</td><td>最大約90%</td><td>中断されても問題ない処理（まとめて行うバッチ処理・分析など）</td></tr>
   <tr><td><b>Dedicated Hosts</b></td><td>物理サーバーを<b>専有</b>する</td><td>なし（割高）</td><td>既存ソフトウェアのライセンスを持ち込みたい、規制上専有が必要</td></tr>
 </table></div>
 
 <div class="box hook">
   <div class="box-title"><span class="em">🔑</span>覚え方：割引率は「利用者が引き受ける制約」の大きさに比例する</div>
-  <p>制約なし（オンデマンド）＝ 定価。<b>1〜3年の利用をコミット</b>（Savings Plans / RI）＝ 最大約72%引き。<b>いつ中断されても受け入れる</b>（スポット）＝ 最大約90%引き。</p>
+  <p>制約なし（オンデマンド）＝ 定価。<b>1〜3年の利用を約束（コミット）</b>（Savings Plans / RI）＝ 最大約72%引き。<b>いつ中断されても受け入れる</b>（スポット）＝ 最大約90%引き。</p>
 </div>
 
 <h3>一括請求（AWS Organizations）</h3>
@@ -325,7 +325,7 @@
 <p class="muted">※料金・内容は AWS 公式の「AWS Support プラン」ページで最新情報を確認してください。</p>
 
 <h3>AWS Trusted Advisor</h3>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor<span class="yomi">トラステッド アドバイザー</span></div><div class="one">AWS 環境を<b>自動的に点検し、ベストプラクティスに基づく改善点を提示する</b>サービス。<br>点検の分野：<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）・運用上の優秀性</b></div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor<span class="yomi">トラステッド アドバイザー</span></div><div class="one">AWS 環境を<b>自動的に点検し、定石（ベストプラクティス）に基づく改善点を提示する</b>サービス。<br>点検の分野：<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）・運用上の優秀性</b></div></div></div>
 <div class="table-wrap"><table>
   <tr><th>プラン</th><th>利用できるチェック</th></tr>
   <tr><td>ベーシック・デベロッパー</td><td><b>基本チェックのみ</b>（サービスクォータと一部のセキュリティチェック：S3 バケットの公開設定、ルートユーザーの MFA 設定、<b>無制限アクセスを許可しているセキュリティグループ</b>など）</td></tr>
@@ -333,8 +333,8 @@
 </table></div>
 
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の6分野「コ・パ・セ・耐・サ・運」</div>
-  <p><b>コ</b>スト最適化／<b>パ</b>フォーマンス／<b>セ</b>キュリティ／<b>耐</b>障害性／<b>サ</b>ービスクォータ／<b>運</b>用上の優秀性</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の6分野「安く・速く・安全に・壊れず・上限内で・運用よく」</div>
+  <p><b>安く</b>＝コスト最適化／<b>速く</b>＝パフォーマンス／<b>安全に</b>＝セキュリティ／<b>壊れず</b>＝耐障害性／<b>上限内で</b>＝サービスクォータ／<b>運用よく</b>＝運用上の優秀性</p>
 </div>
 
 <div class="box exam">

@@ -153,7 +153,7 @@
   </ol>
   <p style="margin:.9em 0 .2em"><b>読む前の問い</b><small class="muted">（答えを予測してから読み進め、読み終えたら答え合わせをしてください）</small></p>
   <ul style="margin:0">
-    <li>中断されても問題ないバッチ処理を、最も低コストで実行するにはどの購入オプションを選ぶか。</li>
+    <li>中断されても問題ないバッチ処理（まとめて行う処理）を、最も低コストで実行するにはどの購入オプションを選ぶか。</li>
     <li>アクセスが急増したとき、サーバーの台数と通信の振り分けをどう自動化するか。</li>
     <li>サーバーを一切管理せずにプログラムを実行するには、どのサービスを使うか。</li>
   </ul>
@@ -263,14 +263,14 @@
   <div class="cap">一方の AZ に障害が発生しても、ELB はもう一方の AZ の EC2 に通信を振り分け、Auto Scaling が不足した台数を自動で補います。これにより<b>高可用性</b>と<b>伸縮性</b>を両立できます。</div>
 </div>
 
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEC2AutoScaling.svg" alt=""><div><div class="name">Amazon EC2 Auto Scaling<span class="yomi">オートスケーリング</span></div><div class="one">EC2 の台数を<b>需要に応じて自動で増減</b>する。異常のあるインスタンスを自動で置き換える機能も持つ。<br>主なスケーリング方式：<b>ターゲット追跡</b>（例：CPU 使用率を50%に維持）／<b>スケジュール</b>（例：毎朝9時に増加）／<b>予測</b>（過去の傾向から事前に増加）。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonEC2AutoScaling.svg" alt=""><div><div class="name">Amazon EC2 Auto Scaling<span class="yomi">オートスケーリング</span></div><div class="one">EC2 の台数を<b>需要に応じて自動で増減</b>する。異常のあるインスタンスを自動で置き換える機能も持つ。<br>主な増減（スケーリング）の方式：<b>ターゲット追跡</b>（例：CPU 使用率を50%に維持）／<b>スケジュール</b>（例：毎朝9時に増加）／<b>予測</b>（過去の傾向から事前に増加）。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/ElasticLoadBalancing.svg" alt=""><div><div class="name">Elastic Load Balancing（ELB）<span class="yomi">ロードバランサー</span></div><div class="one">受信した通信を複数のサーバーに<b>振り分ける</b>（<span class="term" data-tip="負荷分散：処理（負荷）を複数のサーバーに分散させ、特定のサーバーへの集中を避けること。">負荷分散</span>）。<span class="term" data-tip="ヘルスチェック：サーバーが正常に応答しているかを定期的に確認する仕組み。">ヘルスチェック</span>により、異常のあるサーバーには通信を送らない。</div></div></div>
 
 <h3>ELB の3種類</h3>
 <div class="table-wrap"><table>
   <tr><th>種類</th><th>特徴</th><th>キーワード</th></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingApplicationLoadBalancer.svg" alt=""><b>ALB</b><br><small class="muted">Application</small></td><td>HTTP/HTTPS の内容を解釈して振り分ける。<code>/images</code> と <code>/api</code> で転送先を変える、といった制御が可能</td><td>「<b>パス（URL）ベースのルーティング</b>」「HTTP」「<span class="term" data-tip="レイヤー7：通信を7階層で捉える OSI 参照モデルの最上位層（アプリケーション層）。URL や HTTP ヘッダーなどを扱う。">レイヤー7</span>」</td></tr>
-  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingNetworkLoadBalancer.svg" alt=""><b>NLB</b><br><small class="muted">Network</small></td><td>TCP/UDP の通信を<b>極めて高速かつ大量</b>に振り分ける。固定 IP アドレスを持てる</td><td>「<b>毎秒数百万リクエスト</b>」「低レイテンシー」「固定 IP」「レイヤー4」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingApplicationLoadBalancer.svg" alt=""><b>ALB</b><br><small class="muted">Application</small></td><td>HTTP/HTTPS の内容を解釈して振り分ける。<code>/images</code> と <code>/api</code> で転送先を変える、といった制御が可能</td><td>「<b>パス（URL）ベースのルーティング（振り分け）</b>」「HTTP」「<span class="term" data-tip="レイヤー7：通信を7階層で捉える OSI 参照モデルの最上位層（アプリケーション層）。URL や HTTP ヘッダーなどを扱う。">レイヤー7</span>」</td></tr>
+  <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingNetworkLoadBalancer.svg" alt=""><b>NLB</b><br><small class="muted">Network</small></td><td>TCP/UDP の通信を<b>極めて高速かつ大量</b>に振り分ける。固定 IP アドレスを持てる</td><td>「<b>毎秒数百万リクエスト</b>」「低レイテンシー（遅延が小さい）」「固定 IP」「レイヤー4」</td></tr>
   <tr><td><img class="ico-s" src="../assets/aws-icons/resource/ElasticLoadBalancingGatewayLoadBalancer.svg" alt=""><b>GWLB</b><br><small class="muted">Gateway</small></td><td>サードパーティ製のファイアウォールなど、<b>セキュリティ製品</b>に通信を経由させる</td><td>「<b>サードパーティの仮想アプライアンス</b>」<br><small class="muted">仮想アプライアンス＝特定の機能を持つ機器をソフトウェアとして提供したもの。</small></td></tr>
 </table></div>
 
@@ -357,7 +357,7 @@
 
 <h2>6. その他のコンピューティングサービス</h2>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AmazonLightsail.svg" alt=""><div><div class="name">Amazon Lightsail<span class="yomi">ライトセイル</span></div><div class="one"><b>月額定額で利用できる簡易的な仮想サーバー</b>。サーバー・ストレージ・ネットワークが一式で提供される。「AWS の専門知識がなくても、小規模なサイトや WordPress を手軽に構築したい」→ Lightsail。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt=""><div><div class="name">AWS Elastic Beanstalk<span class="yomi">ビーンストーク</span></div><div class="one"><b>コードをアップロードするだけ</b>で、EC2・ELB・Auto Scaling などの環境を自動で構築する（PaaS）。「インフラを意識せずに Web アプリケーションを迅速に公開したい」→ Beanstalk。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt=""><div><div class="name">AWS Elastic Beanstalk<span class="yomi">ビーンストーク</span></div><div class="one"><b>コードをアップロードするだけ</b>で、EC2・ELB・Auto Scaling などの環境を自動で構築する（PaaS）。「サーバーなどの土台（インフラ）を意識せずに Web アプリケーションを迅速に公開したい」→ Beanstalk。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSBatch.svg" alt=""><div><div class="name">AWS Batch<span class="yomi">バッチ</span></div><div class="one">大量の<span class="term" data-tip="バッチ処理：データを一定量ためてから一括で処理する方式。例：夜間に1日分の売上を集計する。">バッチ処理</span>を自動でスケジュール・実行する。必要な台数の計算資源を確保し、処理が終われば解放する（スポットインスタンスとの組み合わせに適する）。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSOutpostsfamily.svg" alt=""><div><div class="name">AWS Outposts<span class="yomi">アウトポスト</span></div><div class="one">AWS のハードウェアを<b>自社のデータセンターに設置</b>し、AWS と同じサービスや API を利用できる。「データをオンプレミスに置いたまま AWS のサービスを使いたい」→ Outposts（ハイブリッド構成）。</div></div></div>
 

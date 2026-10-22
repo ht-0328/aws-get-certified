@@ -140,7 +140,7 @@
   <ul style="margin:0">
     <li>オンプレミスで運用していた企業が、クラウドに移行すると費用の構造はどう変わるか。</li>
     <li>東京リージョンの1つのデータセンターが停止しても、サービスを止めないためにはどう配置すればよいか。</li>
-    <li>海外の利用者に低遅延で配信したい場合、どのインフラを使うか。</li>
+    <li>海外の利用者に低遅延で配信したい場合、どの設備（インフラ）を使うか。</li>
   </ul>
 </div>
 
@@ -247,7 +247,7 @@
 <div class="table-wrap"><table>
   <tr><th>モデル</th><th>意味</th><th>AWS の例</th><th>利用者の管理範囲</th></tr>
   <tr><td><b>IaaS</b></td><td>Infrastructure as a Service<br><small class="muted">サーバーやネットワークなどの基盤を提供</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonEC2.svg" alt="">EC2</td><td>OS、ミドルウェア、アプリケーション、データ</td></tr>
-  <tr><td><b>PaaS</b></td><td>Platform as a Service<br><small class="muted">アプリケーションの実行環境まで提供</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt="">Elastic Beanstalk</td><td>アプリケーション、データ</td></tr>
+  <tr><td><b>PaaS</b></td><td>Platform as a Service<br><small class="muted">アプリケーションの実行環境まで提供</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt="">Elastic Beanstalk<br><small class="muted">RDS のような、運用を任せるマネージドサービスも PaaS にあたる</small></td><td>アプリケーション、データ</td></tr>
   <tr><td><b>SaaS</b></td><td>Software as a Service<br><small class="muted">完成したソフトウェアを提供</small></td><td><img class="ico-s" src="../assets/aws-icons/architecture-service/AmazonWorkMail.svg" alt="">WorkMail など<br><small class="muted">（一般的な例：Gmail、Microsoft 365）</small></td><td>データと利用設定のみ</td></tr>
 </table></div>
 
@@ -261,7 +261,7 @@
 </table></div>
 
 <h2>4. AWS グローバルインフラストラクチャ</h2>
-<p>AWS のインフラストラクチャは、世界各地のデータセンターで構成されています。その配置には階層的な単位があり、<b>試験で頻繁に問われます</b>。</p>
+<p>AWS のインフラストラクチャ（サーバーやネットワークなどの設備）は、世界各地のデータセンターで構成されています。その配置には階層的な単位があり、<b>試験で頻繁に問われます</b>。</p>
 
 <div class="diagram">
   <div class="dtitle">リージョン ⊃ アベイラビリティーゾーン ⊃ データセンター</div>

@@ -67,8 +67,8 @@
       <ul>
         <li>Trusted Advisor：環境を自動で点検し、改善点を提案する
           <ul>
-          <li>分野はコスト・パフォーマンス・セキュリティ・耐障害性・クォータ</li>
-          <li>運用上の優秀性も加わる。全チェックは Business 以上のプラン</li>
+          <li>分野は6つ：コスト・性能・安全・壊れにくさ・上限・運用</li>
+          <li>全チェックは Business 以上のサポートプラン</li>
           <li>例：全開放（0.0.0.0/0）の SG、S3 の公開、ルートの MFA 無し</li>
           </ul>
         </li>
@@ -93,7 +93,7 @@
         </li>
       </ul>
     </li>
-    <li><b>設計の評価は Well-Architected の6つの柱</b>：覚え方は「運・セ・信・パ・コ・サ」
+    <li><b>設計の評価は Well-Architected の6つの柱</b>：動かす・守る・止めない・速く・安く・優しく
       <ol>
         <li>運用上の優秀性：運用を自動化し、小さな変更を頻繁に行って改善する</li>
         <li>セキュリティ：データとシステムを守る（最小権限・暗号化・追跡可能性）</li>
@@ -189,7 +189,7 @@
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSSystemsManager.svg" alt=""><div><div class="name">AWS Systems Manager</div><div class="one">EC2 やオンプレミスのサーバーを<b>一元的に操作・管理</b>するための機能群。主な機能は次のとおり。<br>・<b>Session Manager</b>：<span class="term" data-tip="SSH（Secure Shell）：ネットワーク越しにサーバーへ安全にログインして操作するためのプロトコル。通常は鍵ペアとポート 22 番を使う。">SSH</span> の鍵管理やポートの開放なしに、ブラウザなどから安全にサーバーへ接続する<br>・<b>Patch Manager</b>：<span class="term" data-tip="パッチ：ソフトウェアの不具合や脆弱性を修正するための更新プログラム。">パッチ</span>の適用を一括で自動化する<br>・<b>Run Command</b>：複数のサーバーに同じコマンドを一斉に実行する<br>・<b>Parameter Store</b>：設定値やパスワードなどを安全に保管する</div></div></div>
 
 <h2>3. インフラのコード化：CloudFormation と CDK</h2>
-<p>マネジメントコンソールで手作業で構築すると、同じ環境の再現に手間がかかり、設定ミスも起こりやすくなります。そこで、<b>インフラの構成をコードとして記述し、自動で構築する</b>手法が使われます。これを <span class="term" data-tip="IaC（Infrastructure as Code）：サーバーやネットワークなどのインフラ構成をコードで記述し、バージョン管理や自動構築を可能にする手法。">IaC（Infrastructure as Code）</span>といいます。</p>
+<p>マネジメントコンソールで手作業で構築すると、同じ環境の再現に手間がかかり、設定ミスも起こりやすくなります。そこで、<b>インフラ（サーバーやネットワークなどの土台）の構成をコードとして記述し、自動で構築する</b>手法が使われます。これを <span class="term" data-tip="IaC（Infrastructure as Code）：サーバーやネットワークなどのインフラ構成をコードで記述し、バージョン管理や自動構築を可能にする手法。">IaC（Infrastructure as Code）</span>といいます。</p>
 
 <div class="box story">
   <div class="box-title"><span class="em">💡</span>イメージで理解する</div>
@@ -212,21 +212,21 @@
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSElasticBeanstalk.svg" alt=""><div><div class="name">（参考）Elastic Beanstalk</div><div class="one">アプリケーションのコードをアップロードするだけで、実行環境を自動で構築する PaaS。<b>「インフラを意識せずにアプリケーションを動かしたい」</b>なら Elastic Beanstalk、<b>「インフラをコードで細かく管理したい」</b>なら CloudFormation。</div></div></div>
 
 <h2>4. 助言と通知</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor</div><div class="one">利用中の AWS 環境を自動で点検し、<b>ベストプラクティスに基づく改善提案</b>を行う。対象分野は<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）</b>（加えて運用上の優秀性）。すべてのチェック項目を利用するには <b>Business 以上のサポートプラン</b>が必要。例：使われていない EBS（コスト）、<b>無制限アクセス（0.0.0.0/0）を許可しているセキュリティグループ</b>・S3 の公開設定・ルートユーザーの MFA 未設定（セキュリティ）。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSTrustedAdvisor.svg" alt=""><div><div class="name">AWS Trusted Advisor</div><div class="one">利用中の AWS 環境を自動で点検し、<b>定石（ベストプラクティス）に基づく改善提案</b>を行う。対象分野は<b>コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）・運用上の優秀性</b>の6つ。すべてのチェック項目を利用するには <b>Business 以上のサポートプラン</b>が必要。例：使われていない EBS（コスト）、<b>無制限アクセス（0.0.0.0/0）を許可しているセキュリティグループ</b>・S3 の公開設定・ルートユーザーの MFA 未設定（セキュリティ）。</div></div></div>
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の5分野「コ・パ・セ・耐・上」</div>
-  <p><b>コ</b>スト／<b>パ</b>フォーマンス／<b>セ</b>キュリティ／<b>耐</b>障害性／サービスの<b>上</b>限。Well-Architected の柱と重なる項目が多いので、対応づけて覚えると効率的です。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：Trusted Advisor の6分野「安く・速く・安全に・壊れず・上限内で・運用よく」</div>
+  <p><b>安く</b>＝コスト最適化／<b>速く</b>＝パフォーマンス／<b>安全に</b>＝セキュリティ／<b>壊れず</b>＝耐障害性／<b>上限内で</b>＝サービスクォータ／<b>運用よく</b>＝運用上の優秀性。Well-Architected の柱と重なる項目が多いので、対応づけて覚えると効率的です。</p>
 </div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSHealthDashboard.svg" alt=""><div><div class="name">AWS Health Dashboard</div><div class="one">AWS 側で発生している<b>障害や予定されたメンテナンスの情報</b>を確認する画面。特に「<b>自分のアカウントのリソースに影響するもの</b>」を通知する。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSXRay.svg" alt=""><div><div class="name">AWS X-Ray</div><div class="one">アプリケーション内でリクエストが<b>どのコンポーネントを経由し、どこで時間を要したか</b>を可視化する（分散トレーシング）。<span class="term" data-tip="マイクロサービス：1 つのアプリケーションを、独立して開発・デプロイできる小さなサービスの集合として構成する設計手法。">マイクロサービス</span>構成でのボトルネックの特定に使う。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSXRay.svg" alt=""><div><div class="name">AWS X-Ray</div><div class="one">アプリケーション内でリクエストが<b>どの部品（コンポーネント）を経由し、どこで時間を要したか</b>を可視化する（分散トレーシング）。<span class="term" data-tip="マイクロサービス：1 つのアプリケーションを、独立して開発・デプロイできる小さなサービスの集合として構成する設計手法。">マイクロサービス</span>構成で、いちばん遅い部分（ボトルネック）を見つけるのに使う。</div></div></div>
 
 <h2>5. 複数アカウントの管理</h2>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSOrganizations.svg" alt=""><div><div class="name">AWS Organizations</div><div class="one">複数の AWS アカウントを<b>組織として一元管理</b>する。<b>一括請求</b>（請求を 1 つにまとめ、使用量の合算によりボリュームディスカウントを受けやすくなる）と、<b>SCP</b>（<span class="term" data-tip="SCP（サービスコントロールポリシー）：Organizations で、各アカウントに許可される操作の上限を定めるポリシー。">サービスコントロールポリシー</span>）による「特定のアカウントでは特定のサービスを使用禁止にする」といった制御ができる。詳しくは <a href="02-security-iam.html">第2章</a>。</div></div></div>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSControlTower.svg" alt=""><div><div class="name">AWS Control Tower</div><div class="one">セキュリティやガバナンスの設定が整った複数アカウント環境（<span class="term" data-tip="ランディングゾーン：セキュリティやログ収集などの基本設定があらかじめ整備された、マルチアカウント環境の土台。">ランディングゾーン</span>）を、<b>ベストプラクティスに沿って自動で構築</b>する。Organizations を基盤として動作する。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSControlTower.svg" alt=""><div><div class="name">AWS Control Tower</div><div class="one">セキュリティや統制（ガバナンス）の設定が整った複数アカウント環境（<span class="term" data-tip="ランディングゾーン：セキュリティやログ収集などの基本設定があらかじめ整備された、マルチアカウント環境の土台。">ランディングゾーン</span>）を、<b>ベストプラクティスに沿って自動で構築</b>する。Organizations を基盤として動作する。</div></div></div>
 <div class="svc"><img src="../assets/aws-icons/architecture-service/AWSServiceCatalog.svg" alt=""><div><div class="name">AWS Service Catalog</div><div class="one">組織が<b>承認した構成だけ</b>をカタログとして公開し、利用者はその中から選んで環境を作成する。統制を保ちながらセルフサービスでの利用を可能にする。</div></div></div>
 
 <h2>6. 設計の指針：Well-Architected フレームワーク</h2>
-<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSWellArchitectedTool.svg" alt=""><div><div class="name">AWS Well-Architected フレームワーク</div><div class="one">AWS が多数の事例から体系化した<b>優れた設計のための原則とベストプラクティス</b>。<b>6つの柱</b>で構成される。<b>Well-Architected Tool</b> を使うと、設問に回答する形式で自分のワークロードを評価できる（無料）。</div></div></div>
+<div class="svc"><img src="../assets/aws-icons/architecture-service/AWSWellArchitectedTool.svg" alt=""><div><div class="name">AWS Well-Architected フレームワーク</div><div class="one">AWS が多数の事例から体系化した<b>優れた設計のための原則とベストプラクティス</b>。<b>6つの柱</b>で構成される。<b>Well-Architected Tool</b> を使うと、設問に回答する形式で自分のシステム（ワークロード）を評価できる（無料）。</div></div></div>
 
 <div class="table-wrap"><table>
   <tr><th>#</th><th>柱</th><th>要点</th></tr>
@@ -238,8 +238,8 @@
   <tr><td>6</td><td><b>サ</b>ステナビリティ<br><small class="muted">Sustainability</small></td><td>エネルギー消費などの環境負荷を最小化する</td></tr>
 </table></div>
 <div class="box hook">
-  <div class="box-title"><span class="em">🔑</span>覚え方：「運・セ・信・パ・コ・サ」</div>
-  <p>学習方法のページで紹介した頭字法です。あわせて、6番目の<b>サステナビリティは 2021 年に追加された</b>柱であることも押さえておきます。</p>
+  <div class="box-title"><span class="em">🔑</span>覚え方：「動かす・守る・止めない・速く・安く・地球に優しく」</div>
+  <p><b>動かす</b>＝運用上の優秀性／<b>守る</b>＝セキュリティ／<b>止めない</b>＝信頼性／<b>速く</b>＝パフォーマンス効率／<b>安く</b>＝コスト最適化／<b>地球に優しく</b>＝サステナビリティ。学習方法のページで紹介した「意味のある言葉の並び」で覚える例です。あわせて、6番目の<b>サステナビリティは 2021 年に追加された</b>柱であることも押さえておきます。</p>
 </div>
 <div class="box exam">
   <div class="box-title"><span class="em">🎯</span>試験での問われ方</div>
@@ -270,8 +270,8 @@
   <details class="q"><summary>CPU 使用率が 80% を超えたらメールで通知するにはどうするか。</summary><div class="a">CloudWatch のメトリクスにアラームを設定し、SNS でメール通知する。</div></details>
   <details class="q"><summary>SSH の鍵やポートを開放せずにサーバーへ接続できる機能は何か。</summary><div class="a">Systems Manager の Session Manager。</div></details>
   <details class="q"><summary>IaC とは何か。AWS の代表的なサービスは何か。</summary><div class="a">インフラの構成をコードで記述し、自動で構築・管理する手法。CloudFormation（テンプレート）と CDK（汎用プログラミング言語で記述）。</div></details>
-  <details class="q"><summary>Trusted Advisor が点検する5つの分野は何か。</summary><div class="a">コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）。</div></details>
-  <details class="q"><summary>Well-Architected フレームワークの6つの柱は何か。</summary><div class="a">運用上の優秀性・セキュリティ・信頼性・パフォーマンス効率・コスト最適化・サステナビリティ（運・セ・信・パ・コ・サ）。</div></details>
+  <details class="q"><summary>Trusted Advisor が点検する6つの分野は何か。</summary><div class="a">コスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータ（上限）・運用上の優秀性（安く・速く・安全に・壊れず・上限内で・運用よく）。</div></details>
+  <details class="q"><summary>Well-Architected フレームワークの6つの柱は何か。</summary><div class="a">運用上の優秀性・セキュリティ・信頼性・パフォーマンス効率・コスト最適化・サステナビリティ（動かす・守る・止めない・速く・安く・地球に優しく）。</div></details>
   <details class="q"><summary>複数アカウント環境をベストプラクティスに沿って自動構築するサービスは何か。</summary><div class="a">AWS Control Tower。</div></details>
   <details class="q"><summary>組織が承認した構成だけを利用者に選ばせたい。使うサービスは何か。</summary><div class="a">AWS Service Catalog。</div></details>
   <details class="q"><summary>アプリケーションのどこでリクエストの処理に時間がかかっているかを調べるサービスは何か。</summary><div class="a">AWS X-Ray。</div></details>
