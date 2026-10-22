@@ -1,7 +1,7 @@
 # aws-get-certified
 
 AWS 認定（クラウドプラクティショナー／ソリューションアーキテクト アソシエイト）の対策用学習サイト「**AWS 合格ノート**」です。
-GitHub Pages で公開し、PC・スマートフォンのブラウザで閲覧できます。
+GitHub Pages で公開し、PC・スマートフォンのブラウザで閲覧できます。公開先：<https://ht-0328.github.io/aws-get-certified/>
 
 ## 特徴
 
@@ -48,7 +48,7 @@ docs/
 1. **最初の1回だけ**：GitHub のリポジトリ画面で **Settings → Pages** を開き、**Build and deployment** の Source を「**GitHub Actions**」にする
 2. このブランチを `main` にマージする
 3. あとは `main` の `docs/` が変わるたびに自動で公開されます（**Actions** タブの「Deploy to GitHub Pages」から手動実行も可能）
-4. 公開先：`https://ht-0328.github.io/aws-get-certified/`
+4. 公開先：<https://ht-0328.github.io/aws-get-certified/>
 
 ローカルで見るときは `docs/index.html` をブラウザで開くだけで OK です。
 
